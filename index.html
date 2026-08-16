@@ -52,7 +52,6 @@
 
     #reader {
       position: absolute;
-
       inset: 0;
 
       width: 100% !important;
@@ -78,13 +77,11 @@
 
     #loading {
       position: absolute;
-
       inset: 0;
 
       background: #000;
 
       display: flex;
-
       align-items: center;
       justify-content: center;
 
@@ -113,7 +110,6 @@
 
     #website {
       position: absolute;
-
       inset: 0;
 
       width: 100%;
@@ -203,6 +199,7 @@
     let scanner = null;
     let scanning = false;
     let qrFound = false;
+    let fallbackTimer = null;
 
 
     async function startScanner() {
@@ -233,20 +230,12 @@
           },
 
           {
-
             fps: 15,
 
             qrbox: function(
               viewfinderWidth,
               viewfinderHeight
             ) {
-
-              /*
-                Use a large scanning area.
-                This makes it much easier to
-                detect QR codes anywhere near
-                the center of the camera.
-              */
 
               const size =
                 Math.floor(
@@ -281,9 +270,9 @@
 
           },
 
-          function(errorMessage) {
+          function() {
 
-            // Normal scanning errors are ignored.
+            // Ignore normal scanning errors.
 
           }
 
@@ -343,30 +332,106 @@
         .style.display = "none";
 
 
-      document.getElementById("website")
-        .src = url;
+      document.getElementById("loading")
+        .style.display = "flex";
 
 
-      document.getElementById("website")
-        .style.display = "block";
+      const website =
+        document.getElementById("website");
 
 
-      document.getElementById("rescan")
-        .style.display = "block";
+      website.style.display = "block";
+
+
+      let loaded = false;
+
+
+      website.onload = function() {
+
+        loaded = true;
+
+        document.getElementById("loading")
+          .style.display = "none";
+
+        document.getElementById("rescan")
+          .style.display = "block";
+
+      };
+
+
+      website.onerror = function() {
+
+        openInBrowser(url);
+
+      };
+
+
+      website.src = url;
+
+
+      /*
+        Some websites block iframe embedding.
+
+        If the iframe hasn't loaded after
+        several seconds, use the normal browser
+        instead.
+
+        The scanner URL remains in browser history,
+        so pressing Back returns to the scanner.
+      */
+
+      clearTimeout(fallbackTimer);
+
+      fallbackTimer = setTimeout(function() {
+
+        if (!loaded) {
+
+          openInBrowser(url);
+
+        }
+
+      }, 5000);
+
+    }
+
+
+    function openInBrowser(url) {
+
+      clearTimeout(fallbackTimer);
+
+      /*
+        Navigate the CURRENT tab instead of opening
+        a separate tab.
+
+        This creates a browser history entry,
+        meaning the browser Back button returns
+        directly to the scanner.
+      */
+
+      window.location.href = url;
 
     }
 
 
     async function rescan() {
 
+      clearTimeout(fallbackTimer);
+
+
       document.getElementById("website")
         .style.display = "none";
+
 
       document.getElementById("website")
         .src = "about:blank";
 
+
       document.getElementById("rescan")
         .style.display = "none";
+
+
+      document.getElementById("reader")
+        .style.display = "block";
 
 
       if (scanner) {
@@ -380,6 +445,7 @@
         }
 
         catch(error) {}
+
 
         try {
 
@@ -395,9 +461,6 @@
       scanner = null;
 
       scanning = false;
-
-      document.getElementById("reader")
-        .style.display = "block";
 
 
       setTimeout(function() {
