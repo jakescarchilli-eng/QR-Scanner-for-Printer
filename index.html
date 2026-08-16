@@ -1,18 +1,31 @@
 <!--
   QR SCANNER
-  VERSION: 3.6
-  Normal QR codes now display the website/site name
+  VERSION: 3.7
+
+  Added:
+  - Developer Mode
+  - Developer output panel
+  - 50/50 Dev Mode split
+  - Light Mode
+  - Dev Mode and Light Mode in Home Menu
 -->
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Printer Scanner 5000</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
+
 
   <style>
 
@@ -20,309 +33,831 @@
       box-sizing: border-box;
     }
 
+
     html,
     body {
+
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       background: #000;
+
       overflow: hidden;
+
+      font-family: Arial, sans-serif;
+
     }
+
+
+    /*
+      APP
+    */
 
     #app {
+
       width: 100%;
       height: 100%;
+
       display: flex;
       flex-direction: column;
-      align-items: center;
+
       background: #000;
+
     }
+
+
+    /*
+      TOP BAR
+    */
 
     #top-bar {
+
       position: relative;
+
       width: 100%;
       height: 65px;
+
       flex-shrink: 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       background: #000;
+
     }
+
 
     #site-title {
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 24px;
+
       font-weight: 700;
+
       text-align: center;
+
       white-space: nowrap;
+
       user-select: none;
+
     }
+
+
+    /*
+      HOME BUTTON
+    */
 
     #home-button {
+
       position: absolute;
+
       left: 12px;
       top: 50%;
+
       transform: translateY(-50%);
+
       width: 42px;
       height: 42px;
+
       border: none;
+
       border-radius: 12px;
+
       background: #222;
+
       color: white;
+
       font-size: 22px;
+
       cursor: pointer;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
+
       z-index: 200;
+
     }
+
 
     #home-button:active {
-      transform: translateY(-50%) scale(0.94);
+
+      transform:
+        translateY(-50%)
+        scale(0.94);
+
     }
+
+
+    /*
+      HOME MENU
+    */
 
     #home-menu {
+
       position: absolute;
+
       left: 12px;
       top: 58px;
-      width: 180px;
+
+      width: 190px;
+
+      max-height: calc(100vh - 75px);
+
+      overflow-y: auto;
+
       padding: 10px;
+
       background: #111;
+
       border: 1px solid #333;
+
       border-radius: 18px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.5);
+
       z-index: 300;
+
       display: none;
+
     }
+
 
     .menu-button {
+
       width: 100%;
+
       border: none;
+
       border-radius: 12px;
+
       padding: 13px 10px;
+
       margin: 4px 0;
+
       background: #222;
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 17px;
+
       font-weight: 600;
+
       cursor: pointer;
+
     }
+
 
     .menu-button:active {
+
       background: #333;
+
       transform: scale(0.98);
+
     }
+
+
+    /*
+      CAMERA AREA
+    */
 
     #camera {
+
       position: relative;
+
       width: 100%;
+
       height: calc(100% - 65px);
+
       overflow: hidden;
-      border-radius: 28px 28px 0 0;
+
+      border-radius:
+        28px 28px 0 0;
+
       background: #000;
+
     }
+
 
     #reader {
+
       position: absolute;
+
       inset: 0;
+
       width: 100% !important;
       height: 100% !important;
+
       border: none !important;
+
     }
 
+
     #reader video {
+
       width: 100% !important;
       height: 100% !important;
+
       object-fit: cover !important;
+
     }
+
 
     #reader__dashboard,
     #reader__header_message {
+
       display: none !important;
+
     }
+
 
     #reader__scan_region {
+
       border: none !important;
+
     }
+
 
     #reader__scan_region img {
+
       display: none !important;
+
     }
+
 
     #reader__scan_region > div {
+
       border: none !important;
+
     }
+
+
+    /*
+      SCAN BOX
+    */
 
     #scan-box {
+
       position: absolute;
+
       width: 250px !important;
       height: 250px !important;
+
       min-width: 250px;
       min-height: 250px;
+
       max-width: 250px;
       max-height: 250px;
+
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -50%);
+
+      transform:
+        translate(-50%, -50%);
+
       border: 3px solid white;
+
       border-radius: 18px;
+
       pointer-events: none;
+
       z-index: 10;
+
     }
+
+
+    /*
+      HOLD STILL
+    */
 
     #hold-still {
+
       position: absolute;
+
       left: 50%;
+
       top: calc(50% + 155px);
-      transform: translateX(-50%);
+
+      transform:
+        translateX(-50%);
+
       z-index: 15;
+
       padding: 9px 16px;
+
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.65);
+
+      background:
+        rgba(0, 0, 0, 0.65);
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 15px;
+
       font-weight: 600;
+
       white-space: nowrap;
+
       display: none;
+
     }
+
+
+    /*
+      ZOOM
+    */
 
     #zoom-container {
+
       position: absolute;
+
       left: 50%;
       bottom: 45px;
-      transform: translateX(-50%);
+
+      transform:
+        translateX(-50%);
+
       z-index: 100;
+
       width: min(70%, 350px);
+
       padding: 10px 16px;
+
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.65);
+
+      background:
+        rgba(0, 0, 0, 0.65);
+
       display: flex;
+
       align-items: center;
+
       gap: 10px;
+
     }
+
 
     #zoom-label {
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 13px;
+
       font-weight: 600;
+
       white-space: nowrap;
+
     }
+
 
     #zoom-slider {
+
       width: 100%;
+
       height: 5px;
+
       accent-color: white;
+
       cursor: pointer;
+
     }
+
 
     #zoom-value {
+
       min-width: 35px;
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 13px;
+
       text-align: right;
+
     }
+
+
+    /*
+      LOADING
+    */
 
     #loading {
+
       position: absolute;
+
       inset: 0;
+
       background: #000;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
+
       z-index: 20;
+
     }
+
 
     .spinner {
+
       width: 28px;
       height: 28px;
+
       border: 3px solid #333;
-      border-top: 3px solid white;
+
+      border-top:
+        3px solid white;
+
       border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+
+      animation:
+        spin 0.6s linear infinite;
+
     }
 
+
     @keyframes spin {
+
       to {
         transform: rotate(360deg);
       }
+
     }
+
+
+    /*
+      RESULT
+    */
 
     #result-text {
+
       position: absolute;
+
       left: 50%;
       top: 12%;
-      transform: translateX(-50%);
+
+      transform:
+        translateX(-50%);
+
       z-index: 50;
+
       width: 85%;
       max-width: 700px;
+
       color: white;
-      font-family: Arial, sans-serif;
+
       font-size: 36px;
+
       font-weight: 700;
+
       text-align: center;
+
       line-height: 1.25;
+
       display: none;
+
     }
+
+
+    /*
+      ACTION BUTTONS
+    */
 
     .action-button {
+
       position: absolute;
+
       left: 50%;
-      transform: translateX(-50%);
+
+      transform:
+        translateX(-50%);
+
       z-index: 50;
+
       border: none;
+
       padding: 18px 38px;
+
       border-radius: 999px;
+
       background: white;
+
       color: #111;
-      font-family: Arial, sans-serif;
+
       font-size: 20px;
+
       font-weight: 600;
+
       cursor: pointer;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+
+      box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.25);
+
     }
+
 
     .action-button:active {
-      transform: translateX(-50%) scale(0.95);
+
+      transform:
+        translateX(-50%)
+        scale(0.95);
+
     }
+
 
     #open-button {
+
       top: 55%;
+
       display: none;
+
     }
+
 
     #rescan {
+
       top: 70%;
+
       display: none;
+
     }
 
+
+    /*
+      VERSION
+    */
+
     #version-number {
+
       position: absolute;
+
       left: 50%;
       bottom: 6px;
-      transform: translateX(-50%);
+
+      transform:
+        translateX(-50%);
+
       z-index: 100;
-      color: rgba(255, 255, 255, 0.45);
-      font-family: Arial, sans-serif;
+
+      color:
+        rgba(255, 255, 255, 0.45);
+
       font-size: 9px;
-      font-weight: 400;
+
       pointer-events: none;
+
       user-select: none;
+
+    }
+
+
+    /*
+      DEV MODE
+    */
+
+    #dev-panel {
+
+      display: none;
+
+      width: 100%;
+
+      height: 50%;
+
+      flex-shrink: 0;
+
+      background: #000;
+
+      border-top:
+        2px solid #333;
+
+      color: #fff;
+
+      overflow: hidden;
+
+      flex-direction: column;
+
+    }
+
+
+    #dev-header {
+
+      height: 40px;
+
+      flex-shrink: 0;
+
+      display: flex;
+
+      align-items: center;
+
+      padding-left: 14px;
+
+      background: #111;
+
+      border-bottom:
+        1px solid #333;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+    }
+
+
+    #dev-output {
+
+      flex: 1;
+
+      overflow-y: auto;
+
+      padding: 10px;
+
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      white-space: pre-wrap;
+
+      word-break: break-word;
+
+    }
+
+
+    .dev-line {
+
+      margin-bottom: 3px;
+
+    }
+
+
+    /*
+      DEV MODE ACTIVE
+    */
+
+    body.dev-mode #app {
+
+      height: 100%;
+
+    }
+
+
+    body.dev-mode #top-bar {
+
+      height: 50px;
+
+    }
+
+
+    body.dev-mode #camera {
+
+      height: calc(50% - 25px);
+
+      border-radius: 0;
+
+    }
+
+
+    body.dev-mode #dev-panel {
+
+      display: flex;
+
+    }
+
+
+    /*
+      LIGHT MODE
+    */
+
+    body.light-mode {
+
+      background: #f2f2f2;
+
+    }
+
+
+    body.light-mode #app {
+
+      background: #f2f2f2;
+
+    }
+
+
+    body.light-mode #top-bar {
+
+      background: #f2f2f2;
+
+    }
+
+
+    body.light-mode #site-title {
+
+      color: #000;
+
+    }
+
+
+    body.light-mode #home-button {
+
+      background: #ddd;
+
+      color: #000;
+
+    }
+
+
+    body.light-mode #home-menu {
+
+      background: #f5f5f5;
+
+      border-color: #ccc;
+
+    }
+
+
+    body.light-mode .menu-button {
+
+      background: #ddd;
+
+      color: #000;
+
+    }
+
+
+    body.light-mode .menu-button:active {
+
+      background: #ccc;
+
+    }
+
+
+    body.light-mode #zoom-container {
+
+      background:
+        rgba(255, 255, 255, 0.8);
+
+    }
+
+
+    body.light-mode #zoom-label,
+    body.light-mode #zoom-value {
+
+      color: #000;
+
+    }
+
+
+    body.light-mode #hold-still {
+
+      background:
+        rgba(255, 255, 255, 0.8);
+
+      color: #000;
+
+    }
+
+
+    body.light-mode #dev-panel {
+
+      background: #000;
+
+      color: #fff;
+
+    }
+
+
+    body.light-mode #version-number {
+
+      color:
+        rgba(255, 255, 255, 0.45);
+
     }
 
   </style>
+
 </head>
+
 
 <body>
 
+
   <div id="app">
 
+
+    <!-- TOP BAR -->
+
     <div id="top-bar">
+
 
       <button
         id="home-button"
@@ -332,32 +867,54 @@
         ☰
       </button>
 
+
       <div id="site-title">
+
         Printer Scanner 5000
+
       </div>
+
+
+      <!-- HOME MENU -->
 
       <div id="home-menu">
 
+
         <button
           class="menu-button"
-          onclick="openPrinterLink('https://apps.apple.com/app/id1625671285')"
+          onclick="
+            openPrinterLink(
+              'https://apps.apple.com/app/id1625671285'
+            )
+          "
         >
           H2D
         </button>
 
+
         <button
           class="menu-button"
-          onclick="openPrinterLink('https://apps.apple.com/app/id1166269606')"
+          onclick="
+            openPrinterLink(
+              'https://apps.apple.com/app/id1166269606'
+            )
+          "
         >
           TOYBOX
         </button>
 
+
         <button
           class="menu-button"
-          onclick="openPrinterLink('https://apps.apple.com/app/id1658133862')"
+          onclick="
+            openPrinterLink(
+              'https://apps.apple.com/app/id1658133862'
+            )
+          "
         >
           Ender 3
         </button>
+
 
         <button
           class="menu-button"
@@ -366,25 +923,58 @@
           Refresh
         </button>
 
+
+        <button
+          class="menu-button"
+          onclick="toggleDevMode()"
+        >
+          Dev Mode
+        </button>
+
+
+        <button
+          class="menu-button"
+          onclick="toggleLightMode()"
+        >
+          Light Mode
+        </button>
+
+
       </div>
 
     </div>
 
+
+    <!-- CAMERA -->
+
     <div id="camera">
+
 
       <div id="reader"></div>
 
+
       <div id="scan-box"></div>
 
+
       <div id="hold-still">
-        it’s a bit blurry, try moving a bit
+
+        it’s a bit blurry,
+        try moving a bit
+
       </div>
+
+
+      <!-- ZOOM -->
 
       <div id="zoom-container">
 
+
         <span id="zoom-label">
+
           Zoom
+
         </span>
+
 
         <input
           id="zoom-slider"
@@ -396,17 +986,32 @@
           oninput="setZoom(this.value)"
         >
 
+
         <span id="zoom-value">
+
           1×
+
         </span>
 
+
       </div>
+
+
+      <!-- LOADING -->
 
       <div id="loading">
+
         <div class="spinner"></div>
+
       </div>
 
+
+      <!-- RESULT -->
+
       <div id="result-text"></div>
+
+
+      <!-- OPEN / PRINT -->
 
       <button
         id="open-button"
@@ -416,6 +1021,9 @@
         Open
       </button>
 
+
+      <!-- RESCAN -->
+
       <button
         id="rescan"
         class="action-button"
@@ -424,26 +1032,117 @@
         Rescan
       </button>
 
+
+      <!-- VERSION -->
+
       <div id="version-number">
-        v3.6
+
+        v3.7
+
       </div>
 
+
     </div>
+
+
+    <!-- DEV OUTPUT -->
+
+    <div id="dev-panel">
+
+
+      <div id="dev-header">
+
+        Developer Output
+
+      </div>
+
+
+      <div id="dev-output"></div>
+
+
+    </div>
+
 
   </div>
 
 
   <script>
 
+
+    /*
+      VARIABLES
+    */
+
     let scanner = null;
+
     let firstDetection = null;
+
     let detectedText = null;
+
     let scanConfirmed = false;
+
     let scannedURL = null;
+
     let isPrinterLink = false;
+
     let cameraTrack = null;
 
+    let devMode = false;
+
+    let lightMode = false;
+
     const HOLD_TIME = 600;
+
+
+    /*
+      DEV LOG
+    */
+
+    function devLog(message) {
+
+      const output =
+        document.getElementById(
+          "dev-output"
+        );
+
+
+      if (!output) {
+        return;
+      }
+
+
+      const now =
+        new Date();
+
+
+      const time =
+        now.toLocaleTimeString();
+
+
+      const line =
+        document.createElement(
+          "div"
+        );
+
+
+      line.className =
+        "dev-line";
+
+
+      line.textContent =
+        "[" +
+        time +
+        "] " +
+        message;
+
+
+      output.appendChild(line);
+
+
+      output.scrollTop =
+        output.scrollHeight;
+
+    }
 
 
     /*
@@ -453,49 +1152,170 @@
     function toggleHomeMenu() {
 
       const menu =
-        document.getElementById("home-menu");
+        document.getElementById(
+          "home-menu"
+        );
+
 
       menu.style.display =
         menu.style.display === "block"
           ? "none"
           : "block";
+
+
+      devLog(
+        "Home menu " +
+        (
+          menu.style.display === "block"
+            ? "opened"
+            : "closed"
+        )
+      );
+
     }
 
+
+    /*
+      OPEN PRINTER LINK
+    */
 
     function openPrinterLink(url) {
 
-      window.open(url, "_blank");
+      devLog(
+        "Printer shortcut pressed: " +
+        url
+      );
+
+
+      window.open(
+        url,
+        "_blank"
+      );
+
 
       document.getElementById(
         "home-menu"
-      ).style.display = "none";
+      ).style.display =
+        "none";
 
     }
 
 
+    /*
+      REFRESH
+    */
+
     function refreshPage() {
+
+      devLog(
+        "Refresh button pressed"
+      );
+
 
       window.location.reload();
 
     }
 
 
+    /*
+      DEV MODE
+    */
+
+    function toggleDevMode() {
+
+      devMode =
+        !devMode;
+
+
+      document.body.classList.toggle(
+        "dev-mode",
+        devMode
+      );
+
+
+      devLog(
+        "Developer Mode: " +
+        (
+          devMode
+            ? "ON"
+            : "OFF"
+        )
+      );
+
+
+      document.getElementById(
+        "home-menu"
+      ).style.display =
+        "none";
+
+    }
+
+
+    /*
+      LIGHT MODE
+    */
+
+    function toggleLightMode() {
+
+      lightMode =
+        !lightMode;
+
+
+      document.body.classList.toggle(
+        "light-mode",
+        lightMode
+      );
+
+
+      devLog(
+        "Light Mode: " +
+        (
+          lightMode
+            ? "ON"
+            : "OFF"
+        )
+      );
+
+
+      document.getElementById(
+        "home-menu"
+      ).style.display =
+        "none";
+
+    }
+
+
+    /*
+      CLOSE MENU WHEN CLICKING OUTSIDE
+    */
+
     document.addEventListener(
       "click",
       function(event) {
 
         const menu =
-          document.getElementById("home-menu");
+          document.getElementById(
+            "home-menu"
+          );
+
 
         const button =
-          document.getElementById("home-button");
+          document.getElementById(
+            "home-button"
+          );
+
 
         if (
-          !menu.contains(event.target) &&
-          !button.contains(event.target)
+          !menu.contains(
+            event.target
+          ) &&
+          !button.contains(
+            event.target
+          )
         ) {
 
-          menu.style.display = "none";
+          menu.style.display =
+            "none";
 
         }
 
@@ -504,34 +1324,42 @@
 
 
     /*
-      GET NORMAL SITE NAME
+      SITE NAME
     */
 
     function getSiteName(url) {
 
       try {
 
-        let fixedURL = url;
+        let fixedURL =
+          url;
+
 
         if (
-          !fixedURL.startsWith("http://") &&
-          !fixedURL.startsWith("https://")
+          !fixedURL.startsWith(
+            "http://"
+          ) &&
+          !fixedURL.startsWith(
+            "https://"
+          )
         ) {
 
           fixedURL =
-            "https://" + fixedURL;
+            "https://" +
+            fixedURL;
 
         }
 
+
         const parsed =
-          new URL(fixedURL);
+          new URL(
+            fixedURL
+          );
+
 
         let hostname =
           parsed.hostname;
 
-        /*
-          Remove www.
-        */
 
         hostname =
           hostname.replace(
@@ -540,29 +1368,49 @@
           );
 
 
-        /*
-          Turn domains into readable names.
-          Example:
-          youtube.com -> YouTube
-          google.com -> Google
-        */
-
         const knownSites = {
 
-          "youtube.com": "YouTube",
-          "google.com": "Google",
-          "github.com": "GitHub",
-          "amazon.com": "Amazon",
-          "apple.com": "Apple",
-          "facebook.com": "Facebook",
-          "instagram.com": "Instagram",
-          "tiktok.com": "TikTok",
-          "reddit.com": "Reddit",
-          "x.com": "X",
-          "twitter.com": "Twitter",
-          "microsoft.com": "Microsoft",
-          "bambulab.com": "Bambu Lab",
-          "makerworld.com": "MakerWorld"
+          "youtube.com":
+            "YouTube",
+
+          "google.com":
+            "Google",
+
+          "github.com":
+            "GitHub",
+
+          "amazon.com":
+            "Amazon",
+
+          "apple.com":
+            "Apple",
+
+          "facebook.com":
+            "Facebook",
+
+          "instagram.com":
+            "Instagram",
+
+          "tiktok.com":
+            "TikTok",
+
+          "reddit.com":
+            "Reddit",
+
+          "x.com":
+            "X",
+
+          "twitter.com":
+            "Twitter",
+
+          "microsoft.com":
+            "Microsoft",
+
+          "bambulab.com":
+            "Bambu Lab",
+
+          "makerworld.com":
+            "MakerWorld"
 
         };
 
@@ -571,14 +1419,12 @@
           knownSites[hostname]
         ) {
 
-          return knownSites[hostname];
+          return knownSites[
+            hostname
+          ];
 
         }
 
-
-        /*
-          Otherwise use domain name
-        */
 
         const parts =
           hostname.split(".");
@@ -589,11 +1435,14 @@
         ) {
 
           let name =
-            parts[parts.length - 2];
+            parts[
+              parts.length - 2
+            ];
 
 
           name =
-            name.charAt(0).toUpperCase() +
+            name.charAt(0)
+              .toUpperCase() +
             name.slice(1);
 
 
@@ -608,6 +1457,11 @@
 
       catch (error) {
 
+        devLog(
+          "Could not determine site name"
+        );
+
+
         return "QR Code Found";
 
       }
@@ -616,10 +1470,16 @@
 
 
     /*
-      CUSTOM QR RESULTS
+      QR RESULT
     */
 
     function getQRText(url) {
+
+      devLog(
+        "Processing QR code: " +
+        url
+      );
+
 
       try {
 
@@ -629,6 +1489,7 @@
               ? url
               : "https://" + url
           );
+
 
         const cleanURL =
           scannedURL.origin +
@@ -644,7 +1505,14 @@
           "https://apps.apple.com/app/id1166269606"
         ) {
 
-          isPrinterLink = true;
+          isPrinterLink =
+            true;
+
+
+          devLog(
+            "Recognized TOYBOX QR"
+          );
+
 
           return "TOYBOX Found";
 
@@ -660,7 +1528,14 @@
           "https://apps.apple.com/app/id1658133862"
         ) {
 
-          isPrinterLink = true;
+          isPrinterLink =
+            true;
+
+
+          devLog(
+            "Recognized Ender 3 QR"
+          );
+
 
           return "Ender 3 Found";
 
@@ -676,7 +1551,14 @@
           "https://apps.apple.com/app/id1625671285"
         ) {
 
-          isPrinterLink = true;
+          isPrinterLink =
+            true;
+
+
+          devLog(
+            "Recognized H2D QR"
+          );
+
 
           return "This is to print with the H2D";
 
@@ -690,10 +1572,18 @@
         if (
           scannedURL.origin ===
             "https://makerworld.com" &&
-          scannedURL.pathname === "/en"
+          scannedURL.pathname ===
+            "/en"
         ) {
 
-          isPrinterLink = false;
+          isPrinterLink =
+            false;
+
+
+          devLog(
+            "Recognized MakerWorld QR"
+          );
+
 
           return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
 
@@ -704,15 +1594,34 @@
           NORMAL QR
         */
 
-        isPrinterLink = false;
+        isPrinterLink =
+          false;
 
-        return getSiteName(url);
+
+        const siteName =
+          getSiteName(url);
+
+
+        devLog(
+          "Normal QR detected: " +
+          siteName
+        );
+
+
+        return siteName;
 
       }
 
       catch (error) {
 
-        isPrinterLink = false;
+        isPrinterLink =
+          false;
+
+
+        devLog(
+          "QR URL could not be parsed"
+        );
+
 
         return "QR Code Found";
 
@@ -730,14 +1639,30 @@
       const zoom =
         parseFloat(value);
 
+
       document.getElementById(
         "zoom-value"
       ).textContent =
-        zoom.toFixed(1) + "×";
+        zoom.toFixed(1) +
+        "×";
+
+
+      devLog(
+        "Zoom changed to " +
+        zoom.toFixed(1) +
+        "×"
+      );
 
 
       if (!cameraTrack) {
+
+        devLog(
+          "Zoom unavailable: camera track not ready"
+        );
+
+
         return;
+
       }
 
 
@@ -747,13 +1672,23 @@
           cameraTrack.getCapabilities();
 
 
-        if (!capabilities.zoom) {
+        if (
+          !capabilities.zoom
+        ) {
+
+          devLog(
+            "Camera does not support hardware zoom"
+          );
+
+
           return;
+
         }
 
 
         const min =
           capabilities.zoom.min;
+
 
         const max =
           capabilities.zoom.max;
@@ -768,20 +1703,28 @@
         await cameraTrack.applyConstraints({
 
           advanced: [
+
             {
-              zoom: actualZoom
+              zoom:
+                actualZoom
             }
+
           ]
 
         });
+
+
+        devLog(
+          "Hardware zoom applied"
+        );
 
       }
 
       catch (error) {
 
-        console.log(
-          "Zoom not supported:",
-          error
+        devLog(
+          "Zoom error: " +
+          error.message
         );
 
       }
@@ -795,34 +1738,61 @@
 
     async function startScanner() {
 
+      devLog(
+        "Starting scanner..."
+      );
+
+
       scanner =
-        new Html5Qrcode("reader");
+        new Html5Qrcode(
+          "reader"
+        );
+
 
       try {
 
         await scanner.start(
 
           {
-            facingMode: "environment"
+            facingMode:
+              "environment"
           },
 
           {
+
             fps: 30,
 
             qrbox: {
+
               width: 250,
               height: 250
+
             },
 
-            disableFlip: false
+            disableFlip:
+              false
+
           },
+
 
           async function(decodedText) {
 
+
             if (scanConfirmed) {
+
               return;
+
             }
 
+
+            devLog(
+              "QR detected by camera"
+            );
+
+
+            /*
+              CAMERA TRACK
+            */
 
             if (!cameraTrack) {
 
@@ -831,18 +1801,28 @@
                   "#reader video"
                 );
 
+
               if (
                 video &&
                 video.srcObject
               ) {
 
                 const tracks =
-                  video.srcObject.getVideoTracks();
+                  video.srcObject
+                    .getVideoTracks();
 
-                if (tracks.length > 0) {
+
+                if (
+                  tracks.length > 0
+                ) {
 
                   cameraTrack =
                     tracks[0];
+
+
+                  devLog(
+                    "Camera track acquired"
+                  );
 
                 }
 
@@ -862,13 +1842,21 @@
               firstDetection =
                 Date.now();
 
+
               detectedText =
                 decodedText;
+
+
+              devLog(
+                "First QR detection"
+              );
+
 
               document.getElementById(
                 "hold-still"
               ).style.display =
                 "block";
+
 
               return;
 
@@ -887,13 +1875,21 @@
               firstDetection =
                 Date.now();
 
+
               detectedText =
                 decodedText;
+
+
+              devLog(
+                "QR changed; restarting confirmation timer"
+              );
+
 
               document.getElementById(
                 "hold-still"
               ).style.display =
                 "block";
+
 
               return;
 
@@ -910,10 +1906,17 @@
               HOLD_TIME
             ) {
 
-              scanConfirmed = true;
+              scanConfirmed =
+                true;
+
 
               scannedURL =
                 decodedText;
+
+
+              devLog(
+                "QR scan confirmed"
+              );
 
 
               document.getElementById(
@@ -944,13 +1947,18 @@
 
                   await scanner.stop();
 
+
+                  devLog(
+                    "Camera stopped"
+                  );
+
                 }
 
                 catch (error) {
 
-                  console.error(
-                    "CAMERA STOP ERROR:",
-                    error
+                  devLog(
+                    "Camera stop error: " +
+                    error.message
                   );
 
                 }
@@ -958,7 +1966,8 @@
               }
 
 
-              cameraTrack = null;
+              cameraTrack =
+                null;
 
 
               /*
@@ -970,10 +1979,12 @@
               ).style.display =
                 "none";
 
+
               document.getElementById(
                 "scan-box"
               ).style.display =
                 "none";
+
 
               document.getElementById(
                 "loading"
@@ -990,13 +2001,25 @@
                   "result-text"
                 );
 
-              resultText.textContent =
+
+              const qrResult =
                 getQRText(
                   decodedText
                 );
 
+
+              resultText.textContent =
+                qrResult;
+
+
               resultText.style.display =
                 "block";
+
+
+              devLog(
+                "Result: " +
+                qrResult
+              );
 
 
               /*
@@ -1008,10 +2031,12 @@
                   "open-button"
                 );
 
+
               openButton.textContent =
                 isPrinterLink
                   ? "Print"
                   : "Open";
+
 
               openButton.style.display =
                 "block";
@@ -1026,13 +2051,23 @@
               ).style.display =
                 "block";
 
+
+              devLog(
+                "Result buttons displayed"
+              );
+
             }
 
           },
 
+
           function(errorMessage) {
 
-            // Normal scanning errors are ignored.
+            /*
+              Normal scanner errors happen
+              constantly while looking for QR
+              codes, so don't spam Dev Mode.
+            */
 
           }
 
@@ -1043,6 +2078,11 @@
           "loading"
         ).style.display =
           "none";
+
+
+        devLog(
+          "Scanner started successfully"
+        );
 
 
         /*
@@ -1056,18 +2096,28 @@
               "#reader video"
             );
 
+
           if (
             video &&
             video.srcObject
           ) {
 
             const tracks =
-              video.srcObject.getVideoTracks();
+              video.srcObject
+                .getVideoTracks();
 
-            if (tracks.length > 0) {
+
+            if (
+              tracks.length > 0
+            ) {
 
               cameraTrack =
                 tracks[0];
+
+
+              devLog(
+                "Camera track ready"
+              );
 
             }
 
@@ -1077,12 +2127,20 @@
 
       }
 
+
       catch(error) {
 
         console.error(
           "CAMERA ERROR:",
           error
         );
+
+
+        devLog(
+          "CAMERA ERROR: " +
+          error.message
+        );
+
 
         document.getElementById(
           "loading"
@@ -1100,23 +2158,47 @@
 
     function openScannedSite() {
 
+      devLog(
+        "Open/Print button pressed"
+      );
+
+
       if (!scannedURL) {
+
+        devLog(
+          "No scanned URL available"
+        );
+
+
         return;
+
       }
+
 
       let url =
         scannedURL;
 
 
       if (
-        !url.startsWith("http://") &&
-        !url.startsWith("https://")
+        !url.startsWith(
+          "http://"
+        ) &&
+        !url.startsWith(
+          "https://"
+        )
       ) {
 
         url =
-          "https://" + url;
+          "https://" +
+          url;
 
       }
+
+
+      devLog(
+        "Opening: " +
+        url
+      );
 
 
       window.open(
@@ -1133,25 +2215,42 @@
 
     function rescan() {
 
+      devLog(
+        "Rescan button pressed"
+      );
+
+
       window.location.reload();
 
     }
 
 
     /*
-      START
+      PAGE START
     */
 
     window.addEventListener(
       "load",
       function() {
 
+        devLog(
+          "Printer Scanner 5000 loaded"
+        );
+
+
+        devLog(
+          "Version 3.7"
+        );
+
+
         startScanner();
 
       }
     );
 
+
   </script>
 
 </body>
+
 </html>
