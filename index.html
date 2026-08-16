@@ -1,14 +1,22 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 4.0
+  VERSION: 4.1
 
-  CHANGE:
-  - Camera preview is full-size again
-  - White scanning box remains fixed at 250x250
-  - Actual QR detection area is fixed at 250x250
-  - Detection area stays centered on the white box
-  - Window resizing/rotation does not resize the scanning area
-  - Everything else kept the same
+  Features:
+  - Full-size camera
+  - Fixed 250x250 scanning area
+  - Flashlight control
+  - Scan sound control
+  - Vibration control
+  - Copy scanned QR
+  - Scan history
+  - Scanner status
+  - QR type detection
+  - Dev Mode
+  - Scan statistics
+  - H2D / TOYBOX / Ender 3 shortcuts
+  - MakerWorld detection
+  - Light Mode
 -->
 
 <!DOCTYPE html>
@@ -28,6 +36,10 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
+
+/* =========================
+   GENERAL
+========================= */
 
 * {
   box-sizing: border-box;
@@ -64,7 +76,6 @@ body {
 ========================= */
 
 #top-bar {
-
   position: relative;
 
   width: 100%;
@@ -80,11 +91,9 @@ body {
 }
 
 #site-title {
-
   color: white;
 
   font-size: 24px;
-
   font-weight: 700;
 
   text-align: center;
@@ -100,7 +109,6 @@ body {
 ========================= */
 
 #home-button {
-
   position: absolute;
 
   left: 12px;
@@ -112,7 +120,6 @@ body {
   height: 42px;
 
   border: none;
-
   border-radius: 12px;
 
   background: #222;
@@ -124,7 +131,6 @@ body {
   cursor: pointer;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -132,10 +138,9 @@ body {
 }
 
 #home-button:active {
-
   transform:
     translateY(-50%)
-    scale(0.94);
+    scale(.94);
 }
 
 
@@ -144,7 +149,6 @@ body {
 ========================= */
 
 #home-menu {
-
   position: absolute;
 
   left: 12px;
@@ -167,7 +171,7 @@ body {
 
   box-shadow:
     0 8px 30px
-    rgba(0,0,0,0.5);
+    rgba(0,0,0,.5);
 
   z-index: 300;
 
@@ -175,11 +179,9 @@ body {
 }
 
 .menu-button {
-
   width: 100%;
 
   border: none;
-
   border-radius: 12px;
 
   padding: 13px 10px;
@@ -191,26 +193,22 @@ body {
   color: white;
 
   font-size: 17px;
-
   font-weight: 600;
 
   cursor: pointer;
 }
 
 .menu-button:active {
-
   background: #333;
-
-  transform: scale(0.98);
+  transform: scale(.98);
 }
 
 
 /* =========================
-   CAMERA AREA
+   CAMERA
 ========================= */
 
 #camera {
-
   position: relative;
 
   width: 100%;
@@ -226,23 +224,7 @@ body {
   background: #000;
 }
 
-
-/* =========================
-   ACTUAL CAMERA
-========================= */
-
-/*
-  IMPORTANT:
-
-  The CAMERA itself is full size.
-
-  This is intentionally NOT 250x250.
-
-  Only the QR detection box is fixed.
-*/
-
 #reader {
-
   position: absolute;
 
   inset: 0;
@@ -257,14 +239,7 @@ body {
   z-index: 4;
 }
 
-
-/*
-  Camera video fills the entire
-  camera area again.
-*/
-
 #reader video {
-
   width: 100% !important;
   height: 100% !important;
 
@@ -273,32 +248,17 @@ body {
   display: block !important;
 }
 
-
-/*
-  Hide library controls.
-*/
-
 #reader__dashboard,
 #reader__header_message {
-
   display: none !important;
 }
 
 
 /* =========================
-   LIBRARY SCAN REGION
+   FIXED SCANNING AREA
 ========================= */
 
-/*
-  HTML5-QRCode creates its own
-  scan region.
-
-  Keep its detection dimensions
-  fixed at 250x250.
-*/
-
 #reader__scan_region {
-
   width: 250px !important;
   height: 250px !important;
 
@@ -316,6 +276,9 @@ body {
   transform:
     translate(-50%, -50%) !important;
 
+  margin: 0 !important;
+  padding: 0 !important;
+
   border: none !important;
 
   overflow: hidden !important;
@@ -323,24 +286,16 @@ body {
   pointer-events: none !important;
 }
 
-
-/*
-  Hide the library's own
-  scanning image/border.
-*/
-
 #reader__scan_region img {
-
   display: none !important;
 }
 
 
 /* =========================
-   FIXED WHITE BOX
+   WHITE SCANNER BOX
 ========================= */
 
 #scan-box {
-
   position: absolute;
 
   width: 250px !important;
@@ -358,8 +313,7 @@ body {
   transform:
     translate(-50%, -50%);
 
-  border:
-    3px solid white;
+  border: 3px solid white;
 
   border-radius: 18px;
 
@@ -370,11 +324,92 @@ body {
 
 
 /* =========================
-   HOLD STILL
+   STATUS
+========================= */
+
+#status-bar {
+  position: absolute;
+
+  left: 50%;
+
+  top:
+    calc(50% - 185px);
+
+  transform:
+    translateX(-50%);
+
+  z-index: 40;
+
+  padding:
+    9px 18px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.65);
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition: .2s;
+}
+
+#status-bar.detected {
+  background:
+    rgba(255,170,0,.8);
+}
+
+#status-bar.success {
+  background:
+    rgba(0,150,70,.85);
+}
+
+
+/* =========================
+   QR TYPE
+========================= */
+
+#qr-type {
+  position: absolute;
+
+  left: 50%;
+
+  top:
+    calc(50% - 225px);
+
+  transform:
+    translateX(-50%);
+
+  z-index: 40;
+
+  padding:
+    8px 16px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.6);
+
+  color: white;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  display: none;
+}
+
+
+/* =========================
+   BLUR MESSAGE
 ========================= */
 
 #hold-still {
-
   position: absolute;
 
   left: 50%;
@@ -393,12 +428,11 @@ body {
   border-radius: 999px;
 
   background:
-    rgba(0,0,0,0.65);
+    rgba(0,0,0,.65);
 
   color: white;
 
   font-size: 15px;
-
   font-weight: 600;
 
   white-space: nowrap;
@@ -408,14 +442,14 @@ body {
 
 
 /* =========================
-   ZOOM
+   CONTROL BAR
 ========================= */
 
-#zoom-container {
-
+#control-bar {
   position: absolute;
 
   left: 50%;
+
   bottom: 45px;
 
   transform:
@@ -423,8 +457,30 @@ body {
 
   z-index: 100;
 
-  width:
-    min(70%, 350px);
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  width: min(94%, 600px);
+}
+
+
+/* =========================
+   ZOOM
+========================= */
+
+#zoom-container {
+  height: 48px;
+
+  flex: 1;
+
+  min-width: 180px;
+
+  max-width: 350px;
 
   padding:
     10px 16px;
@@ -432,7 +488,7 @@ body {
   border-radius: 999px;
 
   background:
-    rgba(0,0,0,0.65);
+    rgba(0,0,0,.65);
 
   display: flex;
 
@@ -442,18 +498,15 @@ body {
 }
 
 #zoom-label {
-
   color: white;
 
   font-size: 13px;
-
   font-weight: 600;
 
   white-space: nowrap;
 }
 
 #zoom-slider {
-
   width: 100%;
 
   height: 5px;
@@ -464,7 +517,6 @@ body {
 }
 
 #zoom-value {
-
   min-width: 35px;
 
   color: white;
@@ -476,11 +528,207 @@ body {
 
 
 /* =========================
+   CIRCLE BUTTONS
+========================= */
+
+.circle-button {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  transition: .15s;
+
+  box-shadow:
+    0 4px 15px
+    rgba(0,0,0,.25);
+}
+
+.circle-button:active {
+  transform: scale(.9);
+}
+
+.circle-button.active {
+  background: white;
+
+  color: black;
+
+  border:
+    2px solid white;
+}
+
+.circle-button:not(.active) {
+  background: black;
+
+  color: white;
+
+  border:
+    2px solid white;
+}
+
+
+/* =========================
+   ORIGINAL ICONS
+========================= */
+
+.icon {
+  position: relative;
+
+  display: block;
+
+  width: 22px;
+  height: 22px;
+
+  color: currentColor;
+
+  pointer-events: none;
+}
+
+
+/* =========================
+   FLASHLIGHT ICON
+========================= */
+
+.flashlight-icon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 2px;
+
+  width: 9px;
+  height: 15px;
+
+  border:
+    2px solid currentColor;
+
+  border-radius: 3px;
+}
+
+.flashlight-icon::after {
+  content: "";
+
+  position: absolute;
+
+  left: 8px;
+  bottom: 1px;
+
+  width: 7px;
+  height: 5px;
+
+  border-left:
+    2px solid currentColor;
+
+  border-right:
+    2px solid currentColor;
+}
+
+
+/* =========================
+   SOUND ICON
+========================= */
+
+.sound-icon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 2px;
+  top: 8px;
+
+  width: 7px;
+  height: 7px;
+
+  background:
+    currentColor;
+
+  border-radius: 1px;
+}
+
+.sound-icon::after {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 4px;
+
+  width: 9px;
+  height: 14px;
+
+  background:
+    currentColor;
+
+  clip-path:
+    polygon(
+      0 35%,
+      35% 35%,
+      100% 0,
+      100% 100%,
+      35% 65%,
+      0 65%
+    );
+}
+
+
+/* =========================
+   VIBRATION ICON
+========================= */
+
+.vibration-icon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 4px;
+
+  width: 8px;
+  height: 14px;
+
+  border:
+    2px solid currentColor;
+
+  border-radius: 3px;
+}
+
+.vibration-icon::after {
+  content: "";
+
+  position: absolute;
+
+  left: 1px;
+  top: 7px;
+
+  width: 4px;
+  height: 8px;
+
+  border-top:
+    2px solid currentColor;
+
+  border-bottom:
+    2px solid currentColor;
+
+  box-shadow:
+    16px 0 0 -1px currentColor;
+}
+
+
+/* =========================
    LOADING
 ========================= */
 
 #loading {
-
   position: absolute;
 
   inset: 0;
@@ -490,14 +738,12 @@ body {
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   z-index: 50;
 }
 
 .spinner {
-
   width: 28px;
   height: 28px;
 
@@ -510,13 +756,14 @@ body {
   border-radius: 50%;
 
   animation:
-    spin 0.6s linear infinite;
+    spin .6s linear infinite;
 }
 
 @keyframes spin {
 
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
 
 }
@@ -527,7 +774,6 @@ body {
 ========================= */
 
 #result-text {
-
   position: absolute;
 
   left: 50%;
@@ -539,13 +785,11 @@ body {
   z-index: 50;
 
   width: 85%;
-
   max-width: 700px;
 
   color: white;
 
   font-size: 36px;
-
   font-weight: 700;
 
   text-align: center;
@@ -561,7 +805,6 @@ body {
 ========================= */
 
 .action-button {
-
   position: absolute;
 
   left: 50%;
@@ -583,32 +826,28 @@ body {
   color: #111;
 
   font-size: 20px;
-
   font-weight: 600;
 
   cursor: pointer;
 
   box-shadow:
     0 5px 20px
-    rgba(0,0,0,0.25);
+    rgba(0,0,0,.25);
 }
 
 .action-button:active {
-
   transform:
     translateX(-50%)
-    scale(0.95);
+    scale(.95);
 }
 
 #open-button {
-
   top: 55%;
 
   display: none;
 }
 
 #rescan {
-
   top: 70%;
 
   display: none;
@@ -620,7 +859,6 @@ body {
 ========================= */
 
 #version-number {
-
   position: absolute;
 
   left: 50%;
@@ -632,7 +870,7 @@ body {
   z-index: 100;
 
   color:
-    rgba(255,255,255,0.45);
+    rgba(255,255,255,.45);
 
   font-size: 9px;
 
@@ -643,15 +881,114 @@ body {
 
 
 /* =========================
+   HISTORY
+========================= */
+
+#history-panel {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: min(90%, 420px);
+
+  max-height: 75%;
+
+  overflow-y: auto;
+
+  padding: 16px;
+
+  background: #111;
+
+  border:
+    1px solid #333;
+
+  border-radius: 20px;
+
+  z-index: 500;
+
+  display: none;
+}
+
+#history-title {
+  color: white;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  margin-bottom: 12px;
+}
+
+.history-item {
+  padding: 12px;
+
+  margin: 6px 0;
+
+  background: #222;
+
+  border-radius: 12px;
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.history-name {
+  font-weight: 700;
+}
+
+.history-url {
+  margin-top: 4px;
+
+  font-size: 11px;
+
+  color: #aaa;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.history-time {
+  margin-top: 4px;
+
+  font-size: 10px;
+
+  color: #777;
+}
+
+.history-close {
+  width: 100%;
+
+  margin-top: 10px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 12px;
+
+  background: #333;
+
+  color: white;
+
+  font-weight: 600;
+}
+
+
+/* =========================
    DEV MODE
 ========================= */
 
 #dev-panel {
-
   display: none;
 
   width: 100%;
-
   height: 50%;
 
   flex-shrink: 0;
@@ -661,7 +998,7 @@ body {
   border-top:
     2px solid #333;
 
-  color: #fff;
+  color: white;
 
   overflow: hidden;
 
@@ -669,7 +1006,6 @@ body {
 }
 
 #dev-header {
-
   height: 40px;
 
   flex-shrink: 0;
@@ -686,12 +1022,10 @@ body {
     1px solid #333;
 
   font-size: 14px;
-
   font-weight: 700;
 }
 
 #dev-output {
-
   flex: 1;
 
   overflow-y: auto;
@@ -712,22 +1046,62 @@ body {
 }
 
 .dev-line {
-
   margin-bottom: 3px;
+}
+
+#dev-stats {
+  padding: 10px;
+
+  border-top:
+    1px solid #333;
+
+  background: #111;
+
+  color: #aaa;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 11px;
+}
+
+#dev-buttons {
+  display: flex;
+
+  gap: 6px;
+
+  padding: 8px;
+
+  background: #111;
+}
+
+.dev-button {
+  flex: 1;
+
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 8px;
+
+  background: #222;
+
+  color: white;
+
+  font-size: 11px;
 }
 
 
 /* =========================
-   DEV MODE
+   DEV MODE LAYOUT
 ========================= */
 
 body.dev-mode #top-bar {
-
   height: 50px;
 }
 
 body.dev-mode #camera {
-
   height:
     calc(50% - 25px);
 
@@ -735,26 +1109,7 @@ body.dev-mode #camera {
 }
 
 body.dev-mode #dev-panel {
-
   display: flex;
-}
-
-
-/*
-  White box remains fixed
-  even in Dev Mode.
-*/
-
-body.dev-mode #scan-box {
-
-  width: 250px !important;
-  height: 250px !important;
-
-  min-width: 250px !important;
-  min-height: 250px !important;
-
-  max-width: 250px !important;
-  max-height: 250px !important;
 }
 
 
@@ -763,76 +1118,85 @@ body.dev-mode #scan-box {
 ========================= */
 
 body.light-mode {
-
   background: #f2f2f2;
 }
 
 body.light-mode #app {
-
   background: #f2f2f2;
 }
 
 body.light-mode #top-bar {
-
   background: #f2f2f2;
 }
 
 body.light-mode #site-title {
-
   color: #000;
 }
 
 body.light-mode #home-button {
-
   background: #ddd;
-
   color: #000;
 }
 
 body.light-mode #home-menu {
-
   background: #f5f5f5;
-
   border-color: #ccc;
 }
 
 body.light-mode .menu-button {
-
   background: #ddd;
-
   color: #000;
 }
 
-body.light-mode .menu-button:active {
-
-  background: #ccc;
-}
-
 body.light-mode #zoom-container {
-
   background:
-    rgba(255,255,255,0.8);
+    rgba(255,255,255,.8);
 }
 
 body.light-mode #zoom-label,
 body.light-mode #zoom-value {
+  color: #000;
+}
+
+body.light-mode .circle-button.active {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+body.light-mode .circle-button:not(.active) {
+  background: white;
+  color: #000;
+  border-color: #000;
+}
+
+body.light-mode #status-bar,
+body.light-mode #qr-type {
+  background:
+    rgba(255,255,255,.85);
 
   color: #000;
 }
 
 body.light-mode #hold-still {
-
   background:
-    rgba(255,255,255,0.8);
+    rgba(255,255,255,.85);
 
   color: #000;
 }
 
-body.light-mode #dev-panel {
+body.light-mode #history-panel {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
 
-  background: #000;
+body.light-mode #history-title {
+  color: #000;
+}
 
-  color: #fff;
+body.light-mode .history-item {
+  background: #ddd;
+  color: #000;
 }
 
 </style>
@@ -842,236 +1206,311 @@ body.light-mode #dev-panel {
 
 <body>
 
-
 <div id="app">
 
 
-  <!-- =====================
-       TOP BAR
-  ====================== -->
+<!-- =========================
+     TOP BAR
+========================= -->
+
+<div id="top-bar">
+
+<button
+  id="home-button"
+  onclick="toggleHomeMenu()"
+  aria-label="Home menu"
+>
+  ☰
+</button>
+
+<div id="site-title">
+  Printer Scanner 5000
+</div>
+
+
+<div id="home-menu">
+
+<button
+  class="menu-button"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1625671285'
+    )
+  "
+>
+  H2D
+</button>
+
+<button
+  class="menu-button"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1166269606'
+    )
+  "
+>
+  TOYBOX
+</button>
+
+<button
+  class="menu-button"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1658133862'
+    )
+  "
+>
+  Ender 3
+</button>
+
+<button
+  class="menu-button"
+  onclick="refreshPage()"
+>
+  Refresh
+</button>
+
+<button
+  class="menu-button"
+  onclick="showHistory()"
+>
+  Scan History
+</button>
+
+<button
+  class="menu-button"
+  onclick="clearHistory()"
+>
+  Clear History
+</button>
+
+<button
+  class="menu-button"
+  onclick="toggleDevMode()"
+>
+  Dev Mode
+</button>
 
-  <div id="top-bar">
+<button
+  class="menu-button"
+  onclick="toggleLightMode()"
+>
+  Light Mode
+</button>
 
+</div>
 
-    <button
-      id="home-button"
-      onclick="toggleHomeMenu()"
-      aria-label="Home"
-    >
-      ☰
-    </button>
+</div>
 
 
-    <div id="site-title">
+<!-- =========================
+     CAMERA
+========================= -->
 
-      Printer Scanner 5000
+<div id="camera">
 
-    </div>
+<div id="reader"></div>
 
+<div id="scan-box"></div>
 
-    <!-- HOME MENU -->
+<div id="status-bar">
+  Starting camera...
+</div>
 
-    <div id="home-menu">
+<div id="qr-type"></div>
 
+<div id="hold-still">
+  it’s a bit blurry, try moving a bit
+</div>
 
-      <button
-        class="menu-button"
-        onclick="
-          openPrinterLink(
-            'https://apps.apple.com/app/id1625671285'
-          )
-        "
-      >
-        H2D
-      </button>
 
+<!-- =========================
+     CONTROLS
+========================= -->
 
-      <button
-        class="menu-button"
-        onclick="
-          openPrinterLink(
-            'https://apps.apple.com/app/id1166269606'
-          )
-        "
-      >
-        TOYBOX
-      </button>
+<div id="control-bar">
 
 
-      <button
-        class="menu-button"
-        onclick="
-          openPrinterLink(
-            'https://apps.apple.com/app/id1658133862'
-          )
-        "
-      >
-        Ender 3
-      </button>
+<!-- FLASHLIGHT -->
 
+<button
+  id="flashlight-button"
+  class="circle-button"
+  onclick="toggleFlashlight()"
+  title="Flashlight"
+  aria-label="Flashlight"
+>
 
-      <button
-        class="menu-button"
-        onclick="refreshPage()"
-      >
-        Refresh
-      </button>
+<span class="icon flashlight-icon"></span>
 
+</button>
 
-      <button
-        class="menu-button"
-        onclick="toggleDevMode()"
-      >
-        Dev Mode
-      </button>
 
+<!-- ZOOM -->
 
-      <button
-        class="menu-button"
-        onclick="toggleLightMode()"
-      >
-        Light Mode
-      </button>
+<div id="zoom-container">
 
+<span id="zoom-label">
+  Zoom
+</span>
 
-    </div>
+<input
+  id="zoom-slider"
+  type="range"
+  min="1"
+  max="5"
+  step="0.1"
+  value="1"
+  oninput="setZoom(this.value)"
+>
 
-  </div>
+<span id="zoom-value">
+  1×
+</span>
 
+</div>
 
-  <!-- =====================
-       CAMERA
-  ====================== -->
 
-  <div id="camera">
+<!-- SOUND -->
 
+<button
+  id="sound-button"
+  class="circle-button active"
+  onclick="toggleSound()"
+  title="Scan sound"
+  aria-label="Scan sound"
+>
 
-    <!-- FULL-SIZE CAMERA -->
+<span class="icon sound-icon"></span>
 
-    <div id="reader"></div>
+</button>
 
 
-    <!-- FIXED WHITE BOX -->
+<!-- VIBRATION -->
 
-    <div id="scan-box"></div>
+<button
+  id="haptic-button"
+  class="circle-button active"
+  onclick="toggleHaptic()"
+  title="Vibration"
+  aria-label="Vibration"
+>
 
+<span class="icon vibration-icon"></span>
 
-    <!-- HOLD STILL -->
+</button>
 
-    <div id="hold-still">
 
-      it’s a bit blurry,
-      try moving a bit
+</div>
 
-    </div>
 
+<!-- LOADING -->
 
-    <!-- ZOOM -->
+<div id="loading">
 
-    <div id="zoom-container">
+<div class="spinner"></div>
 
+</div>
 
-      <span id="zoom-label">
 
-        Zoom
+<!-- RESULT -->
 
-      </span>
+<div id="result-text"></div>
 
 
-      <input
-        id="zoom-slider"
-        type="range"
-        min="1"
-        max="5"
-        step="0.1"
-        value="1"
-        oninput="setZoom(this.value)"
-      >
+<button
+  id="open-button"
+  class="action-button"
+  onclick="openScannedSite()"
+>
+  Open
+</button>
 
 
-      <span id="zoom-value">
+<button
+  id="rescan"
+  class="action-button"
+  onclick="rescan()"
+>
+  Rescan
+</button>
 
-        1×
 
-      </span>
+<div id="version-number">
+  v4.1
+</div>
 
 
-    </div>
+<!-- =========================
+     HISTORY PANEL
+========================= -->
 
+<div id="history-panel">
 
-    <!-- LOADING -->
+<div id="history-title">
+  Scan History
+</div>
 
-    <div id="loading">
+<div id="history-list"></div>
 
-      <div class="spinner"></div>
+<button
+  class="history-close"
+  onclick="hideHistory()"
+>
+  Close
+</button>
 
-    </div>
+</div>
 
+</div>
 
-    <!-- RESULT -->
 
-    <div id="result-text"></div>
+<!-- =========================
+     DEV MODE
+========================= -->
 
+<div id="dev-panel">
 
-    <!-- OPEN / PRINT -->
+<div id="dev-header">
+  Developer Output
+</div>
 
-    <button
-      id="open-button"
-      class="action-button"
-      onclick="openScannedSite()"
-    >
-      Open
-    </button>
+<div id="dev-output"></div>
 
+<div id="dev-stats"></div>
 
-    <!-- RESCAN -->
+<div id="dev-buttons">
 
-    <button
-      id="rescan"
-      class="action-button"
-      onclick="rescan()"
-    >
-      Rescan
-    </button>
+<button
+  class="dev-button"
+  onclick="copyDevOutput()"
+>
+  Copy Output
+</button>
 
+<button
+  class="dev-button"
+  onclick="exportDevOutput()"
+>
+  Export Log
+</button>
 
-    <!-- VERSION -->
+<button
+  class="dev-button"
+  onclick="clearDevOutput()"
+>
+  Clear
+</button>
 
-    <div id="version-number">
+</div>
 
-      v4.0
-
-    </div>
-
-
-  </div>
-
-
-  <!-- =====================
-       DEV OUTPUT
-  ====================== -->
-
-  <div id="dev-panel">
-
-
-    <div id="dev-header">
-
-      Developer Output
-
-    </div>
-
-
-    <div id="dev-output"></div>
-
-
-  </div>
+</div>
 
 
 </div>
 
 
 <script>
-
 
 /* =========================
    VARIABLES
@@ -1095,12 +1534,23 @@ let devMode = false;
 
 let lightMode = false;
 
+let flashlightOn = false;
+
+let soundEnabled = true;
+
+let hapticEnabled = true;
+
+let scanCount = 0;
+
+let successfulScans = 0;
+
+let failedScans = 0;
+
+let scanStartTime = null;
+
+let lastScanTime = 0;
+
 const HOLD_TIME = 600;
-
-
-/*
-  FIXED SCANNING SIZE
-*/
 
 const QR_SIZE = 250;
 
@@ -1116,9 +1566,7 @@ function devLog(message) {
       "dev-output"
     );
 
-  if (!output) {
-    return;
-  }
+  if (!output) return;
 
   const now =
     new Date();
@@ -1140,10 +1588,40 @@ function devLog(message) {
     "] " +
     message;
 
-  output.appendChild(line);
+  output.appendChild(
+    line
+  );
 
   output.scrollTop =
     output.scrollHeight;
+
+  updateStats();
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+function updateStats() {
+
+  const stats =
+    document.getElementById(
+      "dev-stats"
+    );
+
+  if (!stats) return;
+
+  stats.textContent =
+    "Scans: " +
+    scanCount +
+    " | Successful: " +
+    successfulScans +
+    " | Failed: " +
+    failedScans +
+    " | Last scan: " +
+    lastScanTime +
+    " ms";
 }
 
 
@@ -1162,22 +1640,13 @@ function toggleHomeMenu() {
     menu.style.display === "block"
       ? "none"
       : "block";
-
-  devLog(
-    "Home menu " +
-    (
-      menu.style.display === "block"
-        ? "opened"
-        : "closed"
-    )
-  );
 }
 
 
 function openPrinterLink(url) {
 
   devLog(
-    "Printer shortcut pressed: " +
+    "Printer shortcut: " +
     url
   );
 
@@ -1195,11 +1664,436 @@ function openPrinterLink(url) {
 
 function refreshPage() {
 
-  devLog(
-    "Refresh button pressed"
+  window.location.reload();
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function getHistory() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(
+        "printerScannerHistory"
+      )
+    ) || [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveHistory(
+  url,
+  name
+) {
+
+  const history =
+    getHistory();
+
+  history.unshift({
+
+    url: url,
+
+    name: name,
+
+    time:
+      new Date()
+        .toLocaleString()
+
+  });
+
+  const limited =
+    history.slice(0, 20);
+
+  localStorage.setItem(
+    "printerScannerHistory",
+    JSON.stringify(limited)
   );
 
-  window.location.reload();
+  devLog(
+    "Saved scan to history"
+  );
+}
+
+
+function showHistory() {
+
+  const panel =
+    document.getElementById(
+      "history-panel"
+    );
+
+  const list =
+    document.getElementById(
+      "history-list"
+    );
+
+  const history =
+    getHistory();
+
+  list.innerHTML = "";
+
+  if (
+    history.length === 0
+  ) {
+
+    list.innerHTML =
+      '<div class="history-item">' +
+      "No scans yet." +
+      "</div>";
+
+  } else {
+
+    history.forEach(
+      function(item) {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "history-item";
+
+        div.innerHTML =
+
+          '<div class="history-name">' +
+          escapeHTML(item.name) +
+          "</div>" +
+
+          '<div class="history-url">' +
+          escapeHTML(item.url) +
+          "</div>" +
+
+          '<div class="history-time">' +
+          escapeHTML(item.time) +
+          "</div>";
+
+        div.onclick =
+          function() {
+
+            window.open(
+              item.url,
+              "_blank"
+            );
+
+          };
+
+        list.appendChild(
+          div
+        );
+
+      }
+    );
+
+  }
+
+  panel.style.display =
+    "block";
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+}
+
+
+function hideHistory() {
+
+  document.getElementById(
+    "history-panel"
+  ).style.display =
+    "none";
+}
+
+
+function clearHistory() {
+
+  localStorage.removeItem(
+    "printerScannerHistory"
+  );
+
+  devLog(
+    "Scan history cleared"
+  );
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+}
+
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+}
+
+
+/* =========================
+   FLASHLIGHT
+========================= */
+
+async function toggleFlashlight() {
+
+  const button =
+    document.getElementById(
+      "flashlight-button"
+    );
+
+  if (!cameraTrack) {
+
+    devLog(
+      "Flashlight unavailable: camera not ready"
+    );
+
+    return;
+  }
+
+  try {
+
+    const capabilities =
+      cameraTrack.getCapabilities();
+
+    if (
+      !capabilities.torch
+    ) {
+
+      devLog(
+        "This camera does not expose torch control"
+      );
+
+      return;
+    }
+
+    flashlightOn =
+      !flashlightOn;
+
+    await cameraTrack.applyConstraints({
+
+      advanced: [
+        {
+          torch:
+            flashlightOn
+        }
+      ]
+
+    });
+
+    button.classList.toggle(
+      "active",
+      flashlightOn
+    );
+
+    devLog(
+      "Flashlight: " +
+      (
+        flashlightOn
+          ? "ON"
+          : "OFF"
+      )
+    );
+
+  } catch(error) {
+
+    flashlightOn =
+      false;
+
+    button.classList.remove(
+      "active"
+    );
+
+    devLog(
+      "Flashlight error: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   SOUND
+========================= */
+
+function toggleSound() {
+
+  soundEnabled =
+    !soundEnabled;
+
+  const button =
+    document.getElementById(
+      "sound-button"
+    );
+
+  button.classList.toggle(
+    "active",
+    soundEnabled
+  );
+
+  devLog(
+    "Scan sound: " +
+    (
+      soundEnabled
+        ? "ON"
+        : "OFF"
+    )
+  );
+}
+
+
+function playScanSound() {
+
+  if (!soundEnabled) return;
+
+  try {
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if (!AudioContext) return;
+
+    const audio =
+      new AudioContext();
+
+    const oscillator =
+      audio.createOscillator();
+
+    const gain =
+      audio.createGain();
+
+    oscillator.frequency.value =
+      880;
+
+    oscillator.type =
+      "sine";
+
+    gain.gain.value =
+      0.08;
+
+    oscillator.connect(
+      gain
+    );
+
+    gain.connect(
+      audio.destination
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+      audio.currentTime +
+      0.12
+    );
+
+  } catch {
+
+    devLog(
+      "Sound error"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   HAPTIC
+========================= */
+
+function toggleHaptic() {
+
+  hapticEnabled =
+    !hapticEnabled;
+
+  const button =
+    document.getElementById(
+      "haptic-button"
+    );
+
+  button.classList.toggle(
+    "active",
+    hapticEnabled
+  );
+
+  devLog(
+    "Haptic feedback: " +
+    (
+      hapticEnabled
+        ? "ON"
+        : "OFF"
+    )
+  );
+}
+
+
+function doHaptic() {
+
+  if (
+    hapticEnabled &&
+    navigator.vibrate
+  ) {
+
+    navigator.vibrate(
+      [60, 40, 80]
+    );
+
+  }
+
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+async function copyScannedURL() {
+
+  if (!scannedURL) return;
+
+  try {
+
+    await navigator.clipboard
+      .writeText(
+        scannedURL
+      );
+
+    devLog(
+      "Scanned QR copied"
+    );
+
+    alert(
+      "Copied!"
+    );
+
+  } catch(error) {
+
+    devLog(
+      "Clipboard error: " +
+      error.message
+    );
+
+  }
+
 }
 
 
@@ -1217,6 +2111,11 @@ function toggleDevMode() {
     devMode
   );
 
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
   devLog(
     "Developer Mode: " +
     (
@@ -1226,10 +2125,91 @@ function toggleDevMode() {
     )
   );
 
+}
+
+
+function clearDevOutput() {
+
   document.getElementById(
-    "home-menu"
-  ).style.display =
-    "none";
+    "dev-output"
+  ).innerHTML = "";
+
+  devLog(
+    "Developer output cleared"
+  );
+
+}
+
+
+async function copyDevOutput() {
+
+  const text =
+    document.getElementById(
+      "dev-output"
+    ).innerText;
+
+  try {
+
+    await navigator.clipboard
+      .writeText(text);
+
+    devLog(
+      "Developer output copied"
+    );
+
+  } catch {
+
+    devLog(
+      "Could not copy developer output"
+    );
+
+  }
+
+}
+
+
+function exportDevOutput() {
+
+  const text =
+    document.getElementById(
+      "dev-output"
+    ).innerText;
+
+  const blob =
+    new Blob(
+      [text],
+      {
+        type:
+          "text/plain"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href =
+    url;
+
+  link.download =
+    "printer-scanner-log.txt";
+
+  link.click();
+
+  URL.revokeObjectURL(
+    url
+  );
+
+  devLog(
+    "Developer log exported"
+  );
+
 }
 
 
@@ -1247,6 +2227,11 @@ function toggleLightMode() {
     lightMode
   );
 
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
   devLog(
     "Light Mode: " +
     (
@@ -1256,10 +2241,6 @@ function toggleLightMode() {
     )
   );
 
-  document.getElementById(
-    "home-menu"
-  ).style.display =
-    "none";
 }
 
 
@@ -1282,12 +2263,17 @@ document.addEventListener(
       );
 
     if (
-      !menu.contains(event.target) &&
-      !button.contains(event.target)
+      !menu.contains(
+        event.target
+      ) &&
+      !button.contains(
+        event.target
+      )
     ) {
 
       menu.style.display =
         "none";
+
     }
 
   }
@@ -1306,23 +2292,27 @@ function getSiteName(url) {
       url;
 
     if (
-      !fixedURL.startsWith("http://") &&
-      !fixedURL.startsWith("https://")
+      !fixedURL.startsWith(
+        "http://"
+      ) &&
+      !fixedURL.startsWith(
+        "https://"
+      )
     ) {
 
       fixedURL =
         "https://" +
         fixedURL;
+
     }
 
     const parsed =
-      new URL(fixedURL);
+      new URL(
+        fixedURL
+      );
 
     let hostname =
-      parsed.hostname;
-
-    hostname =
-      hostname.replace(
+      parsed.hostname.replace(
         /^www\./,
         ""
       );
@@ -1380,6 +2370,7 @@ function getSiteName(url) {
       return knownSites[
         hostname
       ];
+
     }
 
     const parts =
@@ -1389,30 +2380,93 @@ function getSiteName(url) {
       parts.length >= 2
     ) {
 
-      let name =
+      const name =
         parts[
           parts.length - 2
         ];
 
-      name =
-        name.charAt(0).toUpperCase() +
-        name.slice(1);
+      return (
+        name
+          .charAt(0)
+          .toUpperCase() +
+        name.slice(1)
+      );
 
-      return name;
     }
 
     return hostname;
 
-  }
-
-  catch(error) {
-
-    devLog(
-      "Could not determine site name"
-    );
+  } catch {
 
     return "QR Code Found";
+
   }
+
+}
+
+
+/* =========================
+   QR TYPE
+========================= */
+
+function getQRType(url) {
+
+  try {
+
+    const parsed =
+      new URL(
+        url.startsWith("http")
+          ? url
+          : "https://" + url
+      );
+
+    if (
+      parsed.protocol ===
+      "mailto:"
+    ) {
+
+      return "Email";
+
+    }
+
+    if (
+      parsed.protocol ===
+      "tel:"
+    ) {
+
+      return "Phone Number";
+
+    }
+
+    if (
+      parsed.protocol ===
+      "http:" ||
+      parsed.protocol ===
+      "https:"
+    ) {
+
+      return "Website";
+
+    }
+
+    return "Text";
+
+  } catch {
+
+    if (
+      url.startsWith(
+        "WIFI:"
+      )
+    ) {
+
+      return "Wi-Fi";
+
+    }
+
+    return "Text";
+
+  }
+
 }
 
 
@@ -1421,11 +2475,6 @@ function getSiteName(url) {
 ========================= */
 
 function getQRText(url) {
-
-  devLog(
-    "Processing QR code: " +
-    url
-  );
 
   try {
 
@@ -1441,8 +2490,6 @@ function getQRText(url) {
       parsedURL.pathname;
 
 
-    /* TOYBOX */
-
     if (
       cleanURL ===
       "https://apps.apple.com/app/id1166269606"
@@ -1451,15 +2498,10 @@ function getQRText(url) {
       isPrinterLink =
         true;
 
-      devLog(
-        "Recognized TOYBOX QR"
-      );
-
       return "TOYBOX Found";
+
     }
 
-
-    /* ENDER 3 */
 
     if (
       cleanURL ===
@@ -1469,15 +2511,10 @@ function getQRText(url) {
       isPrinterLink =
         true;
 
-      devLog(
-        "Recognized Ender 3 QR"
-      );
-
       return "Ender 3 Found";
+
     }
 
-
-    /* H2D */
 
     if (
       cleanURL ===
@@ -1487,61 +2524,42 @@ function getQRText(url) {
       isPrinterLink =
         true;
 
-      devLog(
-        "Recognized H2D QR"
-      );
-
       return "This is to print with the H2D";
+
     }
 
-
-    /* MAKERWORLD */
 
     if (
       parsedURL.origin ===
         "https://makerworld.com" &&
-      parsedURL.pathname === "/en"
+      parsedURL.pathname ===
+        "/en"
     ) {
 
       isPrinterLink =
         false;
 
-      devLog(
-        "Recognized MakerWorld QR"
-      );
-
       return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
+
     }
 
 
-    /* NORMAL QR */
-
     isPrinterLink =
       false;
 
-    const siteName =
-      getSiteName(url);
-
-    devLog(
-      "Normal QR detected: " +
-      siteName
+    return getSiteName(
+      url
     );
 
-    return siteName;
-
-  }
-
-  catch(error) {
+  } catch {
 
     isPrinterLink =
       false;
-
-    devLog(
-      "QR URL could not be parsed"
-    );
 
     return "QR Code Found";
+
   }
+
 }
 
 
@@ -1560,33 +2578,23 @@ async function setZoom(value) {
     zoom.toFixed(1) +
     "×";
 
-  devLog(
-    "Zoom changed to " +
-    zoom.toFixed(1) +
-    "×"
-  );
-
-  if (!cameraTrack) {
-
-    devLog(
-      "Zoom unavailable: camera track not ready"
-    );
-
+  if (!cameraTrack)
     return;
-  }
 
   try {
 
     const capabilities =
-      cameraTrack.getCapabilities();
+      cameraTrack
+        .getCapabilities();
 
     if (!capabilities.zoom) {
 
       devLog(
-        "Camera does not support hardware zoom"
+        "Camera does not support zoom"
       );
 
       return;
+
     }
 
     const min =
@@ -1600,37 +2608,34 @@ async function setZoom(value) {
       ((zoom - 1) / 4) *
       (max - min);
 
-    await cameraTrack.applyConstraints({
+    await cameraTrack
+      .applyConstraints({
 
-      advanced: [
+        advanced: [
 
-        {
-          zoom:
-            actualZoom
-        }
+          {
+            zoom:
+              actualZoom
+          }
 
-      ]
+        ]
 
-    });
+      });
 
-    devLog(
-      "Hardware zoom applied"
-    );
-
-  }
-
-  catch(error) {
+  } catch(error) {
 
     devLog(
       "Zoom error: " +
       error.message
     );
+
   }
+
 }
 
 
 /* =========================
-   FORCE SCAN REGION
+   LOCK SCAN REGION
 ========================= */
 
 function positionScanRegion() {
@@ -1640,9 +2645,8 @@ function positionScanRegion() {
       "reader__scan_region"
     );
 
-  if (!region) {
+  if (!region)
     return;
-  }
 
   region.style.position =
     "absolute";
@@ -1683,15 +2687,6 @@ function positionScanRegion() {
   region.style.border =
     "none";
 
-  region.style.overflow =
-    "hidden";
-
-  devLog(
-    "Detection region locked to " +
-    QR_SIZE +
-    "x" +
-    QR_SIZE
-  );
 }
 
 
@@ -1701,9 +2696,16 @@ function positionScanRegion() {
 
 async function startScanner() {
 
-  devLog(
-    "Starting scanner..."
-  );
+  scanStartTime =
+    Date.now();
+
+  const status =
+    document.getElementById(
+      "status-bar"
+    );
+
+  status.textContent =
+    "Starting camera...";
 
   scanner =
     new Html5Qrcode(
@@ -1723,18 +2725,12 @@ async function startScanner() {
 
         fps: 30,
 
-        /*
-          IMPORTANT:
-
-          Camera stays full-size.
-
-          Only the QR detection box
-          is fixed at 250x250.
-        */
-
         qrbox: {
-          width: QR_SIZE,
-          height: QR_SIZE
+          width:
+            QR_SIZE,
+
+          height:
+            QR_SIZE
         },
 
         disableFlip:
@@ -1742,19 +2738,28 @@ async function startScanner() {
 
       },
 
+      async function(
+        decodedText
+      ) {
 
-      async function(decodedText) {
+        if (
+          scanConfirmed
+        ) {
 
-        if (scanConfirmed) {
           return;
+
         }
 
+        status.textContent =
+          "QR detected";
+
+        status.className =
+          "detected";
+
         devLog(
-          "QR detected by camera"
+          "QR detected"
         );
 
-
-        /* CAMERA TRACK */
 
         if (!cameraTrack) {
 
@@ -1773,24 +2778,22 @@ async function startScanner() {
                 .getVideoTracks();
 
             if (
-              tracks.length > 0
+              tracks.length
             ) {
 
               cameraTrack =
                 tracks[0];
 
-              devLog(
-                "Camera track acquired"
-              );
             }
+
           }
+
         }
 
 
-        /* FIRST DETECTION */
-
         if (
-          firstDetection === null
+          firstDetection ===
+          null
         ) {
 
           firstDetection =
@@ -1799,20 +2802,15 @@ async function startScanner() {
           detectedText =
             decodedText;
 
-          devLog(
-            "First QR detection"
-          );
-
           document.getElementById(
             "hold-still"
           ).style.display =
             "block";
 
           return;
+
         }
 
-
-        /* DIFFERENT QR */
 
         if (
           decodedText !==
@@ -1825,20 +2823,10 @@ async function startScanner() {
           detectedText =
             decodedText;
 
-          devLog(
-            "QR changed; restarting confirmation timer"
-          );
-
-          document.getElementById(
-            "hold-still"
-          ).style.display =
-            "block";
-
           return;
+
         }
 
-
-        /* CONFIRM */
 
         if (
           Date.now() -
@@ -1852,8 +2840,52 @@ async function startScanner() {
           scannedURL =
             decodedText;
 
-          devLog(
-            "QR scan confirmed"
+          successfulScans++;
+
+          scanCount++;
+
+          lastScanTime =
+            Date.now() -
+            scanStartTime;
+
+          playScanSound();
+
+          doHaptic();
+
+
+          status.textContent =
+            "Scan complete";
+
+          status.className =
+            "success";
+
+
+          const type =
+            getQRType(
+              decodedText
+            );
+
+          const typeBox =
+            document.getElementById(
+              "qr-type"
+            );
+
+          typeBox.textContent =
+            type;
+
+          typeBox.style.display =
+            "block";
+
+
+          const result =
+            getQRText(
+              decodedText
+            );
+
+
+          saveHistory(
+            decodedText,
+            result
           );
 
 
@@ -1862,12 +2894,10 @@ async function startScanner() {
           ).style.display =
             "none";
 
-
           document.getElementById(
-            "zoom-container"
+            "control-bar"
           ).style.display =
             "none";
-
 
           document.getElementById(
             "version-number"
@@ -1875,34 +2905,16 @@ async function startScanner() {
             "none";
 
 
-          /* STOP CAMERA */
+          try {
 
-          if (scanner) {
+            await scanner.stop();
 
-            try {
+          } catch {}
 
-              await scanner.stop();
-
-              devLog(
-                "Camera stopped"
-              );
-
-            }
-
-            catch(error) {
-
-              devLog(
-                "Camera stop error: " +
-                error.message
-              );
-            }
-          }
 
           cameraTrack =
             null;
 
-
-          /* HIDE SCANNER */
 
           document.getElementById(
             "reader"
@@ -1914,38 +2926,17 @@ async function startScanner() {
           ).style.display =
             "none";
 
+
           document.getElementById(
-            "loading"
+            "result-text"
+          ).textContent =
+            result;
+
+          document.getElementById(
+            "result-text"
           ).style.display =
-            "none";
-
-
-          /* RESULT */
-
-          const resultText =
-            document.getElementById(
-              "result-text"
-            );
-
-          const qrResult =
-            getQRText(
-              decodedText
-            );
-
-          resultText.textContent =
-            qrResult;
-
-          resultText.style.display =
             "block";
 
-
-          devLog(
-            "Result: " +
-            qrResult
-          );
-
-
-          /* BUTTON */
 
           const openButton =
             document.getElementById(
@@ -1961,8 +2952,6 @@ async function startScanner() {
             "block";
 
 
-          /* RESCAN */
-
           document.getElementById(
             "rescan"
           ).style.display =
@@ -1970,31 +2959,18 @@ async function startScanner() {
 
 
           devLog(
-            "Result buttons displayed"
+            "Scan complete: " +
+            result
           );
 
         }
 
       },
 
-
-      function(errorMessage) {
-
-        /*
-          Normal scanning errors are
-          intentionally ignored.
-        */
-
-      }
+      function() {}
 
     );
 
-
-    /*
-      The library creates its scan
-      region after start(), so position
-      it after startup.
-    */
 
     setTimeout(
       positionScanRegion,
@@ -2018,112 +2994,105 @@ async function startScanner() {
       "none";
 
 
-    devLog(
-      "Full-size camera started"
-    );
+    status.textContent =
+      "Ready to scan";
 
 
-    devLog(
-      "Scanner detection area: 250x250"
-    );
+    setTimeout(
+      function() {
 
-
-    /* CAMERA TRACK */
-
-    setTimeout(function() {
-
-      const video =
-        document.querySelector(
-          "#reader video"
-        );
-
-      if (
-        video &&
-        video.srcObject
-      ) {
-
-        const tracks =
-          video.srcObject
-            .getVideoTracks();
+        const video =
+          document.querySelector(
+            "#reader video"
+          );
 
         if (
-          tracks.length > 0
+          video &&
+          video.srcObject
         ) {
 
-          cameraTrack =
-            tracks[0];
+          const tracks =
+            video.srcObject
+              .getVideoTracks();
 
-          devLog(
-            "Camera track ready"
-          );
+          if (
+            tracks.length
+          ) {
+
+            cameraTrack =
+              tracks[0];
+
+            devLog(
+              "Camera track ready"
+            );
+
+          }
+
         }
-      }
 
-    }, 500);
-
-  }
-
-  catch(error) {
-
-    console.error(
-      "CAMERA ERROR:",
-      error
+      },
+      700
     );
+
+
+    devLog(
+      "Camera started"
+    );
+
+  } catch(error) {
+
+    failedScans++;
+
+    document.getElementById(
+      "loading"
+    ).style.display =
+      "none";
+
+    status.textContent =
+      "Camera unavailable";
 
     devLog(
       "CAMERA ERROR: " +
       error.message
     );
 
-    document.getElementById(
-      "loading"
-    ).style.display =
-      "none";
   }
+
 }
 
 
 /* =========================
-   OPEN / PRINT
+   OPEN SCANNED SITE
 ========================= */
 
 function openScannedSite() {
 
-  devLog(
-    "Open/Print button pressed"
-  );
-
-  if (!scannedURL) {
-
-    devLog(
-      "No scanned URL available"
-    );
-
+  if (!scannedURL)
     return;
-  }
 
   let url =
     scannedURL;
 
   if (
-    !url.startsWith("http://") &&
-    !url.startsWith("https://")
+    !url.startsWith(
+      "http://"
+    ) &&
+    !url.startsWith(
+      "https://"
+    )
   ) {
 
     url =
       "https://" +
       url;
-  }
 
-  devLog(
-    "Opening: " +
-    url
-  );
+  }
 
   window.open(
     url,
     "_blank"
   );
+
 }
 
 
@@ -2133,26 +3102,17 @@ function openScannedSite() {
 
 function rescan() {
 
-  devLog(
-    "Rescan button pressed"
-  );
-
   window.location.reload();
+
 }
 
 
 /* =========================
-   KEEP DETECTION BOX CENTERED
+   RESIZE
 ========================= */
 
-/*
-  Re-position the actual library
-  detection area after resize/rotation.
-
-  The size NEVER changes.
-*/
-
-let resizeTimer = null;
+let resizeTimer =
+  null;
 
 function keepScannerLocked() {
 
@@ -2166,13 +3126,10 @@ function keepScannerLocked() {
 
         positionScanRegion();
 
-        devLog(
-          "Screen changed - detection area re-centered at 250x250"
-        );
-
       },
       50
     );
+
 }
 
 
@@ -2196,7 +3153,7 @@ window.addEventListener(
 
 
 /* =========================
-   PAGE START
+   START
 ========================= */
 
 window.addEventListener(
@@ -2204,11 +3161,11 @@ window.addEventListener(
   function() {
 
     devLog(
-      "Printer Scanner 5000 loaded"
+      "Printer Scanner 5000"
     );
 
     devLog(
-      "Version 4.0"
+      "Version 4.1"
     );
 
     devLog(
@@ -2216,7 +3173,7 @@ window.addEventListener(
     );
 
     devLog(
-      "Detection area: FIXED 250x250"
+      "QR area: FIXED 250x250"
     );
 
     startScanner();
