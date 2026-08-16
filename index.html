@@ -123,9 +123,9 @@
       z-index: 5;
     }
 
-    /* Scan button */
+    /* Bottom buttons */
 
-    #rescan {
+    #buttons {
       position: absolute;
 
       bottom: 22px;
@@ -137,26 +137,34 @@
 
       display: none;
 
+      gap: 8px;
+    }
+
+    button {
       border: none;
+
       border-radius: 999px;
 
-      padding: 12px 25px;
+      padding: 12px 20px;
 
       background: rgba(255, 255, 255, 0.95);
 
       color: #111;
 
       font-size: 15px;
+
       font-weight: 600;
 
       cursor: pointer;
 
       box-shadow:
         0 4px 18px rgba(0, 0, 0, 0.25);
+
+      white-space: nowrap;
     }
 
-    #rescan:active {
-      transform: translateX(-50%) scale(0.95);
+    button:active {
+      transform: scale(0.95);
     }
 
   </style>
@@ -180,11 +188,17 @@
         allow="fullscreen">
       </iframe>
 
-      <button
-        id="rescan"
-        onclick="rescan()">
-        Scan
-      </button>
+      <div id="buttons">
+
+        <button onclick="rescan()">
+          Scan
+        </button>
+
+        <button onclick="openInBrowser()">
+          Open in Browser
+        </button>
+
+      </div>
 
     </div>
 
@@ -197,7 +211,7 @@
     let scanning = false;
     let qrFound = false;
 
-    let fallbackTimer = null;
+    let currentURL = "";
 
 
     async function startScanner() {
@@ -207,7 +221,7 @@
       document.getElementById("loading")
         .style.display = "flex";
 
-      document.getElementById("rescan")
+      document.getElementById("buttons")
         .style.display = "none";
 
       document.getElementById("website")
@@ -318,6 +332,9 @@
       }
 
 
+      currentURL = url;
+
+
       if (scanning) {
 
         try {
@@ -345,54 +362,44 @@
         document.getElementById("website");
 
 
-      let iframeLoaded = false;
-
-
       website.onload = function() {
-
-        iframeLoaded = true;
-
-        clearTimeout(fallbackTimer);
 
         document.getElementById("loading")
           .style.display = "none";
 
         website.style.display = "block";
 
-        document.getElementById("rescan")
-          .style.display = "block";
+        document.getElementById("buttons")
+          .style.display = "flex";
 
       };
 
 
       website.src = url;
 
+    }
+
+
+    function openInBrowser() {
+
+      if (!currentURL) {
+        return;
+      }
 
       /*
-        Give the website a few seconds to load
-        inside the scanner.
+        Navigate the current tab.
 
-        If it doesn't load, navigate the current
-        browser tab to the URL instead.
+        Because this happens from the scanner page,
+        the browser's Back button returns to the
+        scanner.
       */
 
-      fallbackTimer = setTimeout(function() {
-
-        if (!iframeLoaded) {
-
-          window.location.href = url;
-
-        }
-
-      }, 5000);
+      window.location.href = currentURL;
 
     }
 
 
     async function rescan() {
-
-      clearTimeout(fallbackTimer);
-
 
       document.getElementById("website")
         .src = "about:blank";
@@ -402,7 +409,7 @@
         .style.display = "none";
 
 
-      document.getElementById("rescan")
+      document.getElementById("buttons")
         .style.display = "none";
 
 
@@ -435,7 +442,10 @@
 
 
       scanner = null;
+
       scanning = false;
+
+      currentURL = "";
 
 
       setTimeout(function() {
