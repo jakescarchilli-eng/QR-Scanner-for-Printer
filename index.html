@@ -1,21 +1,26 @@
 <!--
   QR SCANNER
-  VERSION: 1.3
-  Square camera area
+  VERSION: 1.6
+  Instant QR scanning
   Fixed 250×250 scanning box
+  Based on Version 1.3 layout
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>QR Scanner</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -24,43 +29,36 @@
     body {
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       background: #f2f2f2;
+
       overflow: hidden;
     }
-
-    /*
-      The camera area is ALWAYS a square.
-      It uses the smaller dimension of
-      the available screen.
-    */
 
     #app {
       width: 100%;
       height: 100%;
 
       display: flex;
+
       align-items: center;
       justify-content: center;
 
       padding: 20px;
     }
 
+    /*
+      CAMERA AREA
+    */
+
     #camera {
       position: relative;
 
-      width: min(
-        calc(100vw - 40px),
-        calc(100vh - 40px)
-      );
-
-      height: min(
-        calc(100vw - 40px),
-        calc(100vh - 40px)
-      );
-
-      aspect-ratio: 1 / 1;
+      width: 100%;
+      height: 100%;
 
       overflow: hidden;
 
@@ -68,6 +66,10 @@
 
       background: #000;
     }
+
+    /*
+      CAMERA VIDEO
+    */
 
     #reader {
       position: absolute;
@@ -87,7 +89,9 @@
       object-fit: cover !important;
     }
 
-    /* Hide html5-qrcode UI */
+    /*
+      Hide html5-qrcode's visual controls.
+    */
 
     #reader__dashboard {
       display: none !important;
@@ -110,9 +114,9 @@
     }
 
     /*
-      FIXED QR SCANNING BOX
+      FIXED SCANNING BOX
 
-      Exactly 250 × 250 pixels.
+      Always exactly 250 × 250 pixels.
     */
 
     #scan-box {
@@ -141,7 +145,9 @@
       z-index: 10;
     }
 
-    /* Loading */
+    /*
+      LOADING
+    */
 
     #loading {
       position: absolute;
@@ -168,13 +174,15 @@
 
       border-radius: 50%;
 
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.6s linear infinite;
     }
 
     @keyframes spin {
+
       to {
         transform: rotate(360deg);
       }
+
     }
 
   </style>
@@ -188,11 +196,7 @@
 
       <div id="reader"></div>
 
-      <!-- Fixed 250 × 250 scanning box -->
-
       <div id="scan-box"></div>
-
-      <!-- Loading screen -->
 
       <div id="loading">
 
@@ -209,6 +213,8 @@
 
     let scanner = null;
 
+    let qrLocked = false;
+
 
     async function startScanner() {
 
@@ -220,23 +226,50 @@
         await scanner.start(
 
           {
-            facingMode: "environment"
+            facingMode: {
+              ideal: "environment"
+            }
           },
 
           {
 
-            fps: 10,
+            /*
+              Higher FPS = more frequent
+              QR detection attempts.
+            */
+
+            fps: 30,
+
+            /*
+              Fixed detection area.
+            */
 
             qrbox: {
               width: 250,
               height: 250
             },
 
+            /*
+              Keep the image processing
+              focused on the QR area.
+            */
+
             disableFlip: false
 
           },
 
           function(decodedText) {
+
+            /*
+              Stop processing immediately
+              after the first successful scan.
+            */
+
+            if (qrLocked) {
+              return;
+            }
+
+            qrLocked = true;
 
             console.log(
               "QR CODE:",
@@ -247,7 +280,7 @@
 
           function(errorMessage) {
 
-            // Ignore normal scanning errors.
+            // Normal scanning errors ignored.
 
           }
 
