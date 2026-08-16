@@ -16,156 +16,71 @@
     html,
     body {
       margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
+      background: #f2f2f2;
       overflow: hidden;
-      background: #000;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-                   "Helvetica Neue", Arial, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     #app {
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #camera {
       position: relative;
       width: 100%;
       height: 100%;
+      max-width: 900px;
+      max-height: 900px;
+      overflow: hidden;
+      border-radius: 28px;
       background: #000;
     }
-
-    /* Camera */
 
     #reader {
       position: absolute;
       inset: 0;
       width: 100% !important;
       height: 100% !important;
-      border: 0 !important;
-      background: #000;
+      border: none !important;
     }
 
     #reader video {
-      position: absolute !important;
-      inset: 0 !important;
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
     }
 
-    /* Remove html5-qrcode's default UI */
-
-    #reader__dashboard {
-      display: none !important;
-    }
-
-    #reader__header_message {
-      display: none !important;
-    }
-
+    #reader__dashboard,
+    #reader__header_message,
     #reader img {
       display: none !important;
     }
 
-    /* Scanner frame */
-
-    #scan-frame {
-      position: absolute;
-      width: min(70vw, 320px);
-      height: min(70vw, 320px);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-
-    .corner {
-      position: absolute;
-      width: 45px;
-      height: 45px;
-      border-color: white;
-      border-style: solid;
-      filter: drop-shadow(0 1px 4px rgba(0,0,0,.5));
-    }
-
-    .top-left {
-      top: 0;
-      left: 0;
-      border-width: 4px 0 0 4px;
-      border-radius: 12px 0 0 0;
-    }
-
-    .top-right {
-      top: 0;
-      right: 0;
-      border-width: 4px 4px 0 0;
-      border-radius: 0 12px 0 0;
-    }
-
-    .bottom-left {
-      bottom: 0;
-      left: 0;
-      border-width: 0 0 4px 4px;
-      border-radius: 0 0 0 12px;
-    }
-
-    .bottom-right {
-      bottom: 0;
-      right: 0;
-      border-width: 0 4px 4px 0;
-      border-radius: 0 0 12px 0;
-    }
-
-    /* Scanning line */
-
-    #scan-line {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      height: 2px;
-      top: 8px;
-      background: white;
-      box-shadow: 0 0 10px rgba(255,255,255,.8);
-      animation: scan 2s ease-in-out infinite;
-    }
-
-    @keyframes scan {
-      0% {
-        top: 8px;
-        opacity: .4;
-      }
-
-      50% {
-        top: calc(100% - 10px);
-        opacity: 1;
-      }
-
-      100% {
-        top: 8px;
-        opacity: .4;
-      }
-    }
-
-    /* Loading screen */
+    /* Loading */
 
     #loading {
       position: absolute;
       inset: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       background: #000;
-      transition: opacity .3s ease;
-    }
-
-    #loading.hidden {
-      opacity: 0;
-      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
 
     .spinner {
-      width: 34px;
-      height: 34px;
-      border: 3px solid rgba(255,255,255,.25);
-      border-top-color: white;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #333;
+      border-top: 3px solid #fff;
       border-radius: 50%;
       animation: spin .8s linear infinite;
     }
@@ -183,69 +98,43 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      border: 0;
-      background: white;
+      border: none;
       display: none;
+      background: white;
       z-index: 5;
     }
 
-    /* Rescan button */
+    /* Rescan */
 
     #rescan {
       position: absolute;
-      z-index: 20;
-      bottom: 28px;
+      bottom: 22px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 20;
 
-      border: 0;
-      padding: 13px 25px;
+      display: none;
 
+      border: none;
       border-radius: 999px;
 
-      background: rgba(255,255,255,.95);
+      padding: 12px 25px;
+
+      background: rgba(255, 255, 255, 0.95);
       color: #111;
 
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
 
       cursor: pointer;
 
-      box-shadow:
-        0 5px 25px rgba(0,0,0,.35);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
 
-      display: none;
-
-      transition:
-        transform .15s ease,
-        opacity .15s ease;
+      transition: transform 0.15s ease;
     }
 
     #rescan:active {
-      transform: translateX(-50%) scale(.96);
-    }
-
-    /* Error overlay */
-
-    #error {
-      position: absolute;
-      inset: 0;
-      z-index: 30;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-
-    #error button {
-      border: 0;
-      border-radius: 999px;
-      padding: 13px 25px;
-      background: white;
-      color: #111;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+      transform: translateX(-50%) scale(0.95);
     }
 
   </style>
@@ -255,86 +144,51 @@
 
   <div id="app">
 
-    <div id="reader"></div>
+    <div id="camera">
 
-    <div id="scan-frame">
-      <div class="corner top-left"></div>
-      <div class="corner top-right"></div>
-      <div class="corner bottom-left"></div>
-      <div class="corner bottom-right"></div>
+      <div id="reader"></div>
 
-      <div id="scan-line"></div>
-    </div>
+      <div id="loading">
+        <div class="spinner"></div>
+      </div>
 
-    <div id="loading">
-      <div class="spinner"></div>
-    </div>
+      <iframe
+        id="website"
+        src="about:blank"
+        allow="fullscreen">
+      </iframe>
 
-    <iframe
-      id="website"
-      src="about:blank"
-      allow="camera; microphone; fullscreen"
-      referrerpolicy="no-referrer">
-    </iframe>
-
-    <button id="rescan" onclick="rescan()">
-      Rescan
-    </button>
-
-    <div id="error">
-      <button onclick="rescan()">
-        Try Again
+      <button id="rescan" onclick="rescan()">
+        Rescan
       </button>
+
     </div>
 
   </div>
+
 
   <script>
 
     let scanner = null;
     let scanning = false;
-    let starting = false;
-
-    const loading =
-      document.getElementById("loading");
-
-    const frame =
-      document.getElementById("scan-frame");
-
-    const scanLine =
-      document.getElementById("scan-line");
-
-    const website =
-      document.getElementById("website");
-
-    const rescanButton =
-      document.getElementById("rescan");
-
-    const errorScreen =
-      document.getElementById("error");
 
 
     async function startScanner() {
 
-      if (scanning || starting) {
-        return;
-      }
+      document.getElementById("loading")
+        .style.display = "flex";
 
-      starting = true;
+      document.getElementById("rescan")
+        .style.display = "none";
 
-      loading.classList.remove("hidden");
+      document.getElementById("reader")
+        .style.display = "block";
 
-      errorScreen.style.display = "none";
 
-      frame.style.display = "block";
+      scanner = new Html5Qrcode("reader");
 
-      rescanButton.style.display = "none";
-
-      website.style.display = "none";
 
       try {
-
-        scanner = new Html5Qrcode("reader");
 
         await scanner.start(
 
@@ -345,28 +199,16 @@
           {
             fps: 10,
 
-            qrbox: function(viewfinderWidth, viewfinderHeight) {
-
-              const size =
-                Math.min(
-                  viewfinderWidth,
-                  viewfinderHeight,
-                  320
-                ) * 0.7;
-
-              return {
-                width: size,
-                height: size
-              };
-            },
-
-            aspectRatio: 1.0
+            qrbox: {
+              width: 250,
+              height: 250
+            }
 
           },
 
           function(decodedText) {
 
-            openWebsite(decodedText);
+            openQR(decodedText);
 
           },
 
@@ -378,62 +220,27 @@
 
         );
 
+
         scanning = true;
-        starting = false;
 
-        setTimeout(function() {
-          loading.classList.add("hidden");
-        }, 250);
+        document.getElementById("loading")
+          .style.display = "none";
 
-      } catch (error) {
+      }
+
+      catch(error) {
 
         console.error(error);
 
-        scanning = false;
-        starting = false;
-
-        loading.classList.add("hidden");
-
-        frame.style.display = "none";
-
-        errorScreen.style.display = "flex";
+        document.getElementById("loading")
+          .style.display = "none";
 
       }
 
     }
 
 
-    async function stopScanner() {
-
-      if (!scanner) {
-        return;
-      }
-
-      try {
-
-        if (scanning) {
-          await scanner.stop();
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-      }
-
-      scanning = false;
-
-      try {
-        scanner.clear();
-      } catch (error) {}
-
-      scanner = null;
-    }
-
-
-    async function openWebsite(decodedText) {
-
-      let url = decodedText.trim();
+    async function openQR(url) {
 
       if (
         !url.startsWith("http://") &&
@@ -442,58 +249,69 @@
         url = "https://" + url;
       }
 
-      await stopScanner();
 
-      frame.style.display = "none";
+      if (scanning) {
 
-      loading.classList.remove("hidden");
+        try {
+          await scanner.stop();
+        }
 
-      website.src = url;
+        catch(error) {}
 
-      website.onload = function() {
+        scanning = false;
 
-        loading.classList.add("hidden");
+      }
 
-        website.style.display = "block";
 
-        rescanButton.style.display = "block";
+      document.getElementById("reader")
+        .style.display = "none";
 
-      };
 
-      website.onerror = function() {
+      document.getElementById("website")
+        .src = url;
 
-        loading.classList.add("hidden");
 
-        website.style.display = "block";
+      document.getElementById("website")
+        .style.display = "block";
 
-        rescanButton.style.display = "block";
 
-      };
+      document.getElementById("rescan")
+        .style.display = "block";
 
     }
 
 
     async function rescan() {
 
-      await stopScanner();
+      document.getElementById("website")
+        .style.display = "none";
 
-      website.src = "about:blank";
+      document.getElementById("website")
+        .src = "about:blank";
 
-      website.style.display = "none";
+      document.getElementById("rescan")
+        .style.display = "none";
 
-      rescanButton.style.display = "none";
+      document.getElementById("reader")
+        .style.display = "block";
 
-      errorScreen.style.display = "none";
 
-      frame.style.display = "block";
+      if (scanner) {
 
-      loading.classList.remove("hidden");
+        try {
+          await scanner.clear();
+        }
 
-      setTimeout(function() {
+        catch(error) {}
 
-        startScanner();
+      }
 
-      }, 300);
+
+      scanner = null;
+      scanning = false;
+
+
+      startScanner();
 
     }
 
