@@ -74,7 +74,7 @@
       display: none !important;
     }
 
-    /* Loading screen */
+    /* Loading */
 
     #loading {
       position: absolute;
@@ -160,15 +160,10 @@
 
       box-shadow:
         0 4px 18px rgba(0, 0, 0, 0.25);
-
-      transition:
-        transform 0.15s ease;
     }
 
     #rescan:active {
-      transform:
-        translateX(-50%)
-        scale(0.95);
+      transform: translateX(-50%) scale(0.95);
     }
 
   </style>
@@ -195,9 +190,7 @@
       <button
         id="rescan"
         onclick="rescan()">
-
         Scan
-
       </button>
 
     </div>
@@ -209,9 +202,12 @@
 
     let scanner = null;
     let scanning = false;
+    let qrFound = false;
 
 
     async function startScanner() {
+
+      qrFound = false;
 
       document.getElementById("loading")
         .style.display = "flex";
@@ -231,27 +227,63 @@
         await scanner.start(
 
           {
-            facingMode: "environment"
-          },
-
-          {
-            fps: 10,
-
-            qrbox: {
-              width: 250,
-              height: 250
+            facingMode: {
+              ideal: "environment"
             }
           },
 
+          {
+
+            fps: 15,
+
+            qrbox: function(
+              viewfinderWidth,
+              viewfinderHeight
+            ) {
+
+              /*
+                Use a large scanning area.
+                This makes it much easier to
+                detect QR codes anywhere near
+                the center of the camera.
+              */
+
+              const size =
+                Math.floor(
+                  Math.min(
+                    viewfinderWidth,
+                    viewfinderHeight
+                  ) * 0.85
+                );
+
+              return {
+                width: size,
+                height: size
+              };
+
+            },
+
+            aspectRatio: 1.0,
+
+            disableFlip: false
+
+          },
+
           function(decodedText) {
+
+            if (qrFound) {
+              return;
+            }
+
+            qrFound = true;
 
             openQR(decodedText);
 
           },
 
-          function() {
+          function(errorMessage) {
 
-            // Ignore normal scanning errors.
+            // Normal scanning errors are ignored.
 
           }
 
@@ -260,7 +292,6 @@
 
         scanning = true;
 
-
         document.getElementById("loading")
           .style.display = "none";
 
@@ -268,7 +299,10 @@
 
       catch(error) {
 
-        console.error(error);
+        console.error(
+          "Scanner error:",
+          error
+        );
 
         document.getElementById("loading")
           .style.display = "none";
@@ -328,24 +362,28 @@
       document.getElementById("website")
         .style.display = "none";
 
-
       document.getElementById("website")
         .src = "about:blank";
 
-
       document.getElementById("rescan")
         .style.display = "none";
-
-
-      document.getElementById("reader")
-        .style.display = "block";
 
 
       if (scanner) {
 
         try {
 
-          await scanner.clear();
+          if (scanning) {
+            await scanner.stop();
+          }
+
+        }
+
+        catch(error) {}
+
+        try {
+
+          scanner.clear();
 
         }
 
@@ -358,8 +396,15 @@
 
       scanning = false;
 
+      document.getElementById("reader")
+        .style.display = "block";
 
-      startScanner();
+
+      setTimeout(function() {
+
+        startScanner();
+
+      }, 300);
 
     }
 
