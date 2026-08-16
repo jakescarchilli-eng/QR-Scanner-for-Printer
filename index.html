@@ -1,7 +1,7 @@
 <!--
   QR SCANNER
-  VERSION: 1.5
-  Square GitHub Pages site
+  VERSION: 1.3
+  Square camera area
   Fixed 250×250 scanning box
 -->
 
@@ -9,17 +9,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>QR Scanner</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -28,31 +24,43 @@
     body {
       margin: 0;
       padding: 0;
-
       width: 100%;
       height: 100%;
-
       background: #f2f2f2;
-
       overflow: hidden;
     }
 
     /*
-      ENTIRE GITHUB PAGE
-
-      The page itself is square.
+      The camera area is ALWAYS a square.
+      It uses the smaller dimension of
+      the available screen.
     */
 
-    #page {
-      position: fixed;
+    #app {
+      width: 100%;
+      height: 100%;
 
-      width: 90vmin;
-      height: 90vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      left: 50%;
-      top: 50%;
+      padding: 20px;
+    }
 
-      transform: translate(-50%, -50%);
+    #camera {
+      position: relative;
+
+      width: min(
+        calc(100vw - 40px),
+        calc(100vh - 40px)
+      );
+
+      height: min(
+        calc(100vw - 40px),
+        calc(100vh - 40px)
+      );
+
+      aspect-ratio: 1 / 1;
 
       overflow: hidden;
 
@@ -60,10 +68,6 @@
 
       background: #000;
     }
-
-    /*
-      CAMERA
-    */
 
     #reader {
       position: absolute;
@@ -83,9 +87,7 @@
       object-fit: cover !important;
     }
 
-    /*
-      Hide html5-qrcode controls.
-    */
+    /* Hide html5-qrcode UI */
 
     #reader__dashboard {
       display: none !important;
@@ -139,9 +141,7 @@
       z-index: 10;
     }
 
-    /*
-      LOADING
-    */
+    /* Loading */
 
     #loading {
       position: absolute;
@@ -172,11 +172,9 @@
     }
 
     @keyframes spin {
-
       to {
         transform: rotate(360deg);
       }
-
     }
 
   </style>
@@ -184,19 +182,23 @@
 
 <body>
 
-  <!--
-    This is the entire square website.
-  -->
+  <div id="app">
 
-  <div id="page">
+    <div id="camera">
 
-    <div id="reader"></div>
+      <div id="reader"></div>
 
-    <div id="scan-box"></div>
+      <!-- Fixed 250 × 250 scanning box -->
 
-    <div id="loading">
+      <div id="scan-box"></div>
 
-      <div class="spinner"></div>
+      <!-- Loading screen -->
+
+      <div id="loading">
+
+        <div class="spinner"></div>
+
+      </div>
 
     </div>
 
