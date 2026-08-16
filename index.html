@@ -1,8 +1,7 @@
 <!--
   QR SCANNER
-  VERSION: 2.8
-  Custom results for TOYBOX, Ender 3, H2D, and MakerWorld
-  Added tiny version number on scanning page
+  VERSION: 2.9
+  Tiny version number moved to bottom center
 -->
 
 <!DOCTYPE html>
@@ -82,80 +81,54 @@
 
     #scan-box {
       position: absolute;
-
       width: 250px !important;
       height: 250px !important;
-
       min-width: 250px;
       min-height: 250px;
-
       max-width: 250px;
       max-height: 250px;
-
       left: 50%;
       top: 50%;
-
       transform: translate(-50%, -50%);
-
       border: 3px solid white;
       border-radius: 18px;
-
       pointer-events: none;
-
       z-index: 10;
     }
 
     #hold-still {
       position: absolute;
-
       left: 50%;
       top: calc(50% + 155px);
-
       transform: translateX(-50%);
-
       z-index: 15;
-
       padding: 9px 16px;
-
       border-radius: 999px;
-
       background: rgba(0, 0, 0, 0.65);
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 15px;
       font-weight: 600;
-
       white-space: nowrap;
-
       display: none;
     }
 
     #loading {
       position: absolute;
       inset: 0;
-
       background: #000;
-
       display: flex;
-
       align-items: center;
       justify-content: center;
-
       z-index: 20;
     }
 
     .spinner {
       width: 28px;
       height: 28px;
-
       border: 3px solid #333;
       border-top: 3px solid white;
-
       border-radius: 50%;
-
       animation: spin 0.6s linear infinite;
     }
 
@@ -165,76 +138,42 @@
       }
     }
 
-    /*
-      RESULT TEXT
-    */
-
     #result-text {
       position: absolute;
-
       left: 50%;
       top: 12%;
-
       transform: translateX(-50%);
-
       z-index: 50;
-
       width: 85%;
       max-width: 700px;
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 36px;
       font-weight: 700;
-
       text-align: center;
-
       line-height: 1.25;
-
       display: none;
     }
 
-    /*
-      BUTTONS
-    */
-
     .action-button {
       position: absolute;
-
       left: 50%;
-
       transform: translateX(-50%);
-
       z-index: 50;
-
       border: none;
-
       padding: 18px 38px;
-
       border-radius: 999px;
-
       background: white;
-
       color: #111;
-
       font-family: Arial, sans-serif;
-
       font-size: 20px;
-
       font-weight: 600;
-
       cursor: pointer;
-
-      box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
     }
 
     .action-button:active {
-      transform:
-        translateX(-50%)
-        scale(0.95);
+      transform: translateX(-50%) scale(0.95);
     }
 
     #open-button {
@@ -249,14 +188,17 @@
 
     /*
       TINY VERSION NUMBER
-      ONLY VISIBLE ON SCANNER PAGE
+      BOTTOM CENTER
+      ONLY VISIBLE ON SCANNING PAGE
     */
 
     #version-number {
       position: absolute;
 
-      left: 8px;
+      left: 50%;
       bottom: 6px;
+
+      transform: translateX(-50%);
 
       z-index: 100;
 
@@ -312,9 +254,8 @@
         Rescan
       </button>
 
-      <!-- ONLY ON SCANNING PAGE -->
       <div id="version-number">
-        v2.8
+        v2.9
       </div>
 
     </div>
@@ -334,10 +275,6 @@
     const HOLD_TIME = 600;
 
 
-    /*
-      CUSTOM QR RESULTS
-    */
-
     function getQRText(url) {
 
       try {
@@ -353,74 +290,43 @@
           scannedURL.pathname;
 
 
-        /*
-          TOYBOX
-        */
-
         if (
           cleanURL ===
           "https://apps.apple.com/app/id1166269606"
         ) {
-
           isPrinterLink = true;
-
           return "TOYBOX Found";
-
         }
 
-
-        /*
-          ENDER 3
-        */
 
         if (
           cleanURL ===
           "https://apps.apple.com/app/id1658133862"
         ) {
-
           isPrinterLink = true;
-
           return "Ender 3 Found";
-
         }
 
-
-        /*
-          H2D
-        */
 
         if (
           cleanURL ===
           "https://apps.apple.com/app/id1625671285"
         ) {
-
           isPrinterLink = true;
-
           return "This is to print with the H2D";
-
         }
 
-
-        /*
-          MAKERWORLD
-        */
 
         if (
           scannedURL.origin ===
             "https://makerworld.com" &&
           scannedURL.pathname === "/en"
         ) {
-
           isPrinterLink = false;
 
           return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
-
         }
 
-
-        /*
-          DEFAULT
-        */
 
         isPrinterLink = false;
 
@@ -438,10 +344,6 @@
 
     }
 
-
-    /*
-      START CAMERA
-    */
 
     async function startScanner() {
 
@@ -515,19 +417,10 @@
               ).style.display = "none";
 
 
-              /*
-                HIDE VERSION NUMBER
-                AFTER SUCCESSFUL SCAN
-              */
-
               document.getElementById(
                 "version-number"
               ).style.display = "none";
 
-
-              /*
-                TURN CAMERA OFF
-              */
 
               if (scanner) {
 
@@ -549,10 +442,6 @@
               }
 
 
-              /*
-                HIDE SCANNER UI
-              */
-
               document.getElementById(
                 "reader"
               ).style.display = "none";
@@ -566,10 +455,6 @@
               ).style.display = "none";
 
 
-              /*
-                SHOW RESULT
-              */
-
               const resultText =
                 document.getElementById(
                   "result-text"
@@ -582,27 +467,17 @@
                 "block";
 
 
-              /*
-                BUTTON TEXT
-              */
-
               const openButton =
                 document.getElementById(
                   "open-button"
                 );
 
               if (isPrinterLink) {
-
-                openButton.textContent =
-                  "Print";
-
+                openButton.textContent = "Print";
               }
 
               else {
-
-                openButton.textContent =
-                  "Open";
-
+                openButton.textContent = "Open";
               }
 
 
@@ -646,10 +521,6 @@
     }
 
 
-    /*
-      OPEN / PRINT
-    */
-
     function openScannedSite() {
 
       if (!scannedURL) {
@@ -677,20 +548,12 @@
     }
 
 
-    /*
-      RESCAN
-    */
-
     function rescan() {
 
       window.location.reload();
 
     }
 
-
-    /*
-      START
-    */
 
     window.addEventListener(
       "load",
