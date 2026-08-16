@@ -44,6 +44,7 @@
       max-height: 900px;
 
       overflow: hidden;
+
       border-radius: 28px;
 
       background: #000;
@@ -51,6 +52,7 @@
 
     #reader {
       position: absolute;
+
       inset: 0;
 
       width: 100% !important;
@@ -76,11 +78,13 @@
 
     #loading {
       position: absolute;
+
       inset: 0;
 
       background: #000;
 
       display: flex;
+
       align-items: center;
       justify-content: center;
 
@@ -109,6 +113,7 @@
 
     #website {
       position: absolute;
+
       inset: 0;
 
       width: 100%;
@@ -123,9 +128,9 @@
       z-index: 5;
     }
 
-    /* Bottom buttons */
+    /* Scan button */
 
-    #buttons {
+    #rescan {
       position: absolute;
 
       bottom: 22px;
@@ -137,15 +142,11 @@
 
       display: none;
 
-      gap: 8px;
-    }
-
-    button {
       border: none;
 
       border-radius: 999px;
 
-      padding: 12px 20px;
+      padding: 12px 25px;
 
       background: rgba(255, 255, 255, 0.95);
 
@@ -160,11 +161,14 @@
       box-shadow:
         0 4px 18px rgba(0, 0, 0, 0.25);
 
-      white-space: nowrap;
+      transition:
+        transform 0.15s ease;
     }
 
-    button:active {
-      transform: scale(0.95);
+    #rescan:active {
+      transform:
+        translateX(-50%)
+        scale(0.95);
     }
 
   </style>
@@ -188,17 +192,13 @@
         allow="fullscreen">
       </iframe>
 
-      <div id="buttons">
+      <button
+        id="rescan"
+        onclick="rescan()">
 
-        <button onclick="rescan()">
-          Scan
-        </button>
+        Scan
 
-        <button onclick="openInBrowser()">
-          Open in Browser
-        </button>
-
-      </div>
+      </button>
 
     </div>
 
@@ -211,8 +211,6 @@
     let scanning = false;
     let qrFound = false;
 
-    let currentURL = "";
-
 
     async function startScanner() {
 
@@ -221,10 +219,7 @@
       document.getElementById("loading")
         .style.display = "flex";
 
-      document.getElementById("buttons")
-        .style.display = "none";
-
-      document.getElementById("website")
+      document.getElementById("rescan")
         .style.display = "none";
 
       document.getElementById("reader")
@@ -305,7 +300,7 @@
       catch(error) {
 
         console.error(
-          "Camera error:",
+          "Scanner error:",
           error
         );
 
@@ -317,10 +312,7 @@
     }
 
 
-    async function openQR(decodedText) {
-
-      let url = decodedText.trim();
-
+    async function openQR(url) {
 
       if (
         !url.startsWith("http://") &&
@@ -330,9 +322,6 @@
         url = "https://" + url;
 
       }
-
-
-      currentURL = url;
 
 
       if (scanning) {
@@ -354,47 +343,16 @@
         .style.display = "none";
 
 
-      document.getElementById("loading")
-        .style.display = "flex";
+      document.getElementById("website")
+        .src = url;
 
 
-      const website =
-        document.getElementById("website");
+      document.getElementById("website")
+        .style.display = "block";
 
 
-      website.onload = function() {
-
-        document.getElementById("loading")
-          .style.display = "none";
-
-        website.style.display = "block";
-
-        document.getElementById("buttons")
-          .style.display = "flex";
-
-      };
-
-
-      website.src = url;
-
-    }
-
-
-    function openInBrowser() {
-
-      if (!currentURL) {
-        return;
-      }
-
-      /*
-        Navigate the current tab.
-
-        Because this happens from the scanner page,
-        the browser's Back button returns to the
-        scanner.
-      */
-
-      window.location.href = currentURL;
+      document.getElementById("rescan")
+        .style.display = "block";
 
     }
 
@@ -402,16 +360,13 @@
     async function rescan() {
 
       document.getElementById("website")
-        .src = "about:blank";
-
+        .style.display = "none";
 
       document.getElementById("website")
+        .src = "about:blank";
+
+      document.getElementById("rescan")
         .style.display = "none";
-
-
-      document.getElementById("buttons")
-        .style.display = "none";
-
 
       document.getElementById("reader")
         .style.display = "block";
@@ -420,20 +375,7 @@
       if (scanner) {
 
         try {
-
-          if (scanning) {
-            await scanner.stop();
-          }
-
-        }
-
-        catch(error) {}
-
-
-        try {
-
-          scanner.clear();
-
+          await scanner.clear();
         }
 
         catch(error) {}
@@ -442,10 +384,7 @@
 
 
       scanner = null;
-
       scanning = false;
-
-      currentURL = "";
 
 
       setTimeout(function() {
