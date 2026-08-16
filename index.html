@@ -1,29 +1,18 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 4.1
+  VERSION: 4.2
 
-  Features:
-  - Full-size camera
-  - Fixed 250x250 scanning area
-  - Flashlight control
-  - Scan sound control
-  - Vibration control
-  - Copy scanned QR
-  - Scan history
-  - Scanner status
-  - QR type detection
-  - Dev Mode
-  - Scan statistics
-  - H2D / TOYBOX / Ender 3 shortcuts
-  - MakerWorld detection
-  - Light Mode
+  Changes from v4.1:
+  - Removed vibration feature completely
+  - Removed "Scan complete" status
+  - Kept "Ready to scan"
+  - Kept "QR detected"
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 
 <meta
@@ -363,11 +352,6 @@ body {
     rgba(255,170,0,.8);
 }
 
-#status-bar.success {
-  background:
-    rgba(0,150,70,.85);
-}
-
 
 /* =========================
    QR TYPE
@@ -528,7 +512,7 @@ body {
 
 
 /* =========================
-   CIRCLE BUTTONS
+   CIRCLE BUTTON
 ========================= */
 
 .circle-button {
@@ -682,49 +666,6 @@ body {
 
 
 /* =========================
-   VIBRATION ICON
-========================= */
-
-.vibration-icon::before {
-  content: "";
-
-  position: absolute;
-
-  left: 7px;
-  top: 4px;
-
-  width: 8px;
-  height: 14px;
-
-  border:
-    2px solid currentColor;
-
-  border-radius: 3px;
-}
-
-.vibration-icon::after {
-  content: "";
-
-  position: absolute;
-
-  left: 1px;
-  top: 7px;
-
-  width: 4px;
-  height: 8px;
-
-  border-top:
-    2px solid currentColor;
-
-  border-bottom:
-    2px solid currentColor;
-
-  box-shadow:
-    16px 0 0 -1px currentColor;
-}
-
-
-/* =========================
    LOADING
 ========================= */
 
@@ -760,12 +701,10 @@ body {
 }
 
 @keyframes spin {
-
   to {
     transform:
       rotate(360deg);
   }
-
 }
 
 
@@ -1200,7 +1139,6 @@ body.light-mode .history-item {
 }
 
 </style>
-
 </head>
 
 
@@ -1385,22 +1323,6 @@ body.light-mode .history-item {
 
 </button>
 
-
-<!-- VIBRATION -->
-
-<button
-  id="haptic-button"
-  class="circle-button active"
-  onclick="toggleHaptic()"
-  title="Vibration"
-  aria-label="Vibration"
->
-
-<span class="icon vibration-icon"></span>
-
-</button>
-
-
 </div>
 
 
@@ -1437,7 +1359,7 @@ body.light-mode .history-item {
 
 
 <div id="version-number">
-  v4.1
+  v4.2
 </div>
 
 
@@ -1537,8 +1459,6 @@ let lightMode = false;
 let flashlightOn = false;
 
 let soundEnabled = true;
-
-let hapticEnabled = true;
 
 let scanCount = 0;
 
@@ -2009,87 +1929,6 @@ function playScanSound() {
 
     devLog(
       "Sound error"
-    );
-
-  }
-
-}
-
-
-/* =========================
-   HAPTIC
-========================= */
-
-function toggleHaptic() {
-
-  hapticEnabled =
-    !hapticEnabled;
-
-  const button =
-    document.getElementById(
-      "haptic-button"
-    );
-
-  button.classList.toggle(
-    "active",
-    hapticEnabled
-  );
-
-  devLog(
-    "Haptic feedback: " +
-    (
-      hapticEnabled
-        ? "ON"
-        : "OFF"
-    )
-  );
-}
-
-
-function doHaptic() {
-
-  if (
-    hapticEnabled &&
-    navigator.vibrate
-  ) {
-
-    navigator.vibrate(
-      [60, 40, 80]
-    );
-
-  }
-
-}
-
-
-/* =========================
-   COPY
-========================= */
-
-async function copyScannedURL() {
-
-  if (!scannedURL) return;
-
-  try {
-
-    await navigator.clipboard
-      .writeText(
-        scannedURL
-      );
-
-    devLog(
-      "Scanned QR copied"
-    );
-
-    alert(
-      "Copied!"
-    );
-
-  } catch(error) {
-
-    devLog(
-      "Clipboard error: " +
-      error.message
     );
 
   }
@@ -2612,12 +2451,10 @@ async function setZoom(value) {
       .applyConstraints({
 
         advanced: [
-
           {
             zoom:
               actualZoom
           }
-
         ]
 
       });
@@ -2750,6 +2587,12 @@ async function startScanner() {
 
         }
 
+
+        /*
+          Keep "QR detected".
+          No "Scan complete" message.
+        */
+
         status.textContent =
           "QR detected";
 
@@ -2850,14 +2693,12 @@ async function startScanner() {
 
           playScanSound();
 
-          doHaptic();
 
-
-          status.textContent =
-            "Scan complete";
-
-          status.className =
-            "success";
+          /*
+            IMPORTANT:
+            There is intentionally
+            NO vibration here.
+          */
 
 
           const type =
@@ -2959,7 +2800,7 @@ async function startScanner() {
 
 
           devLog(
-            "Scan complete: " +
+            "QR accepted: " +
             result
           );
 
@@ -2994,8 +2835,15 @@ async function startScanner() {
       "none";
 
 
+    /*
+      Keep "Ready to scan".
+    */
+
     status.textContent =
       "Ready to scan";
+
+    status.className =
+      "";
 
 
     setTimeout(
@@ -3165,7 +3013,7 @@ window.addEventListener(
     );
 
     devLog(
-      "Version 4.1"
+      "Version 4.2"
     );
 
     devLog(
@@ -3176,6 +3024,14 @@ window.addEventListener(
       "QR area: FIXED 250x250"
     );
 
+    devLog(
+      "Vibration: REMOVED"
+    );
+
+    devLog(
+      "Scan success status: REMOVED"
+    );
+
     startScanner();
 
   }
@@ -3184,5 +3040,4 @@ window.addEventListener(
 </script>
 
 </body>
-
 </html>
