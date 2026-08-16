@@ -1,12 +1,13 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 4.2
+  VERSION: 4.3
 
-  Changes from v4.1:
-  - Removed vibration feature completely
-  - Removed "Scan complete" status
-  - Kept "Ready to scan"
-  - Kept "QR detected"
+  Changes from v4.2:
+  - QR detected text hides after successful scan
+  - Website/type text hides after successful scan
+  - Vibration remains removed
+  - "Scan complete" remains removed
+  - "Ready to scan" remains unchanged
 -->
 
 <!DOCTYPE html>
@@ -26,10 +27,6 @@
 
 <style>
 
-/* =========================
-   GENERAL
-========================= */
-
 * {
   box-sizing: border-box;
 }
@@ -38,24 +35,18 @@ html,
 body {
   margin: 0;
   padding: 0;
-
   width: 100%;
   height: 100%;
-
   background: #000;
-
   overflow: hidden;
-
   font-family: Arial, sans-serif;
 }
 
 #app {
   width: 100%;
   height: 100%;
-
   display: flex;
   flex-direction: column;
-
   background: #000;
 }
 
@@ -66,29 +57,21 @@ body {
 
 #top-bar {
   position: relative;
-
   width: 100%;
   height: 65px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #000;
 }
 
 #site-title {
   color: white;
-
   font-size: 24px;
   font-weight: 700;
-
   text-align: center;
-
   white-space: nowrap;
-
   user-select: none;
 }
 
@@ -99,30 +82,20 @@ body {
 
 #home-button {
   position: absolute;
-
   left: 12px;
   top: 50%;
-
   transform: translateY(-50%);
-
   width: 42px;
   height: 42px;
-
   border: none;
   border-radius: 12px;
-
   background: #222;
-
   color: white;
-
   font-size: 22px;
-
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   z-index: 200;
 }
 
@@ -139,51 +112,32 @@ body {
 
 #home-menu {
   position: absolute;
-
   left: 12px;
   top: 58px;
-
   width: 190px;
-
-  max-height:
-    calc(100vh - 75px);
-
+  max-height: calc(100vh - 75px);
   overflow-y: auto;
-
   padding: 10px;
-
   background: #111;
-
   border: 1px solid #333;
-
   border-radius: 18px;
-
   box-shadow:
     0 8px 30px
     rgba(0,0,0,.5);
-
   z-index: 300;
-
   display: none;
 }
 
 .menu-button {
   width: 100%;
-
   border: none;
   border-radius: 12px;
-
   padding: 13px 10px;
-
   margin: 4px 0;
-
   background: #222;
-
   color: white;
-
   font-size: 17px;
   font-weight: 600;
-
   cursor: pointer;
 }
 
@@ -199,41 +153,27 @@ body {
 
 #camera {
   position: relative;
-
   width: 100%;
-
-  height:
-    calc(100% - 65px);
-
+  height: calc(100% - 65px);
   overflow: hidden;
-
-  border-radius:
-    28px 28px 0 0;
-
+  border-radius: 28px 28px 0 0;
   background: #000;
 }
 
 #reader {
   position: absolute;
-
   inset: 0;
-
   width: 100% !important;
   height: 100% !important;
-
   border: none !important;
-
   overflow: hidden;
-
   z-index: 4;
 }
 
 #reader video {
   width: 100% !important;
   height: 100% !important;
-
   object-fit: cover !important;
-
   display: block !important;
 }
 
@@ -433,7 +373,6 @@ body {
   position: absolute;
 
   left: 50%;
-
   bottom: 45px;
 
   transform:
@@ -444,7 +383,6 @@ body {
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 10px;
@@ -463,7 +401,6 @@ body {
   flex: 1;
 
   min-width: 180px;
-
   max-width: 350px;
 
   padding:
@@ -492,11 +429,8 @@ body {
 
 #zoom-slider {
   width: 100%;
-
   height: 5px;
-
   accent-color: white;
-
   cursor: pointer;
 }
 
@@ -512,7 +446,7 @@ body {
 
 
 /* =========================
-   CIRCLE BUTTON
+   CIRCLE BUTTONS
 ========================= */
 
 .circle-button {
@@ -543,25 +477,21 @@ body {
 
 .circle-button.active {
   background: white;
-
   color: black;
-
   border:
     2px solid white;
 }
 
 .circle-button:not(.active) {
   background: black;
-
   color: white;
-
   border:
     2px solid white;
 }
 
 
 /* =========================
-   ORIGINAL ICONS
+   FLASHLIGHT ICON
 ========================= */
 
 .icon {
@@ -576,11 +506,6 @@ body {
 
   pointer-events: none;
 }
-
-
-/* =========================
-   FLASHLIGHT ICON
-========================= */
 
 .flashlight-icon::before {
   content: "";
@@ -782,13 +707,11 @@ body {
 
 #open-button {
   top: 55%;
-
   display: none;
 }
 
 #rescan {
   top: 70%;
-
   display: none;
 }
 
@@ -1269,8 +1192,6 @@ body.light-mode .history-item {
 <div id="control-bar">
 
 
-<!-- FLASHLIGHT -->
-
 <button
   id="flashlight-button"
   class="circle-button"
@@ -1283,8 +1204,6 @@ body.light-mode .history-item {
 
 </button>
 
-
-<!-- ZOOM -->
 
 <div id="zoom-container">
 
@@ -1309,8 +1228,6 @@ body.light-mode .history-item {
 </div>
 
 
-<!-- SOUND -->
-
 <button
   id="sound-button"
   class="circle-button active"
@@ -1326,16 +1243,12 @@ body.light-mode .history-item {
 </div>
 
 
-<!-- LOADING -->
-
 <div id="loading">
 
 <div class="spinner"></div>
 
 </div>
 
-
-<!-- RESULT -->
 
 <div id="result-text"></div>
 
@@ -1359,13 +1272,9 @@ body.light-mode .history-item {
 
 
 <div id="version-number">
-  v4.2
+  v4.3
 </div>
 
-
-<!-- =========================
-     HISTORY PANEL
-========================= -->
 
 <div id="history-panel">
 
@@ -1386,10 +1295,6 @@ body.light-mode .history-item {
 
 </div>
 
-
-<!-- =========================
-     DEV MODE
-========================= -->
 
 <div id="dev-panel">
 
@@ -1439,39 +1344,23 @@ body.light-mode .history-item {
 ========================= */
 
 let scanner = null;
-
 let firstDetection = null;
-
 let detectedText = null;
-
 let scanConfirmed = false;
-
 let scannedURL = null;
-
 let isPrinterLink = false;
-
 let cameraTrack = null;
-
 let devMode = false;
-
 let lightMode = false;
-
 let flashlightOn = false;
-
 let soundEnabled = true;
-
 let scanCount = 0;
-
 let successfulScans = 0;
-
 let failedScans = 0;
-
 let scanStartTime = null;
-
 let lastScanTime = 0;
 
 const HOLD_TIME = 600;
-
 const QR_SIZE = 250;
 
 
@@ -1518,10 +1407,6 @@ function devLog(message) {
   updateStats();
 }
 
-
-/* =========================
-   STATS
-========================= */
 
 function updateStats() {
 
@@ -2185,12 +2070,6 @@ function getSiteName(url) {
       "reddit.com":
         "Reddit",
 
-      "x.com":
-        "X",
-
-      "twitter.com":
-        "Twitter",
-
       "microsoft.com":
         "Microsoft",
 
@@ -2588,10 +2467,7 @@ async function startScanner() {
         }
 
 
-        /*
-          Keep "QR detected".
-          No "Scan complete" message.
-        */
+        /* QR DETECTED */
 
         status.textContent =
           "QR detected";
@@ -2694,29 +2570,10 @@ async function startScanner() {
           playScanSound();
 
 
-          /*
-            IMPORTANT:
-            There is intentionally
-            NO vibration here.
-          */
-
-
           const type =
             getQRType(
               decodedText
             );
-
-          const typeBox =
-            document.getElementById(
-              "qr-type"
-            );
-
-          typeBox.textContent =
-            type;
-
-          typeBox.style.display =
-            "block";
-
 
           const result =
             getQRText(
@@ -2730,10 +2587,27 @@ async function startScanner() {
           );
 
 
+          /*
+           * IMPORTANT:
+           * Hide ALL scanning status
+           * text once the scan succeeds.
+           */
+
+          document.getElementById(
+            "status-bar"
+          ).style.display =
+            "none";
+
+          document.getElementById(
+            "qr-type"
+          ).style.display =
+            "none";
+
           document.getElementById(
             "hold-still"
           ).style.display =
             "none";
+
 
           document.getElementById(
             "control-bar"
@@ -2834,10 +2708,6 @@ async function startScanner() {
     ).style.display =
       "none";
 
-
-    /*
-      Keep "Ready to scan".
-    */
 
     status.textContent =
       "Ready to scan";
@@ -3013,7 +2883,7 @@ window.addEventListener(
     );
 
     devLog(
-      "Version 4.2"
+      "Version 4.3"
     );
 
     devLog(
@@ -3030,6 +2900,10 @@ window.addEventListener(
 
     devLog(
       "Scan success status: REMOVED"
+    );
+
+    devLog(
+      "QR detected text hides after scan"
     );
 
     startScanner();
