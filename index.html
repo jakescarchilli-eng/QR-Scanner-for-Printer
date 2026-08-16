@@ -1,8 +1,8 @@
 <!--
   QR SCANNER
-  VERSION: 2.7
+  VERSION: 2.8
   Custom results for TOYBOX, Ender 3, H2D, and MakerWorld
-  Improved spacing for longer result text
+  Added tiny version number on scanning page
 -->
 
 <!DOCTYPE html>
@@ -237,21 +237,40 @@
         scale(0.95);
     }
 
-    /*
-      BUTTONS ARE NOW SPACED
-      FARTHER DOWN FROM THE TEXT
-    */
-
     #open-button {
       top: 55%;
-
       display: none;
     }
 
     #rescan {
       top: 70%;
-
       display: none;
+    }
+
+    /*
+      TINY VERSION NUMBER
+      ONLY VISIBLE ON SCANNER PAGE
+    */
+
+    #version-number {
+      position: absolute;
+
+      left: 8px;
+      bottom: 6px;
+
+      z-index: 100;
+
+      color: rgba(255, 255, 255, 0.45);
+
+      font-family: Arial, sans-serif;
+
+      font-size: 9px;
+
+      font-weight: 400;
+
+      pointer-events: none;
+
+      user-select: none;
     }
 
   </style>
@@ -292,6 +311,11 @@
       >
         Rescan
       </button>
+
+      <!-- ONLY ON SCANNING PAGE -->
+      <div id="version-number">
+        v2.8
+      </div>
 
     </div>
 
@@ -488,6 +512,16 @@
 
               document.getElementById(
                 "hold-still"
+              ).style.display = "none";
+
+
+              /*
+                HIDE VERSION NUMBER
+                AFTER SUCCESSFUL SCAN
+              */
+
+              document.getElementById(
+                "version-number"
               ).style.display = "none";
 
 
