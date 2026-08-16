@@ -1,8 +1,8 @@
 <!--
   QR SCANNER
-  VERSION: 3.0
+  VERSION: 3.1
   Custom results for TOYBOX, Ender 3, H2D, and MakerWorld
-  Hold-still message updated
+  Added "Printer Scanner 5000" title
 -->
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>QR Scanner</title>
+  <title>Printer Scanner 5000</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -47,6 +47,38 @@
       overflow: hidden;
       border-radius: 28px;
       background: #000;
+    }
+
+    /*
+      SITE TITLE
+    */
+
+    #site-title {
+      position: absolute;
+
+      top: 18px;
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      z-index: 100;
+
+      color: white;
+
+      font-family: Arial, sans-serif;
+
+      font-size: 24px;
+      font-weight: 700;
+
+      text-align: center;
+
+      white-space: nowrap;
+
+      text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.6);
+
+      pointer-events: none;
+      user-select: none;
     }
 
     #reader {
@@ -277,6 +309,10 @@
 
     <div id="camera">
 
+      <div id="site-title">
+        Printer Scanner 5000
+      </div>
+
       <div id="reader"></div>
 
       <div id="scan-box"></div>
@@ -308,7 +344,7 @@
       </button>
 
       <div id="version-number">
-        v3.0
+        v3.1
       </div>
 
     </div>
