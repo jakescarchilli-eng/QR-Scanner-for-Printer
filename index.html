@@ -1,322 +1,416 @@
 <!--
-  QR SCANNER
-  VERSION: 1.6
-  Instant QR scanning
-  Fixed 250×250 scanning box
-  Based on Version 1.3 layout
+  QR SCANNER
+  VERSION: 1.7
+  Hold-still QR confirmation
+  Fixed 250×250 scanning box
+  Based on Version 1.3 layout
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>QR Scanner</title>
+  <title>QR Scanner</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 
-  <style>
+  <style>
 
-    * {
-      box-sizing: border-box;
-    }
+    * {
+      box-sizing: border-box;
+    }
 
-    html,
-    body {
-      margin: 0;
-      padding: 0;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #f2f2f2;
+      overflow: hidden;
+    }
 
-      width: 100%;
-      height: 100%;
+    #app {
+      width: 100%;
+      height: 100%;
 
-      background: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      overflow: hidden;
-    }
+      padding: 20px;
+    }
 
-    #app {
-      width: 100%;
-      height: 100%;
+    #camera {
+      position: relative;
 
-      display: flex;
+      width: 100%;
+      height: 100%;
 
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
 
-      padding: 20px;
-    }
+      border-radius: 28px;
 
-    /*
-      CAMERA AREA
-    */
+      background: #000;
+    }
 
-    #camera {
-      position: relative;
+    #reader {
+      position: absolute;
+      inset: 0;
 
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
 
-      overflow: hidden;
+      border: none !important;
+    }
 
-      border-radius: 28px;
+    #reader video {
+      width: 100% !important;
+      height: 100% !important;
 
-      background: #000;
-    }
+      object-fit: cover !important;
+    }
 
-    /*
-      CAMERA VIDEO
-    */
+    /* Hide html5-qrcode UI */
 
-    #reader {
-      position: absolute;
+    #reader__dashboard {
+      display: none !important;
+    }
 
-      inset: 0;
+    #reader__header_message {
+      display: none !important;
+    }
 
-      width: 100% !important;
-      height: 100% !important;
+    #reader__scan_region {
+      border: none !important;
+    }
 
-      border: none !important;
-    }
+    #reader__scan_region img {
+      display: none !important;
+    }
 
-    #reader video {
-      width: 100% !important;
-      height: 100% !important;
+    #reader__scan_region > div {
+      border: none !important;
+    }
 
-      object-fit: cover !important;
-    }
+    /*
+      FIXED QR BOX
 
-    /*
-      Hide html5-qrcode's visual controls.
-    */
+      Always exactly 250 × 250 pixels.
+    */
 
-    #reader__dashboard {
-      display: none !important;
-    }
+    #scan-box {
+      position: absolute;
 
-    #reader__header_message {
-      display: none !important;
-    }
+      width: 250px !important;
+      height: 250px !important;
 
-    #reader__scan_region {
-      border: none !important;
-    }
+      min-width: 250px;
+      min-height: 250px;
 
-    #reader__scan_region img {
-      display: none !important;
-    }
+      max-width: 250px;
+      max-height: 250px;
 
-    #reader__scan_region > div {
-      border: none !important;
-    }
+      left: 50%;
+      top: 50%;
 
-    /*
-      FIXED SCANNING BOX
+      transform: translate(-50%, -50%);
 
-      Always exactly 250 × 250 pixels.
-    */
+      border: 3px solid white;
 
-    #scan-box {
-      position: absolute;
+      border-radius: 18px;
 
-      width: 250px !important;
-      height: 250px !important;
+      pointer-events: none;
 
-      min-width: 250px;
-      min-height: 250px;
+      z-index: 10;
 
-      max-width: 250px;
-      max-height: 250px;
+      transition:
+        border-color 0.15s ease;
+    }
 
-      left: 50%;
-      top: 50%;
+    /*
+      HOLD STILL MESSAGE
+    */
 
-      transform: translate(-50%, -50%);
+    #hold-still {
+      position: absolute;
 
-      border: 3px solid white;
+      left: 50%;
+      top: calc(50% + 155px);
 
-      border-radius: 18px;
+      transform: translateX(-50%);
 
-      pointer-events: none;
+      z-index: 15;
 
-      z-index: 10;
-    }
+      padding: 9px 16px;
 
-    /*
-      LOADING
-    */
+      border-radius: 999px;
 
-    #loading {
-      position: absolute;
+      background: rgba(0, 0, 0, 0.65);
 
-      inset: 0;
+      color: white;
 
-      background: #000;
+      font-family: Arial, sans-serif;
 
-      display: flex;
+      font-size: 15px;
+      font-weight: 600;
 
-      align-items: center;
-      justify-content: center;
+      white-space: nowrap;
 
-      z-index: 20;
-    }
+      display: none;
+    }
 
-    .spinner {
-      width: 28px;
-      height: 28px;
+    /*
+      Loading
+    */
 
-      border: 3px solid #333;
+    #loading {
+      position: absolute;
+      inset: 0;
 
-      border-top: 3px solid white;
+      background: #000;
 
-      border-radius: 50%;
+      display: flex;
 
-      animation: spin 0.6s linear infinite;
-    }
+      align-items: center;
+      justify-content: center;
 
-    @keyframes spin {
+      z-index: 20;
+    }
 
-      to {
-        transform: rotate(360deg);
-      }
+    .spinner {
+      width: 28px;
+      height: 28px;
 
-    }
+      border: 3px solid #333;
 
-  </style>
+      border-top: 3px solid white;
+
+      border-radius: 50%;
+
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
+  </style>
 </head>
 
 <body>
 
-  <div id="app">
+  <div id="app">
 
-    <div id="camera">
+    <div id="camera">
 
-      <div id="reader"></div>
+      <div id="reader"></div>
 
-      <div id="scan-box"></div>
+      <div id="scan-box"></div>
 
-      <div id="loading">
+      <div id="hold-still">
+        Hold still
+      </div>
 
-        <div class="spinner"></div>
+      <div id="loading">
 
-      </div>
+        <div class="spinner"></div>
 
-    </div>
+      </div>
 
-  </div>
+    </div>
 
-
-  <script>
-
-    let scanner = null;
-
-    let qrLocked = false;
+  </div>
 
 
-    async function startScanner() {
+  <script>
 
-      scanner = new Html5Qrcode("reader");
+    let scanner = null;
 
+    let firstDetection = null;
 
-      try {
+    let detectedText = null;
 
-        await scanner.start(
+    let scanConfirmed = false;
 
-          {
-            facingMode: {
-              ideal: "environment"
-            }
-          },
+    /*
+      How long the QR must remain detected
+      before it is confirmed.
+    */
 
-          {
-
-            /*
-              Higher FPS = more frequent
-              QR detection attempts.
-            */
-
-            fps: 30,
-
-            /*
-              Fixed detection area.
-            */
-
-            qrbox: {
-              width: 250,
-              height: 250
-            },
-
-            /*
-              Keep the image processing
-              focused on the QR area.
-            */
-
-            disableFlip: false
-
-          },
-
-          function(decodedText) {
-
-            /*
-              Stop processing immediately
-              after the first successful scan.
-            */
-
-            if (qrLocked) {
-              return;
-            }
-
-            qrLocked = true;
-
-            console.log(
-              "QR CODE:",
-              decodedText
-            );
-
-          },
-
-          function(errorMessage) {
-
-            // Normal scanning errors ignored.
-
-          }
-
-        );
+    const HOLD_TIME = 600;
 
 
-        document.getElementById("loading")
-          .style.display = "none";
+    async function startScanner() {
 
-      }
-
-      catch(error) {
-
-        console.error(
-          "CAMERA ERROR:",
-          error
-        );
-
-        document.getElementById("loading")
-          .style.display = "none";
-
-      }
-
-    }
+      scanner = new Html5Qrcode("reader");
 
 
-    window.addEventListener(
-      "load",
-      function() {
+      try {
 
-        startScanner();
+        await scanner.start(
 
-      }
-    );
+          {
+            facingMode: {
+              ideal: "environment"
+            }
+          },
 
-  </script>
+          {
+            fps: 30,
+
+            qrbox: {
+              width: 250,
+              height: 250
+            },
+
+            disableFlip: false
+          },
+
+          function(decodedText) {
+
+            if (scanConfirmed) {
+              return;
+            }
+
+            /*
+              First detection.
+            */
+
+            if (
+              firstDetection === null
+            ) {
+
+              firstDetection =
+                Date.now();
+
+              detectedText =
+                decodedText;
+
+              document.getElementById(
+                "hold-still"
+              ).style.display = "block";
+
+              document.getElementById(
+                "scan-box"
+              ).style.borderColor = "#ffffff";
+
+              return;
+            }
+
+            /*
+              Make sure we're still seeing
+              the same QR code.
+            */
+
+            if (
+              decodedText !== detectedText
+            ) {
+
+              firstDetection =
+                Date.now();
+
+              detectedText =
+                decodedText;
+
+              return;
+            }
+
+            /*
+              QR has stayed detected long enough.
+            */
+
+            if (
+              Date.now() - firstDetection
+              >= HOLD_TIME
+            ) {
+
+              scanConfirmed = true;
+
+              document.getElementById(
+                "hold-still"
+              ).style.display = "none";
+
+              document.getElementById(
+                "scan-box"
+              ).style.borderColor = "white";
+
+              console.log(
+                "QR CODE CONFIRMED:",
+                decodedText
+              );
+
+              /*
+                The decoded QR URL is available here
+                as decodedText.
+
+                Website-opening behavior can be
+                added here later.
+              */
+
+            }
+
+          },
+
+          function(errorMessage) {
+
+            /*
+              If the QR disappears before
+              confirmation, reset.
+            */
+
+            if (!scanConfirmed) {
+
+              firstDetection = null;
+              detectedText = null;
+
+              document.getElementById(
+                "hold-still"
+              ).style.display = "none";
+
+            }
+
+          }
+
+        );
+
+
+        document.getElementById("loading")
+          .style.display = "none";
+
+      }
+
+      catch(error) {
+
+        console.error(
+          "CAMERA ERROR:",
+          error
+        );
+
+        document.getElementById("loading")
+          .style.display = "none";
+
+      }
+
+    }
+
+
+    window.addEventListener(
+      "load",
+      function() {
+
+        startScanner();
+
+      }
+    );
+
+  </script>
 
 </body>
 </html>
