@@ -1,8 +1,9 @@
 <!--
   QR SCANNER
-  VERSION: 1.8
-  Camera fix only
-  Everything else unchanged from Version 1.7
+  VERSION: 1.95
+  Hold-still text appears every time a QR code is detected
+  Opens confirmed QR codes in a new tab
+  Camera behavior unchanged
 -->
 
 <!DOCTYPE html>
@@ -116,9 +117,6 @@
       pointer-events: none;
 
       z-index: 10;
-
-      transition:
-        border-color 0.15s ease;
     }
 
     #hold-still {
@@ -177,11 +175,9 @@
     }
 
     @keyframes spin {
-
       to {
         transform: rotate(360deg);
       }
-
     }
 
   </style>
@@ -232,11 +228,6 @@
 
       try {
 
-        /*
-          CAMERA INITIALIZATION
-          Restored to the working method.
-        */
-
         await scanner.start(
 
           {
@@ -261,37 +252,47 @@
             }
 
 
+            /*
+              EVERY TIME A QR CODE IS FIRST SEEN,
+              SHOW "HOLD STILL".
+            */
+
             if (firstDetection === null) {
 
-              firstDetection =
-                Date.now();
+              firstDetection = Date.now();
 
-              detectedText =
-                decodedText;
+              detectedText = decodedText;
 
               document.getElementById(
                 "hold-still"
               ).style.display = "block";
 
-              document.getElementById(
-                "scan-box"
-              ).style.borderColor = "#ffffff";
-
               return;
             }
 
+
+            /*
+              If a different QR is detected,
+              restart the hold-still process.
+            */
 
             if (decodedText !== detectedText) {
 
-              firstDetection =
-                Date.now();
+              firstDetection = Date.now();
 
-              detectedText =
-                decodedText;
+              detectedText = decodedText;
+
+              document.getElementById(
+                "hold-still"
+              ).style.display = "block";
 
               return;
             }
 
+
+            /*
+              QR has stayed detected long enough.
+            */
 
             if (
               Date.now() - firstDetection
@@ -304,13 +305,28 @@
                 "hold-still"
               ).style.display = "none";
 
-              document.getElementById(
-                "scan-box"
-              ).style.borderColor = "white";
 
-              console.log(
-                "QR CODE CONFIRMED:",
-                decodedText
+              let url = decodedText;
+
+
+              if (
+                !url.startsWith("http://") &&
+                !url.startsWith("https://")
+              ) {
+
+                url = "https://" + url;
+
+              }
+
+
+              /*
+                Open the scanned website
+                in a new tab.
+              */
+
+              window.open(
+                url,
+                "_blank"
               );
 
             }
@@ -320,9 +336,7 @@
           function(errorMessage) {
 
             /*
-              Do NOT reset the hold state here.
-              html5-qrcode reports many temporary
-              decode errors while the camera is working.
+              Ignore normal camera/decode errors.
             */
 
           }
