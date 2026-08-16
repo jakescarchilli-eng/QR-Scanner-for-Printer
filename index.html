@@ -1,11 +1,14 @@
 <!--
   QR SCANNER
-  VERSION: 2.0
+  VERSION: 2.1
+  Safari-compatible open behavior
   After scan:
   - Camera turns off
   - Scanner UI hides
-  - Rescan button appears
-  - Rescan button refreshes the page
+  - Open button appears
+  - Tap Open to open the scanned site in a new tab
+  - Rescan button remains available
+  Everything else unchanged from Version 2.0
 -->
 
 <!DOCTYPE html>
@@ -197,20 +200,17 @@
     }
 
     /*
-      RESCAN BUTTON
+      BUTTONS
     */
 
-    #rescan {
+    .action-button {
       position: absolute;
 
       left: 50%;
-      top: 50%;
 
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
 
       z-index: 50;
-
-      display: none;
 
       border: none;
 
@@ -234,10 +234,30 @@
         0 5px 20px rgba(0, 0, 0, 0.25);
     }
 
-    #rescan:active {
+    .action-button:active {
       transform:
-        translate(-50%, -50%)
+        translateX(-50%)
         scale(0.95);
+    }
+
+    /*
+      OPEN BUTTON
+    */
+
+    #open-button {
+      top: calc(50% - 28px);
+
+      display: none;
+    }
+
+    /*
+      RESCAN BUTTON
+    */
+
+    #rescan {
+      top: calc(50% + 28px);
+
+      display: none;
     }
 
   </style>
@@ -264,7 +284,16 @@
       </div>
 
       <button
+        id="open-button"
+        class="action-button"
+        onclick="openScannedSite()"
+      >
+        Open
+      </button>
+
+      <button
         id="rescan"
+        class="action-button"
         onclick="rescan()"
       >
         Rescan
@@ -284,6 +313,8 @@
     let detectedText = null;
 
     let scanConfirmed = false;
+
+    let scannedURL = null;
 
     const HOLD_TIME = 600;
 
@@ -368,7 +399,14 @@
 
 
               /*
-                Hide the Hold Still text.
+                Save the URL.
+              */
+
+              scannedURL = decodedText;
+
+
+              /*
+                Hide Hold Still.
               */
 
               document.getElementById(
@@ -377,7 +415,7 @@
 
 
               /*
-                Turn the camera OFF.
+                Turn camera OFF.
               */
 
               if (scanner) {
@@ -400,7 +438,7 @@
 
 
               /*
-                Hide ALL scanner UI.
+                Hide scanner UI.
               */
 
               document.getElementById(
@@ -417,36 +455,16 @@
 
 
               /*
-                Show Rescan button.
+                Show Open + Rescan buttons.
               */
+
+              document.getElementById(
+                "open-button"
+              ).style.display = "block";
 
               document.getElementById(
                 "rescan"
               ).style.display = "block";
-
-
-              /*
-                Open scanned website
-                in a new tab.
-              */
-
-              let url = decodedText;
-
-
-              if (
-                !url.startsWith("http://") &&
-                !url.startsWith("https://")
-              ) {
-
-                url = "https://" + url;
-
-              }
-
-
-              window.open(
-                url,
-                "_blank"
-              );
 
             }
 
@@ -484,10 +502,45 @@
 
 
     /*
-      RESCAN
+      OPEN SCANNED SITE
+    */
 
-      Refreshes the entire page,
-      starting the camera again.
+    function openScannedSite() {
+
+      if (!scannedURL) {
+        return;
+      }
+
+
+      let url = scannedURL;
+
+
+      if (
+        !url.startsWith("http://") &&
+        !url.startsWith("https://")
+      ) {
+
+        url = "https://" + url;
+
+      }
+
+
+      /*
+        This click directly comes from
+        the user, so Safari is much less
+        likely to block the new tab.
+      */
+
+      window.open(
+        url,
+        "_blank"
+      );
+
+    }
+
+
+    /*
+      RESCAN
     */
 
     function rescan() {
