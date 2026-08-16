@@ -1,8 +1,7 @@
 <!--
   QR SCANNER
-  VERSION: 3.2
-  Custom results for TOYBOX, Ender 3, H2D, and MakerWorld
-  Title moved above camera view with black background
+  VERSION: 3.3
+  Added home menu with H2D, TOYBOX, and Ender 3 buttons
 -->
 
 <!DOCTYPE html>
@@ -41,10 +40,12 @@
     }
 
     /*
-      TITLE ABOVE CAMERA
+      TOP BAR
     */
 
-    #site-title {
+    #top-bar {
+      position: relative;
+
       width: 100%;
       height: 65px;
 
@@ -55,7 +56,13 @@
       justify-content: center;
 
       background: #000;
+    }
 
+    /*
+      TITLE
+    */
+
+    #site-title {
       color: white;
 
       font-family: Arial, sans-serif;
@@ -69,6 +76,107 @@
 
       user-select: none;
     }
+
+    /*
+      HOME BUTTON
+    */
+
+    #home-button {
+      position: absolute;
+
+      left: 12px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      width: 42px;
+      height: 42px;
+
+      border: none;
+      border-radius: 12px;
+
+      background: #222;
+
+      color: white;
+
+      font-size: 22px;
+
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 200;
+    }
+
+    #home-button:active {
+      transform:
+        translateY(-50%)
+        scale(0.94);
+    }
+
+    /*
+      HOME MENU
+    */
+
+    #home-menu {
+      position: absolute;
+
+      left: 12px;
+      top: 58px;
+
+      width: 180px;
+
+      padding: 10px;
+
+      background: #111;
+
+      border: 1px solid #333;
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.5);
+
+      z-index: 300;
+
+      display: none;
+    }
+
+    .menu-button {
+      width: 100%;
+
+      border: none;
+
+      border-radius: 12px;
+
+      padding: 13px 10px;
+
+      margin: 4px 0;
+
+      background: #222;
+
+      color: white;
+
+      font-family: Arial, sans-serif;
+
+      font-size: 17px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+    .menu-button:active {
+      background: #333;
+
+      transform: scale(0.98);
+    }
+
+    /*
+      CAMERA
+    */
 
     #camera {
       position: relative;
@@ -117,6 +225,10 @@
       border: none !important;
     }
 
+    /*
+      SCAN BOX
+    */
+
     #scan-box {
       position: absolute;
 
@@ -142,6 +254,10 @@
 
       z-index: 10;
     }
+
+    /*
+      HOLD STILL
+    */
 
     #hold-still {
       position: absolute;
@@ -170,6 +286,10 @@
 
       display: none;
     }
+
+    /*
+      LOADING
+    */
 
     #loading {
       position: absolute;
@@ -205,6 +325,10 @@
       }
     }
 
+    /*
+      RESULT TEXT
+    */
+
     #result-text {
       position: absolute;
 
@@ -231,6 +355,10 @@
 
       display: none;
     }
+
+    /*
+      ACTION BUTTONS
+    */
 
     .action-button {
       position: absolute;
@@ -282,9 +410,7 @@
     }
 
     /*
-      TINY VERSION NUMBER
-      BOTTOM CENTER
-      ONLY VISIBLE ON SCANNING PAGE
+      VERSION
     */
 
     #version-number {
@@ -317,9 +443,54 @@
 
   <div id="app">
 
-    <div id="site-title">
-      Printer Scanner 5000
+    <!-- TOP BAR -->
+
+    <div id="top-bar">
+
+      <button
+        id="home-button"
+        onclick="toggleHomeMenu()"
+        aria-label="Home"
+      >
+        ☰
+      </button>
+
+      <div id="site-title">
+        Printer Scanner 5000
+      </div>
+
+
+      <!-- HOME MENU -->
+
+      <div id="home-menu">
+
+        <button
+          class="menu-button"
+          onclick="openPrinterLink('https://apps.apple.com/app/id1625671285')"
+        >
+          H2D
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openPrinterLink('https://apps.apple.com/app/id1166269606')"
+        >
+          TOYBOX
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openPrinterLink('https://apps.apple.com/app/id1658133862')"
+        >
+          Ender 3
+        </button>
+
+      </div>
+
     </div>
+
+
+    <!-- CAMERA -->
 
     <div id="camera">
 
@@ -354,7 +525,7 @@
       </button>
 
       <div id="version-number">
-        v3.2
+        v3.3
       </div>
 
     </div>
@@ -365,13 +536,95 @@
   <script>
 
     let scanner = null;
+
     let firstDetection = null;
+
     let detectedText = null;
+
     let scanConfirmed = false;
+
     let scannedURL = null;
+
     let isPrinterLink = false;
 
     const HOLD_TIME = 600;
+
+
+    /*
+      HOME MENU
+    */
+
+    function toggleHomeMenu() {
+
+      const menu =
+        document.getElementById(
+          "home-menu"
+        );
+
+      if (
+        menu.style.display === "block"
+      ) {
+
+        menu.style.display = "none";
+
+      }
+
+      else {
+
+        menu.style.display = "block";
+
+      }
+
+    }
+
+
+    /*
+      OPEN PRINTER LINK
+    */
+
+    function openPrinterLink(url) {
+
+      window.open(
+        url,
+        "_blank"
+      );
+
+      document.getElementById(
+        "home-menu"
+      ).style.display = "none";
+
+    }
+
+
+    /*
+      CLOSE MENU WHEN CLICKING OUTSIDE
+    */
+
+    document.addEventListener(
+      "click",
+      function(event) {
+
+        const menu =
+          document.getElementById(
+            "home-menu"
+          );
+
+        const button =
+          document.getElementById(
+            "home-button"
+          );
+
+        if (
+          !menu.contains(event.target) &&
+          !button.contains(event.target)
+        ) {
+
+          menu.style.display = "none";
+
+        }
+
+      }
+    );
 
 
     /*
@@ -393,10 +646,6 @@
           scannedURL.pathname;
 
 
-        /*
-          TOYBOX
-        */
-
         if (
           cleanURL ===
           "https://apps.apple.com/app/id1166269606"
@@ -408,10 +657,6 @@
 
         }
 
-
-        /*
-          ENDER 3
-        */
 
         if (
           cleanURL ===
@@ -425,10 +670,6 @@
         }
 
 
-        /*
-          H2D
-        */
-
         if (
           cleanURL ===
           "https://apps.apple.com/app/id1625671285"
@@ -440,10 +681,6 @@
 
         }
 
-
-        /*
-          MAKERWORLD
-        */
 
         if (
           scannedURL.origin ===
@@ -457,10 +694,6 @@
 
         }
 
-
-        /*
-          DEFAULT
-        */
 
         isPrinterLink = false;
 
@@ -485,7 +718,8 @@
 
     async function startScanner() {
 
-      scanner = new Html5Qrcode("reader");
+      scanner =
+        new Html5Qrcode("reader");
 
       try {
 
@@ -513,75 +747,70 @@
             }
 
 
-            /*
-              FIRST DETECTION
-            */
+            if (
+              firstDetection === null
+            ) {
 
-            if (firstDetection === null) {
+              firstDetection =
+                Date.now();
 
-              firstDetection = Date.now();
-
-              detectedText = decodedText;
+              detectedText =
+                decodedText;
 
               document.getElementById(
                 "hold-still"
-              ).style.display = "block";
+              ).style.display =
+                "block";
 
               return;
 
             }
 
-
-            /*
-              DIFFERENT QR CODE
-            */
-
-            if (decodedText !== detectedText) {
-
-              firstDetection = Date.now();
-
-              detectedText = decodedText;
-
-              document.getElementById(
-                "hold-still"
-              ).style.display = "block";
-
-              return;
-
-            }
-
-
-            /*
-              CONFIRM QR
-            */
 
             if (
-              Date.now() - firstDetection
-              >= HOLD_TIME
+              decodedText !==
+              detectedText
+            ) {
+
+              firstDetection =
+                Date.now();
+
+              detectedText =
+                decodedText;
+
+              document.getElementById(
+                "hold-still"
+              ).style.display =
+                "block";
+
+              return;
+
+            }
+
+
+            if (
+              Date.now() -
+              firstDetection >=
+              HOLD_TIME
             ) {
 
               scanConfirmed = true;
 
-              scannedURL = decodedText;
+              scannedURL =
+                decodedText;
 
 
               document.getElementById(
                 "hold-still"
-              ).style.display = "none";
+              ).style.display =
+                "none";
 
-
-              /*
-                HIDE VERSION NUMBER
-              */
 
               document.getElementById(
                 "version-number"
-              ).style.display = "none";
+              ).style.display =
+                "none";
 
-
-              /*
-                TURN CAMERA OFF
-              */
 
               if (scanner) {
 
@@ -603,26 +832,21 @@
               }
 
 
-              /*
-                HIDE SCANNER UI
-              */
-
               document.getElementById(
                 "reader"
-              ).style.display = "none";
+              ).style.display =
+                "none";
 
               document.getElementById(
                 "scan-box"
-              ).style.display = "none";
+              ).style.display =
+                "none";
 
               document.getElementById(
                 "loading"
-              ).style.display = "none";
+              ).style.display =
+                "none";
 
-
-              /*
-                SHOW RESULT
-              */
 
               const resultText =
                 document.getElementById(
@@ -630,15 +854,13 @@
                 );
 
               resultText.textContent =
-                getQRText(decodedText);
+                getQRText(
+                  decodedText
+                );
 
               resultText.style.display =
                 "block";
 
-
-              /*
-                BUTTON TEXT
-              */
 
               const openButton =
                 document.getElementById(
@@ -665,7 +887,8 @@
 
               document.getElementById(
                 "rescan"
-              ).style.display = "block";
+              ).style.display =
+                "block";
 
             }
 
@@ -680,8 +903,10 @@
         );
 
 
-        document.getElementById("loading")
-          .style.display = "none";
+        document.getElementById(
+          "loading"
+        ).style.display =
+          "none";
 
       }
 
@@ -692,8 +917,10 @@
           error
         );
 
-        document.getElementById("loading")
-          .style.display = "none";
+        document.getElementById(
+          "loading"
+        ).style.display =
+          "none";
 
       }
 
@@ -710,7 +937,8 @@
         return;
       }
 
-      let url = scannedURL;
+      let url =
+        scannedURL;
 
 
       if (
@@ -718,7 +946,8 @@
         !url.startsWith("https://")
       ) {
 
-        url = "https://" + url;
+        url =
+          "https://" + url;
 
       }
 
