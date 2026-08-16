@@ -1,7 +1,8 @@
 <!--
   QR SCANNER
-  VERSION: 2.6
+  VERSION: 2.7
   Custom results for TOYBOX, Ender 3, H2D, and MakerWorld
+  Improved spacing for longer result text
 -->
 
 <!DOCTYPE html>
@@ -81,54 +82,80 @@
 
     #scan-box {
       position: absolute;
+
       width: 250px !important;
       height: 250px !important;
+
       min-width: 250px;
       min-height: 250px;
+
       max-width: 250px;
       max-height: 250px;
+
       left: 50%;
       top: 50%;
+
       transform: translate(-50%, -50%);
+
       border: 3px solid white;
       border-radius: 18px;
+
       pointer-events: none;
+
       z-index: 10;
     }
 
     #hold-still {
       position: absolute;
+
       left: 50%;
       top: calc(50% + 155px);
+
       transform: translateX(-50%);
+
       z-index: 15;
+
       padding: 9px 16px;
+
       border-radius: 999px;
+
       background: rgba(0, 0, 0, 0.65);
+
       color: white;
+
       font-family: Arial, sans-serif;
+
       font-size: 15px;
       font-weight: 600;
+
       white-space: nowrap;
+
       display: none;
     }
 
     #loading {
       position: absolute;
       inset: 0;
+
       background: #000;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
+
       z-index: 20;
     }
 
     .spinner {
       width: 28px;
       height: 28px;
+
       border: 3px solid #333;
       border-top: 3px solid white;
+
       border-radius: 50%;
+
       animation: spin 0.6s linear infinite;
     }
 
@@ -138,50 +165,92 @@
       }
     }
 
+    /*
+      RESULT TEXT
+    */
+
     #result-text {
       position: absolute;
+
       left: 50%;
-      top: calc(50% - 150px);
+      top: 12%;
+
       transform: translateX(-50%);
+
       z-index: 50;
-      width: 90%;
+
+      width: 85%;
+      max-width: 700px;
+
       color: white;
+
       font-family: Arial, sans-serif;
+
       font-size: 36px;
       font-weight: 700;
+
       text-align: center;
-      line-height: 1.2;
+
+      line-height: 1.25;
+
       display: none;
     }
 
+    /*
+      BUTTONS
+    */
+
     .action-button {
       position: absolute;
+
       left: 50%;
+
       transform: translateX(-50%);
+
       z-index: 50;
+
       border: none;
+
       padding: 18px 38px;
+
       border-radius: 999px;
+
       background: white;
+
       color: #111;
+
       font-family: Arial, sans-serif;
+
       font-size: 20px;
+
       font-weight: 600;
+
       cursor: pointer;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+
+      box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.25);
     }
 
     .action-button:active {
-      transform: translateX(-50%) scale(0.95);
+      transform:
+        translateX(-50%)
+        scale(0.95);
     }
 
+    /*
+      BUTTONS ARE NOW SPACED
+      FARTHER DOWN FROM THE TEXT
+    */
+
     #open-button {
-      top: calc(50% + 20px);
+      top: 55%;
+
       display: none;
     }
 
     #rescan {
-      top: calc(50% + 90px);
+      top: 70%;
+
       display: none;
     }
 
@@ -422,6 +491,10 @@
               ).style.display = "none";
 
 
+              /*
+                TURN CAMERA OFF
+              */
+
               if (scanner) {
 
                 try {
@@ -442,6 +515,10 @@
               }
 
 
+              /*
+                HIDE SCANNER UI
+              */
+
               document.getElementById(
                 "reader"
               ).style.display = "none";
@@ -455,6 +532,10 @@
               ).style.display = "none";
 
 
+              /*
+                SHOW RESULT
+              */
+
               const resultText =
                 document.getElementById(
                   "result-text"
@@ -466,6 +547,10 @@
               resultText.style.display =
                 "block";
 
+
+              /*
+                BUTTON TEXT
+              */
 
               const openButton =
                 document.getElementById(
@@ -536,7 +621,6 @@
       if (!scannedURL) {
         return;
       }
-
 
       let url = scannedURL;
 
@@ -572,675 +656,6 @@
 
     /*
       START
-    */
-
-    window.addEventListener(
-      "load",
-      function() {
-
-        startScanner();
-
-      }
-    );
-
-  </script>
-
-</body>
-</html>
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-    }
-
-    #camera {
-      position: relative;
-
-      width: 100%;
-      height: 100%;
-
-      overflow: hidden;
-
-      border-radius: 28px;
-
-      background: #000;
-    }
-
-    #reader {
-      position: absolute;
-      inset: 0;
-
-      width: 100% !important;
-      height: 100% !important;
-
-      border: none !important;
-    }
-
-    #reader video {
-      width: 100% !important;
-      height: 100% !important;
-
-      object-fit: cover !important;
-    }
-
-    #reader__dashboard,
-    #reader__header_message {
-      display: none !important;
-    }
-
-    #reader__scan_region {
-      border: none !important;
-    }
-
-    #reader__scan_region img {
-      display: none !important;
-    }
-
-    #reader__scan_region > div {
-      border: none !important;
-    }
-
-    #scan-box {
-      position: absolute;
-
-      width: 250px !important;
-      height: 250px !important;
-
-      min-width: 250px;
-      min-height: 250px;
-
-      max-width: 250px;
-      max-height: 250px;
-
-      left: 50%;
-      top: 50%;
-
-      transform: translate(-50%, -50%);
-
-      border: 3px solid white;
-
-      border-radius: 18px;
-
-      pointer-events: none;
-
-      z-index: 10;
-    }
-
-    #hold-still {
-      position: absolute;
-
-      left: 50%;
-      top: calc(50% + 155px);
-
-      transform: translateX(-50%);
-
-      z-index: 15;
-
-      padding: 9px 16px;
-
-      border-radius: 999px;
-
-      background: rgba(0, 0, 0, 0.65);
-
-      color: white;
-
-      font-family: Arial, sans-serif;
-
-      font-size: 15px;
-      font-weight: 600;
-
-      white-space: nowrap;
-
-      display: none;
-    }
-
-    #loading {
-      position: absolute;
-      inset: 0;
-
-      background: #000;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      z-index: 20;
-    }
-
-    .spinner {
-      width: 28px;
-      height: 28px;
-
-      border: 3px solid #333;
-      border-top: 3px solid white;
-
-      border-radius: 50%;
-
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    #result-text {
-      position: absolute;
-
-      left: 50%;
-      top: calc(50% - 110px);
-
-      transform: translateX(-50%);
-
-      z-index: 50;
-
-      color: white;
-
-      font-family: Arial, sans-serif;
-
-      font-size: 36px;
-      font-weight: 700;
-
-      text-align: center;
-
-      white-space: nowrap;
-
-      display: none;
-    }
-
-    .action-button {
-      position: absolute;
-
-      left: 50%;
-
-      transform: translateX(-50%);
-
-      z-index: 50;
-
-      border: none;
-
-      padding: 18px 38px;
-
-      border-radius: 999px;
-
-      background: white;
-
-      color: #111;
-
-      font-family: Arial, sans-serif;
-
-      font-size: 20px;
-
-      font-weight: 600;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.25);
-    }
-
-    .action-button:active {
-      transform:
-        translateX(-50%)
-        scale(0.95);
-    }
-
-    #open-button {
-      top: calc(50% - 35px);
-
-      display: none;
-    }
-
-    #rescan {
-      top: calc(50% + 35px);
-
-      display: none;
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <div id="app">
-
-    <div id="camera">
-
-      <div id="reader"></div>
-
-      <div id="scan-box"></div>
-
-      <div id="hold-still">
-        Hold still
-      </div>
-
-      <div id="loading">
-
-        <div class="spinner"></div>
-
-      </div>
-
-      <div id="result-text"></div>
-
-      <button
-        id="open-button"
-        class="action-button"
-        onclick="openScannedSite()"
-      >
-        Open
-      </button>
-
-      <button
-        id="rescan"
-        class="action-button"
-        onclick="rescan()"
-      >
-        Rescan
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <script>
-
-    let scanner = null;
-
-    let firstDetection = null;
-
-    let detectedText = null;
-
-    let scanConfirmed = false;
-
-    let scannedURL = null;
-
-    let isPrinterLink = false;
-
-    const HOLD_TIME = 600;
-
-
-    /*
-      CUSTOM QR RESULTS
-    */
-
-    function getQRText(url) {
-
-      try {
-
-        const scannedURL = new URL(
-          url.startsWith("http")
-            ? url
-            : "https://" + url
-        );
-
-        const cleanURL =
-          scannedURL.origin +
-          scannedURL.pathname;
-
-
-        /*
-          TOYBOX
-        */
-
-        if (
-          cleanURL ===
-          "https://apps.apple.com/app/id1166269606"
-        ) {
-
-          isPrinterLink = true;
-
-          return "TOYBOX Found";
-
-        }
-
-
-        /*
-          ENDER 3
-        */
-
-        if (
-          cleanURL ===
-          "https://apps.apple.com/app/id1658133862"
-        ) {
-
-          isPrinterLink = true;
-
-          return "Ender 3 Found";
-
-        }
-
-
-        /*
-          H2D
-        */
-
-        if (
-          cleanURL ===
-          "https://apps.apple.com/app/id1625671285"
-        ) {
-
-          isPrinterLink = true;
-
-          return "H2D Found";
-
-        }
-
-
-        /*
-          MAKERWORLD
-        */
-
-        if (
-          scannedURL.origin ===
-            "https://makerworld.com" &&
-          scannedURL.pathname === "/en"
-        ) {
-
-          isPrinterLink = false;
-
-          return "Open Makerworld?";
-
-        }
-
-
-        /*
-          DEFAULT
-        */
-
-        isPrinterLink = false;
-
-        return "QR Code Found";
-
-      }
-
-      catch (error) {
-
-        isPrinterLink = false;
-
-        return "QR Code Found";
-
-      }
-
-    }
-
-
-    /*
-      START CAMERA
-    */
-
-    async function startScanner() {
-
-      scanner = new Html5Qrcode("reader");
-
-
-      try {
-
-        await scanner.start(
-
-          {
-            facingMode: "environment"
-          },
-
-          {
-            fps: 30,
-
-            qrbox: {
-              width: 250,
-              height: 250
-            },
-
-            disableFlip: false
-          },
-
-          async function(decodedText) {
-
-            if (scanConfirmed) {
-              return;
-            }
-
-
-            /*
-              FIRST DETECTION
-            */
-
-            if (firstDetection === null) {
-
-              firstDetection = Date.now();
-
-              detectedText = decodedText;
-
-              document.getElementById(
-                "hold-still"
-              ).style.display = "block";
-
-              return;
-
-            }
-
-
-            /*
-              DIFFERENT QR CODE
-            */
-
-            if (decodedText !== detectedText) {
-
-              firstDetection = Date.now();
-
-              detectedText = decodedText;
-
-              document.getElementById(
-                "hold-still"
-              ).style.display = "block";
-
-              return;
-
-            }
-
-
-            /*
-              CONFIRM QR
-            */
-
-            if (
-              Date.now() - firstDetection
-              >= HOLD_TIME
-            ) {
-
-              scanConfirmed = true;
-
-              scannedURL = decodedText;
-
-
-              /*
-                Hide Hold Still
-              */
-
-              document.getElementById(
-                "hold-still"
-              ).style.display = "none";
-
-
-              /*
-                Turn camera OFF
-              */
-
-              if (scanner) {
-
-                try {
-
-                  await scanner.stop();
-
-                }
-
-                catch (error) {
-
-                  console.error(
-                    "CAMERA STOP ERROR:",
-                    error
-                  );
-
-                }
-
-              }
-
-
-              /*
-                Hide scanner UI
-              */
-
-              document.getElementById(
-                "reader"
-              ).style.display = "none";
-
-              document.getElementById(
-                "scan-box"
-              ).style.display = "none";
-
-              document.getElementById(
-                "loading"
-              ).style.display = "none";
-
-
-              /*
-                Show custom result text
-              */
-
-              const resultText =
-                document.getElementById(
-                  "result-text"
-                );
-
-              resultText.textContent =
-                getQRText(decodedText);
-
-              resultText.style.display =
-                "block";
-
-
-              /*
-                Change button text depending
-                on the QR code.
-              */
-
-              const openButton =
-                document.getElementById(
-                  "open-button"
-                );
-
-              if (isPrinterLink) {
-
-                openButton.textContent =
-                  "Print";
-
-              }
-
-              else {
-
-                openButton.textContent =
-                  "Open";
-
-              }
-
-
-              /*
-                Show buttons
-              */
-
-              openButton.style.display =
-                "block";
-
-              document.getElementById(
-                "rescan"
-              ).style.display = "block";
-
-            }
-
-          },
-
-          function(errorMessage) {
-
-            // Ignore normal scanning errors.
-
-          }
-
-        );
-
-
-        document.getElementById("loading")
-          .style.display = "none";
-
-      }
-
-      catch(error) {
-
-        console.error(
-          "CAMERA ERROR:",
-          error
-        );
-
-        document.getElementById("loading")
-          .style.display = "none";
-
-      }
-
-    }
-
-
-    /*
-      OPEN / PRINT
-    */
-
-    function openScannedSite() {
-
-      if (!scannedURL) {
-        return;
-      }
-
-
-      let url = scannedURL;
-
-
-      if (
-        !url.startsWith("http://") &&
-        !url.startsWith("https://")
-      ) {
-
-        url = "https://" + url;
-
-      }
-
-
-      /*
-        The button click directly opens
-        the destination, which works with
-        Safari's popup protection.
-      */
-
-      window.open(
-        url,
-        "_blank"
-      );
-
-    }
-
-
-    /*
-      RESCAN
-    */
-
-    function rescan() {
-
-      window.location.reload();
-
-    }
-
-
-    /*
-      START WHEN PAGE LOADS
     */
 
     window.addEventListener(
