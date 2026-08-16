@@ -1,8 +1,7 @@
 <!--
   QR SCANNER
   VERSION: 2.2
-  Custom text based on scanned website
-  MakerWorld: H2D Found
+  MakerWorld /en = H2D Found
 -->
 
 <!DOCTYPE html>
@@ -89,6 +88,10 @@
       border: none !important;
     }
 
+    /*
+      FIXED QR BOX
+    */
+
     #scan-box {
       position: absolute;
 
@@ -114,6 +117,10 @@
 
       z-index: 10;
     }
+
+    /*
+      HOLD STILL
+    */
 
     #hold-still {
       position: absolute;
@@ -142,6 +149,10 @@
 
       display: none;
     }
+
+    /*
+      LOADING
+    */
 
     #loading {
       position: absolute;
@@ -175,6 +186,10 @@
       }
     }
 
+    /*
+      RESULT TEXT
+    */
+
     #result-text {
       position: absolute;
 
@@ -198,6 +213,10 @@
 
       display: none;
     }
+
+    /*
+      BUTTONS
+    */
 
     .action-button {
       position: absolute;
@@ -236,13 +255,23 @@
         scale(0.95);
     }
 
+    /*
+      OPEN BUTTON
+    */
+
     #open-button {
       top: calc(50% - 28px);
+
       display: none;
     }
 
+    /*
+      RESCAN BUTTON
+    */
+
     #rescan {
       top: calc(50% + 28px);
+
       display: none;
     }
 
@@ -264,7 +293,9 @@
       </div>
 
       <div id="loading">
+
         <div class="spinner"></div>
+
       </div>
 
       <div id="result-text"></div>
@@ -313,29 +344,27 @@
 
       try {
 
-        const hostname =
-          new URL(
-            url.startsWith("http")
-              ? url
-              : "https://" + url
-          ).hostname.toLowerCase();
-
+        const scannedURL = new URL(
+          url.startsWith("http")
+            ? url
+            : "https://" + url
+        );
 
         /*
-          MAKERWORLD
+          EXACT MAKERWORLD LINK
         */
 
         if (
-          hostname.includes("makerworld.com")
+          scannedURL.origin === "https://makerworld.com" &&
+          scannedURL.pathname === "/en"
         ) {
 
           return "H2D Found";
 
         }
 
-
         /*
-          DEFAULT
+          DEFAULT TEXT
         */
 
         return "QR Code Found";
@@ -350,6 +379,10 @@
 
     }
 
+
+    /*
+      START CAMERA
+    */
 
     async function startScanner() {
 
@@ -382,6 +415,10 @@
             }
 
 
+            /*
+              FIRST DETECTION
+            */
+
             if (firstDetection === null) {
 
               firstDetection = Date.now();
@@ -393,8 +430,13 @@
               ).style.display = "block";
 
               return;
+
             }
 
+
+            /*
+              DIFFERENT QR CODE
+            */
 
             if (decodedText !== detectedText) {
 
@@ -407,8 +449,13 @@
               ).style.display = "block";
 
               return;
+
             }
 
+
+            /*
+              CONFIRM QR
+            */
 
             if (
               Date.now() - firstDetection
@@ -420,13 +467,17 @@
               scannedURL = decodedText;
 
 
+              /*
+                Hide Hold Still
+              */
+
               document.getElementById(
                 "hold-still"
               ).style.display = "none";
 
 
               /*
-                Turn camera off.
+                Turn camera OFF
               */
 
               if (scanner) {
@@ -436,6 +487,7 @@
                   await scanner.stop();
 
                 }
+
                 catch (error) {
 
                   console.error(
@@ -449,7 +501,7 @@
 
 
               /*
-                Hide scanner UI.
+                Hide scanner UI
               */
 
               document.getElementById(
@@ -466,7 +518,7 @@
 
 
               /*
-                Show custom text.
+                Show custom result text
               */
 
               const resultText =
@@ -482,7 +534,7 @@
 
 
               /*
-                Show buttons.
+                Show buttons
               */
 
               document.getElementById(
@@ -499,7 +551,9 @@
 
           function(errorMessage) {
 
-            // Ignore normal scanning errors.
+            /*
+              Ignore normal scanning errors.
+            */
 
           }
 
@@ -526,6 +580,10 @@
     }
 
 
+    /*
+      OPEN SCANNED SITE
+    */
+
     function openScannedSite() {
 
       if (!scannedURL) {
@@ -546,6 +604,12 @@
       }
 
 
+      /*
+        User click directly triggers
+        the new tab, which works better
+        with Safari popup protection.
+      */
+
       window.open(
         url,
         "_blank"
@@ -554,12 +618,20 @@
     }
 
 
+    /*
+      RESCAN
+    */
+
     function rescan() {
 
       window.location.reload();
 
     }
 
+
+    /*
+      START WHEN PAGE LOADS
+    */
 
     window.addEventListener(
       "load",
