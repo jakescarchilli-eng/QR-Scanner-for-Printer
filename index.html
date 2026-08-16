@@ -1,7 +1,7 @@
 <!--
   QR SCANNER
-  VERSION: 3.3
-  Added home menu with H2D, TOYBOX, and Ender 3 buttons
+  VERSION: 3.5
+  Added Refresh button to home menu
 -->
 
 <!DOCTYPE html>
@@ -39,172 +39,103 @@
       background: #000;
     }
 
-    /*
-      TOP BAR
-    */
-
     #top-bar {
       position: relative;
-
       width: 100%;
       height: 65px;
-
       flex-shrink: 0;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       background: #000;
     }
 
-    /*
-      TITLE
-    */
-
     #site-title {
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 24px;
       font-weight: 700;
-
       text-align: center;
-
       white-space: nowrap;
-
       user-select: none;
     }
 
-    /*
-      HOME BUTTON
-    */
-
     #home-button {
       position: absolute;
-
       left: 12px;
       top: 50%;
-
       transform: translateY(-50%);
-
       width: 42px;
       height: 42px;
-
       border: none;
       border-radius: 12px;
-
       background: #222;
-
       color: white;
-
       font-size: 22px;
-
       cursor: pointer;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       z-index: 200;
     }
 
     #home-button:active {
-      transform:
-        translateY(-50%)
-        scale(0.94);
+      transform: translateY(-50%) scale(0.94);
     }
-
-    /*
-      HOME MENU
-    */
 
     #home-menu {
       position: absolute;
-
       left: 12px;
       top: 58px;
-
       width: 180px;
-
       padding: 10px;
-
       background: #111;
-
       border: 1px solid #333;
-
       border-radius: 18px;
-
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.5);
-
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
       z-index: 300;
-
       display: none;
     }
 
     .menu-button {
       width: 100%;
-
       border: none;
-
       border-radius: 12px;
-
       padding: 13px 10px;
-
       margin: 4px 0;
-
       background: #222;
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 17px;
-
       font-weight: 600;
-
       cursor: pointer;
     }
 
     .menu-button:active {
       background: #333;
-
       transform: scale(0.98);
     }
 
-    /*
-      CAMERA
-    */
-
     #camera {
       position: relative;
-
       width: 100%;
       height: calc(100% - 65px);
-
       overflow: hidden;
-
       border-radius: 28px 28px 0 0;
-
       background: #000;
     }
 
     #reader {
       position: absolute;
       inset: 0;
-
       width: 100% !important;
       height: 100% !important;
-
       border: none !important;
     }
 
     #reader video {
       width: 100% !important;
       height: 100% !important;
-
       object-fit: cover !important;
     }
 
@@ -225,97 +156,94 @@
       border: none !important;
     }
 
-    /*
-      SCAN BOX
-    */
-
     #scan-box {
       position: absolute;
-
       width: 250px !important;
       height: 250px !important;
-
       min-width: 250px;
       min-height: 250px;
-
       max-width: 250px;
       max-height: 250px;
-
       left: 50%;
       top: 50%;
-
       transform: translate(-50%, -50%);
-
       border: 3px solid white;
-
       border-radius: 18px;
-
       pointer-events: none;
-
       z-index: 10;
     }
 
-    /*
-      HOLD STILL
-    */
-
     #hold-still {
       position: absolute;
-
       left: 50%;
       top: calc(50% + 155px);
-
       transform: translateX(-50%);
-
       z-index: 15;
-
       padding: 9px 16px;
-
       border-radius: 999px;
-
       background: rgba(0, 0, 0, 0.65);
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 15px;
       font-weight: 600;
-
       white-space: nowrap;
-
       display: none;
     }
 
-    /*
-      LOADING
-    */
+    #zoom-container {
+      position: absolute;
+      left: 50%;
+      bottom: 45px;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: min(70%, 350px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #zoom-label {
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    #zoom-slider {
+      width: 100%;
+      height: 5px;
+      accent-color: white;
+      cursor: pointer;
+    }
+
+    #zoom-value {
+      min-width: 35px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      text-align: right;
+    }
 
     #loading {
       position: absolute;
-
       inset: 0;
-
       background: #000;
-
       display: flex;
-
       align-items: center;
       justify-content: center;
-
       z-index: 20;
     }
 
     .spinner {
       width: 28px;
       height: 28px;
-
       border: 3px solid #333;
-
       border-top: 3px solid white;
-
       border-radius: 50%;
-
       animation: spin 0.6s linear infinite;
     }
 
@@ -325,114 +253,65 @@
       }
     }
 
-    /*
-      RESULT TEXT
-    */
-
     #result-text {
       position: absolute;
-
       left: 50%;
       top: 12%;
-
       transform: translateX(-50%);
-
       z-index: 50;
-
       width: 85%;
       max-width: 700px;
-
       color: white;
-
       font-family: Arial, sans-serif;
-
       font-size: 36px;
       font-weight: 700;
-
       text-align: center;
-
       line-height: 1.25;
-
       display: none;
     }
 
-    /*
-      ACTION BUTTONS
-    */
-
     .action-button {
       position: absolute;
-
       left: 50%;
-
       transform: translateX(-50%);
-
       z-index: 50;
-
       border: none;
-
       padding: 18px 38px;
-
       border-radius: 999px;
-
       background: white;
-
       color: #111;
-
       font-family: Arial, sans-serif;
-
       font-size: 20px;
-
       font-weight: 600;
-
       cursor: pointer;
-
-      box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
     }
 
     .action-button:active {
-      transform:
-        translateX(-50%)
-        scale(0.95);
+      transform: translateX(-50%) scale(0.95);
     }
 
     #open-button {
       top: 55%;
-
       display: none;
     }
 
     #rescan {
       top: 70%;
-
       display: none;
     }
 
-    /*
-      VERSION
-    */
-
     #version-number {
       position: absolute;
-
       left: 50%;
       bottom: 6px;
-
       transform: translateX(-50%);
-
       z-index: 100;
-
       color: rgba(255, 255, 255, 0.45);
-
       font-family: Arial, sans-serif;
-
       font-size: 9px;
-
       font-weight: 400;
-
       pointer-events: none;
-
       user-select: none;
     }
 
@@ -442,8 +321,6 @@
 <body>
 
   <div id="app">
-
-    <!-- TOP BAR -->
 
     <div id="top-bar">
 
@@ -458,9 +335,6 @@
       <div id="site-title">
         Printer Scanner 5000
       </div>
-
-
-      <!-- HOME MENU -->
 
       <div id="home-menu">
 
@@ -485,12 +359,16 @@
           Ender 3
         </button>
 
+        <button
+          class="menu-button"
+          onclick="refreshPage()"
+        >
+          Refresh
+        </button>
+
       </div>
 
     </div>
-
-
-    <!-- CAMERA -->
 
     <div id="camera">
 
@@ -500,6 +378,28 @@
 
       <div id="hold-still">
         it’s a bit blurry, try moving a bit
+      </div>
+
+      <div id="zoom-container">
+
+        <span id="zoom-label">
+          Zoom
+        </span>
+
+        <input
+          id="zoom-slider"
+          type="range"
+          min="1"
+          max="5"
+          step="0.1"
+          value="1"
+          oninput="setZoom(this.value)"
+        >
+
+        <span id="zoom-value">
+          1×
+        </span>
+
       </div>
 
       <div id="loading">
@@ -525,7 +425,7 @@
       </button>
 
       <div id="version-number">
-        v3.3
+        v3.5
       </div>
 
     </div>
@@ -536,16 +436,12 @@
   <script>
 
     let scanner = null;
-
     let firstDetection = null;
-
     let detectedText = null;
-
     let scanConfirmed = false;
-
     let scannedURL = null;
-
     let isPrinterLink = false;
+    let cameraTrack = null;
 
     const HOLD_TIME = 600;
 
@@ -557,24 +453,12 @@
     function toggleHomeMenu() {
 
       const menu =
-        document.getElementById(
-          "home-menu"
-        );
+        document.getElementById("home-menu");
 
-      if (
+      menu.style.display =
         menu.style.display === "block"
-      ) {
-
-        menu.style.display = "none";
-
-      }
-
-      else {
-
-        menu.style.display = "block";
-
-      }
-
+          ? "none"
+          : "block";
     }
 
 
@@ -584,14 +468,22 @@
 
     function openPrinterLink(url) {
 
-      window.open(
-        url,
-        "_blank"
-      );
+      window.open(url, "_blank");
 
       document.getElementById(
         "home-menu"
       ).style.display = "none";
+
+    }
+
+
+    /*
+      REFRESH PAGE
+    */
+
+    function refreshPage() {
+
+      window.location.reload();
 
     }
 
@@ -605,14 +497,10 @@
       function(event) {
 
         const menu =
-          document.getElementById(
-            "home-menu"
-          );
+          document.getElementById("home-menu");
 
         const button =
-          document.getElementById(
-            "home-button"
-          );
+          document.getElementById("home-button");
 
         if (
           !menu.contains(event.target) &&
@@ -713,6 +601,74 @@
 
 
     /*
+      ZOOM
+    */
+
+    async function setZoom(value) {
+
+      const zoom =
+        parseFloat(value);
+
+      document.getElementById(
+        "zoom-value"
+      ).textContent =
+        zoom.toFixed(1) + "×";
+
+
+      if (!cameraTrack) {
+        return;
+      }
+
+
+      try {
+
+        const capabilities =
+          cameraTrack.getCapabilities();
+
+
+        if (!capabilities.zoom) {
+          return;
+        }
+
+
+        const min =
+          capabilities.zoom.min;
+
+        const max =
+          capabilities.zoom.max;
+
+
+        const actualZoom =
+          min +
+          ((zoom - 1) / 4) *
+          (max - min);
+
+
+        await cameraTrack.applyConstraints({
+
+          advanced: [
+            {
+              zoom: actualZoom
+            }
+          ]
+
+        });
+
+      }
+
+      catch (error) {
+
+        console.log(
+          "Zoom not supported:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
       START CAMERA
     */
 
@@ -744,6 +700,33 @@
 
             if (scanConfirmed) {
               return;
+            }
+
+
+            if (!cameraTrack) {
+
+              const video =
+                document.querySelector(
+                  "#reader video"
+                );
+
+              if (
+                video &&
+                video.srcObject
+              ) {
+
+                const tracks =
+                  video.srcObject.getVideoTracks();
+
+                if (tracks.length > 0) {
+
+                  cameraTrack =
+                    tracks[0];
+
+                }
+
+              }
+
             }
 
 
@@ -807,6 +790,12 @@
 
 
               document.getElementById(
+                "zoom-container"
+              ).style.display =
+                "none";
+
+
+              document.getElementById(
                 "version-number"
               ).style.display =
                 "none";
@@ -830,6 +819,9 @@
                 }
 
               }
+
+
+              cameraTrack = null;
 
 
               document.getElementById(
@@ -867,23 +859,14 @@
                   "open-button"
                 );
 
-              if (isPrinterLink) {
-
-                openButton.textContent =
-                  "Print";
-
-              }
-
-              else {
-
-                openButton.textContent =
-                  "Open";
-
-              }
-
+              openButton.textContent =
+                isPrinterLink
+                  ? "Print"
+                  : "Open";
 
               openButton.style.display =
                 "block";
+
 
               document.getElementById(
                 "rescan"
@@ -896,7 +879,7 @@
 
           function(errorMessage) {
 
-            // Ignore normal scanning errors.
+            // Normal scanning errors are ignored.
 
           }
 
@@ -907,6 +890,33 @@
           "loading"
         ).style.display =
           "none";
+
+
+        setTimeout(function() {
+
+          const video =
+            document.querySelector(
+              "#reader video"
+            );
+
+          if (
+            video &&
+            video.srcObject
+          ) {
+
+            const tracks =
+              video.srcObject.getVideoTracks();
+
+            if (tracks.length > 0) {
+
+              cameraTrack =
+                tracks[0];
+
+            }
+
+          }
+
+        }, 500);
 
       }
 
