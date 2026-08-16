@@ -1,11 +1,12 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 3.8
+  VERSION: 3.9
 
   CHANGE:
-  - Actual QR scanner detection area is fixed at 250x250
-  - Visual rounded square is fixed at 250x250
-  - Scanner area does not resize when screen/window changes
+  - Actual scanner container is fixed at 250x250
+  - QR detection area is fixed at 250x250
+  - Scanner does not stretch when the tab/window changes size
+  - Rounded visual scanner box stays aligned with the actual scanner
   - Everything else kept the same
 -->
 
@@ -122,6 +123,7 @@ body {
   cursor: pointer;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
@@ -149,7 +151,8 @@ body {
 
   width: 190px;
 
-  max-height: calc(100vh - 75px);
+  max-height:
+    calc(100vh - 75px);
 
   overflow-y: auto;
 
@@ -162,7 +165,8 @@ body {
   border-radius: 18px;
 
   box-shadow:
-    0 8px 30px rgba(0,0,0,0.5);
+    0 8px 30px
+    rgba(0,0,0,0.5);
 
   z-index: 300;
 
@@ -210,7 +214,8 @@ body {
 
   width: 100%;
 
-  height: calc(100% - 65px);
+  height:
+    calc(100% - 65px);
 
   overflow: hidden;
 
@@ -221,35 +226,82 @@ body {
 }
 
 
+/* =========================
+   FIXED ACTUAL SCANNER
+========================= */
+
 /*
-   IMPORTANT:
+  IMPORTANT:
 
-   The reader itself stays full-screen
-   so the camera feed works correctly.
+  The scanner itself is now FIXED.
 
-   The QR DETECTION REGION is fixed
-   separately at exactly 250x250.
+  It is NOT:
+  - 100% width
+  - 100% height
+  - vw
+  - vh
+  - based on camera dimensions
+
+  It is always exactly 250x250.
 */
 
 #reader {
 
   position: absolute;
 
-  inset: 0;
+  width: 250px !important;
+  height: 250px !important;
 
-  width: 100% !important;
-  height: 100% !important;
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  overflow: hidden;
 
   border: none !important;
+
+  z-index: 4;
 }
+
+
+/*
+  Camera video is locked to the
+  scanner's fixed square.
+*/
 
 #reader video {
 
-  width: 100% !important;
-  height: 100% !important;
+  position: absolute !important;
+
+  width: 250px !important;
+  height: 250px !important;
+
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
+
+  left: 0 !important;
+  top: 0 !important;
 
   object-fit: cover !important;
+
 }
+
+
+/*
+  Hide HTML5 QRCode's own
+  extra UI.
+*/
 
 #reader__dashboard,
 #reader__header_message {
@@ -258,8 +310,29 @@ body {
 }
 
 
+/*
+  Remove the library's
+  generated borders.
+*/
+
+#reader__scan_region {
+
+  width: 250px !important;
+  height: 250px !important;
+
+  border: none !important;
+
+  overflow: hidden !important;
+}
+
+#reader__scan_region img {
+
+  display: none !important;
+}
+
+
 /* =========================
-   FIXED SCANNER AREA
+   FIXED VISUAL SCANNER BOX
 ========================= */
 
 #scan-box {
@@ -281,44 +354,14 @@ body {
   transform:
     translate(-50%, -50%);
 
-  border: 3px solid white;
+  border:
+    3px solid white;
 
   border-radius: 18px;
 
   pointer-events: none;
 
-  z-index: 10;
-}
-
-
-/*
-   This invisible element forces
-   the actual scanner region to remain
-   exactly 250x250.
-*/
-
-#fixed-qr-region {
-
-  position: absolute;
-
-  width: 250px !important;
-  height: 250px !important;
-
-  min-width: 250px !important;
-  min-height: 250px !important;
-
-  max-width: 250px !important;
-  max-height: 250px !important;
-
-  left: 50%;
-  top: 50%;
-
-  transform:
-    translate(-50%, -50%);
-
-  pointer-events: none;
-
-  z-index: 5;
+  z-index: 20;
 }
 
 
@@ -332,14 +375,16 @@ body {
 
   left: 50%;
 
-  top: calc(50% + 155px);
+  top:
+    calc(50% + 155px);
 
   transform:
     translateX(-50%);
 
-  z-index: 15;
+  z-index: 30;
 
-  padding: 9px 16px;
+  padding:
+    9px 16px;
 
   border-radius: 999px;
 
@@ -374,9 +419,11 @@ body {
 
   z-index: 100;
 
-  width: min(70%, 350px);
+  width:
+    min(70%, 350px);
 
-  padding: 10px 16px;
+  padding:
+    10px 16px;
 
   border-radius: 999px;
 
@@ -439,9 +486,10 @@ body {
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
-  z-index: 20;
+  z-index: 50;
 }
 
 .spinner {
@@ -449,7 +497,8 @@ body {
   width: 28px;
   height: 28px;
 
-  border: 3px solid #333;
+  border:
+    3px solid #333;
 
   border-top:
     3px solid white;
@@ -504,7 +553,7 @@ body {
 
 
 /* =========================
-   BUTTONS
+   ACTION BUTTONS
 ========================= */
 
 .action-button {
@@ -520,7 +569,8 @@ body {
 
   border: none;
 
-  padding: 18px 38px;
+  padding:
+    18px 38px;
 
   border-radius: 999px;
 
@@ -664,7 +714,7 @@ body {
 
 
 /* =========================
-   DEV MODE ACTIVE
+   DEV MODE
 ========================= */
 
 body.dev-mode #top-bar {
@@ -683,6 +733,25 @@ body.dev-mode #camera {
 body.dev-mode #dev-panel {
 
   display: flex;
+}
+
+
+/*
+  Keep the scanner exactly
+  250x250 even in Dev Mode.
+*/
+
+body.dev-mode #reader,
+body.dev-mode #scan-box {
+
+  width: 250px !important;
+  height: 250px !important;
+
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
 }
 
 
@@ -774,9 +843,7 @@ body.light-mode #dev-panel {
 <div id="app">
 
 
-  <!-- =====================
-       TOP BAR
-  ====================== -->
+  <!-- TOP BAR -->
 
   <div id="top-bar">
 
@@ -867,25 +934,22 @@ body.light-mode #dev-panel {
   </div>
 
 
-  <!-- =====================
-       CAMERA
-  ====================== -->
+  <!-- CAMERA -->
 
   <div id="camera">
 
 
+    <!-- ACTUAL FIXED SCANNER -->
+
     <div id="reader"></div>
 
 
-    <!-- FIXED DETECTION AREA -->
-
-    <div id="fixed-qr-region"></div>
-
-
-    <!-- FIXED VISUAL SQUARE -->
+    <!-- VISUAL FIXED SQUARE -->
 
     <div id="scan-box"></div>
 
+
+    <!-- HOLD STILL -->
 
     <div id="hold-still">
 
@@ -968,7 +1032,7 @@ body.light-mode #dev-panel {
 
     <div id="version-number">
 
-      v3.8
+      v3.9
 
     </div>
 
@@ -976,9 +1040,7 @@ body.light-mode #dev-panel {
   </div>
 
 
-  <!-- =====================
-       DEV OUTPUT
-  ====================== -->
+  <!-- DEV OUTPUT -->
 
   <div id="dev-panel">
 
@@ -1027,20 +1089,9 @@ let lightMode = false;
 const HOLD_TIME = 600;
 
 
-/* =========================
-   FIXED QR SIZE
-========================= */
-
 /*
-   THIS IS THE IMPORTANT PART.
-
-   The visual box and the actual
-   Html5Qrcode detection box use
-   the exact same dimensions.
-
-   Neither dimension is based on
-   window width, height, rotation,
-   percentages, vw, vh, or aspect ratio.
+  THE SCANNER IS ALWAYS
+  EXACTLY THIS SIZE.
 */
 
 const QR_SIZE = 250;
@@ -1229,7 +1280,6 @@ document.addEventListener(
 
       menu.style.display =
         "none";
-
     }
 
   }
@@ -1255,7 +1305,6 @@ function getSiteName(url) {
       fixedURL =
         "https://" +
         fixedURL;
-
     }
 
     const parsed =
@@ -1323,7 +1372,6 @@ function getSiteName(url) {
       return knownSites[
         hostname
       ];
-
     }
 
     const parts =
@@ -1343,7 +1391,6 @@ function getSiteName(url) {
         name.slice(1);
 
       return name;
-
     }
 
     return hostname;
@@ -1357,7 +1404,6 @@ function getSiteName(url) {
     );
 
     return "QR Code Found";
-
   }
 }
 
@@ -1582,7 +1628,7 @@ async function setZoom(value) {
 async function startScanner() {
 
   devLog(
-    "Starting scanner..."
+    "Starting fixed 250x250 scanner..."
   );
 
   scanner =
@@ -1604,7 +1650,8 @@ async function startScanner() {
         fps: 30,
 
         /*
-          FIXED ACTUAL SCANNING AREA
+          ACTUAL QR DETECTION
+          AREA IS FIXED.
         */
 
         qrbox: {
@@ -1657,7 +1704,6 @@ async function startScanner() {
               devLog(
                 "Camera track acquired"
               );
-
             }
           }
         }
@@ -1771,10 +1817,8 @@ async function startScanner() {
                 "Camera stop error: " +
                 error.message
               );
-
             }
           }
-
 
           cameraTrack =
             null;
@@ -1789,11 +1833,6 @@ async function startScanner() {
 
           document.getElementById(
             "scan-box"
-          ).style.display =
-            "none";
-
-          document.getElementById(
-            "fixed-qr-region"
           ).style.display =
             "none";
 
@@ -1827,7 +1866,7 @@ async function startScanner() {
           );
 
 
-          /* BUTTON */
+          /* OPEN / PRINT */
 
           const openButton =
             document.getElementById(
@@ -1854,7 +1893,6 @@ async function startScanner() {
           devLog(
             "Result buttons displayed"
           );
-
         }
 
       },
@@ -1863,9 +1901,8 @@ async function startScanner() {
       function(errorMessage) {
 
         /*
-          Normal scanning errors are
-          ignored so Dev Mode doesn't
-          get flooded.
+          Ignore normal QR
+          searching errors.
         */
 
       }
@@ -1880,7 +1917,7 @@ async function startScanner() {
 
 
     devLog(
-      "Scanner started successfully"
+      "Fixed scanner started"
     );
 
 
@@ -1912,7 +1949,6 @@ async function startScanner() {
           devLog(
             "Camera track ready"
           );
-
         }
       }
 
@@ -2011,11 +2047,11 @@ window.addEventListener(
     );
 
     devLog(
-      "Version 3.8"
+      "Version 3.9"
     );
 
     devLog(
-      "Fixed QR detection size: " +
+      "Actual scanner size: " +
       QR_SIZE +
       "x" +
       QR_SIZE
