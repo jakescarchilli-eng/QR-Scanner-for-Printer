@@ -1,14 +1,8 @@
 <!--
   QR SCANNER
-  VERSION: 2.1
-  Safari-compatible open behavior
-  After scan:
-  - Camera turns off
-  - Scanner UI hides
-  - Open button appears
-  - Tap Open to open the scanned site in a new tab
-  - Rescan button remains available
-  Everything else unchanged from Version 2.0
+  VERSION: 2.2
+  Custom text based on scanned website
+  MakerWorld: H2D Found
 -->
 
 <!DOCTYPE html>
@@ -78,10 +72,7 @@
       object-fit: cover !important;
     }
 
-    #reader__dashboard {
-      display: none !important;
-    }
-
+    #reader__dashboard,
     #reader__header_message {
       display: none !important;
     }
@@ -97,10 +88,6 @@
     #reader__scan_region > div {
       border: none !important;
     }
-
-    /*
-      FIXED QR BOX
-    */
 
     #scan-box {
       position: absolute;
@@ -127,10 +114,6 @@
 
       z-index: 10;
     }
-
-    /*
-      HOLD STILL
-    */
 
     #hold-still {
       position: absolute;
@@ -160,10 +143,6 @@
       display: none;
     }
 
-    /*
-      LOADING
-    */
-
     #loading {
       position: absolute;
       inset: 0;
@@ -183,7 +162,6 @@
       height: 28px;
 
       border: 3px solid #333;
-
       border-top: 3px solid white;
 
       border-radius: 50%;
@@ -192,16 +170,34 @@
     }
 
     @keyframes spin {
-
       to {
         transform: rotate(360deg);
       }
-
     }
 
-    /*
-      BUTTONS
-    */
+    #result-text {
+      position: absolute;
+
+      left: 50%;
+      top: calc(50% - 90px);
+
+      transform: translateX(-50%);
+
+      z-index: 50;
+
+      color: white;
+
+      font-family: Arial, sans-serif;
+
+      font-size: 24px;
+      font-weight: 700;
+
+      text-align: center;
+
+      white-space: nowrap;
+
+      display: none;
+    }
 
     .action-button {
       position: absolute;
@@ -240,23 +236,13 @@
         scale(0.95);
     }
 
-    /*
-      OPEN BUTTON
-    */
-
     #open-button {
       top: calc(50% - 28px);
-
       display: none;
     }
 
-    /*
-      RESCAN BUTTON
-    */
-
     #rescan {
       top: calc(50% + 28px);
-
       display: none;
     }
 
@@ -278,10 +264,10 @@
       </div>
 
       <div id="loading">
-
         <div class="spinner"></div>
-
       </div>
+
+      <div id="result-text"></div>
 
       <button
         id="open-button"
@@ -319,6 +305,52 @@
     const HOLD_TIME = 600;
 
 
+    /*
+      CUSTOM QR TEXT
+    */
+
+    function getQRText(url) {
+
+      try {
+
+        const hostname =
+          new URL(
+            url.startsWith("http")
+              ? url
+              : "https://" + url
+          ).hostname.toLowerCase();
+
+
+        /*
+          MAKERWORLD
+        */
+
+        if (
+          hostname.includes("makerworld.com")
+        ) {
+
+          return "H2D Found";
+
+        }
+
+
+        /*
+          DEFAULT
+        */
+
+        return "QR Code Found";
+
+      }
+
+      catch (error) {
+
+        return "QR Code Found";
+
+      }
+
+    }
+
+
     async function startScanner() {
 
       scanner = new Html5Qrcode("reader");
@@ -350,10 +382,6 @@
             }
 
 
-            /*
-              QR FIRST DETECTED
-            */
-
             if (firstDetection === null) {
 
               firstDetection = Date.now();
@@ -367,10 +395,6 @@
               return;
             }
 
-
-            /*
-              DIFFERENT QR
-            */
 
             if (decodedText !== detectedText) {
 
@@ -386,10 +410,6 @@
             }
 
 
-            /*
-              QR CONFIRMED
-            */
-
             if (
               Date.now() - firstDetection
               >= HOLD_TIME
@@ -397,17 +417,8 @@
 
               scanConfirmed = true;
 
-
-              /*
-                Save the URL.
-              */
-
               scannedURL = decodedText;
 
-
-              /*
-                Hide Hold Still.
-              */
 
               document.getElementById(
                 "hold-still"
@@ -415,7 +426,7 @@
 
 
               /*
-                Turn camera OFF.
+                Turn camera off.
               */
 
               if (scanner) {
@@ -455,7 +466,23 @@
 
 
               /*
-                Show Open + Rescan buttons.
+                Show custom text.
+              */
+
+              const resultText =
+                document.getElementById(
+                  "result-text"
+                );
+
+              resultText.textContent =
+                getQRText(decodedText);
+
+              resultText.style.display =
+                "block";
+
+
+              /*
+                Show buttons.
               */
 
               document.getElementById(
@@ -472,9 +499,7 @@
 
           function(errorMessage) {
 
-            /*
-              Ignore normal scanning errors.
-            */
+            // Ignore normal scanning errors.
 
           }
 
@@ -501,10 +526,6 @@
     }
 
 
-    /*
-      OPEN SCANNED SITE
-    */
-
     function openScannedSite() {
 
       if (!scannedURL) {
@@ -525,12 +546,6 @@
       }
 
 
-      /*
-        This click directly comes from
-        the user, so Safari is much less
-        likely to block the new tab.
-      */
-
       window.open(
         url,
         "_blank"
@@ -538,10 +553,6 @@
 
     }
 
-
-    /*
-      RESCAN
-    */
 
     function rescan() {
 
