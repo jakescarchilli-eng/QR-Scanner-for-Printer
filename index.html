@@ -1,7 +1,8 @@
 <!--
   QR SCANNER
-  VERSION: 2.2
-  MakerWorld /en = H2D Found
+  VERSION: 2.3
+  Bigger buttons and result text
+  Everything else unchanged from Version 2.2
 -->
 
 <!DOCTYPE html>
@@ -88,10 +89,6 @@
       border: none !important;
     }
 
-    /*
-      FIXED QR BOX
-    */
-
     #scan-box {
       position: absolute;
 
@@ -117,10 +114,6 @@
 
       z-index: 10;
     }
-
-    /*
-      HOLD STILL
-    */
 
     #hold-still {
       position: absolute;
@@ -149,10 +142,6 @@
 
       display: none;
     }
-
-    /*
-      LOADING
-    */
 
     #loading {
       position: absolute;
@@ -187,14 +176,14 @@
     }
 
     /*
-      RESULT TEXT
+      BIGGER RESULT TEXT
     */
 
     #result-text {
       position: absolute;
 
       left: 50%;
-      top: calc(50% - 90px);
+      top: calc(50% - 110px);
 
       transform: translateX(-50%);
 
@@ -204,7 +193,7 @@
 
       font-family: Arial, sans-serif;
 
-      font-size: 24px;
+      font-size: 36px;
       font-weight: 700;
 
       text-align: center;
@@ -215,7 +204,7 @@
     }
 
     /*
-      BUTTONS
+      BIGGER BUTTONS
     */
 
     .action-button {
@@ -229,7 +218,7 @@
 
       border: none;
 
-      padding: 13px 25px;
+      padding: 18px 38px;
 
       border-radius: 999px;
 
@@ -239,7 +228,7 @@
 
       font-family: Arial, sans-serif;
 
-      font-size: 15px;
+      font-size: 20px;
 
       font-weight: 600;
 
@@ -255,22 +244,14 @@
         scale(0.95);
     }
 
-    /*
-      OPEN BUTTON
-    */
-
     #open-button {
-      top: calc(50% - 28px);
+      top: calc(50% - 35px);
 
       display: none;
     }
 
-    /*
-      RESCAN BUTTON
-    */
-
     #rescan {
-      top: calc(50% + 28px);
+      top: calc(50% + 35px);
 
       display: none;
     }
@@ -336,10 +317,6 @@
     const HOLD_TIME = 600;
 
 
-    /*
-      CUSTOM QR TEXT
-    */
-
     function getQRText(url) {
 
       try {
@@ -350,10 +327,6 @@
             : "https://" + url
         );
 
-        /*
-          EXACT MAKERWORLD LINK
-        */
-
         if (
           scannedURL.origin === "https://makerworld.com" &&
           scannedURL.pathname === "/en"
@@ -362,10 +335,6 @@
           return "H2D Found";
 
         }
-
-        /*
-          DEFAULT TEXT
-        */
 
         return "QR Code Found";
 
@@ -379,10 +348,6 @@
 
     }
 
-
-    /*
-      START CAMERA
-    */
 
     async function startScanner() {
 
@@ -415,10 +380,6 @@
             }
 
 
-            /*
-              FIRST DETECTION
-            */
-
             if (firstDetection === null) {
 
               firstDetection = Date.now();
@@ -433,10 +394,6 @@
 
             }
 
-
-            /*
-              DIFFERENT QR CODE
-            */
 
             if (decodedText !== detectedText) {
 
@@ -453,10 +410,6 @@
             }
 
 
-            /*
-              CONFIRM QR
-            */
-
             if (
               Date.now() - firstDetection
               >= HOLD_TIME
@@ -467,18 +420,10 @@
               scannedURL = decodedText;
 
 
-              /*
-                Hide Hold Still
-              */
-
               document.getElementById(
                 "hold-still"
               ).style.display = "none";
 
-
-              /*
-                Turn camera OFF
-              */
 
               if (scanner) {
 
@@ -500,10 +445,6 @@
               }
 
 
-              /*
-                Hide scanner UI
-              */
-
               document.getElementById(
                 "reader"
               ).style.display = "none";
@@ -517,10 +458,6 @@
               ).style.display = "none";
 
 
-              /*
-                Show custom result text
-              */
-
               const resultText =
                 document.getElementById(
                   "result-text"
@@ -532,10 +469,6 @@
               resultText.style.display =
                 "block";
 
-
-              /*
-                Show buttons
-              */
 
               document.getElementById(
                 "open-button"
@@ -551,9 +484,7 @@
 
           function(errorMessage) {
 
-            /*
-              Ignore normal scanning errors.
-            */
+            // Ignore normal scanning errors.
 
           }
 
@@ -580,10 +511,6 @@
     }
 
 
-    /*
-      OPEN SCANNED SITE
-    */
-
     function openScannedSite() {
 
       if (!scannedURL) {
@@ -604,12 +531,6 @@
       }
 
 
-      /*
-        User click directly triggers
-        the new tab, which works better
-        with Safari popup protection.
-      */
-
       window.open(
         url,
         "_blank"
@@ -618,20 +539,12 @@
     }
 
 
-    /*
-      RESCAN
-    */
-
     function rescan() {
 
       window.location.reload();
 
     }
 
-
-    /*
-      START WHEN PAGE LOADS
-    */
 
     window.addEventListener(
       "load",
