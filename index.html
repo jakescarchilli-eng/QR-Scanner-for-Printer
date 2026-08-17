@@ -45,6 +45,8 @@ body.barcode-mode #reader__scan_region,body.barcode-mode #scan-box{width:min(86v
 #zoom-container{height:48px;flex:1;min-width:180px;max-width:350px;padding:10px 16px;border-radius:999px;background:#000a;display:flex;align-items:center;gap:10px}#zoom-label,#zoom-value{color:#fff;font-size:13px;font-weight:600;white-space:nowrap}#zoom-slider{width:100%;height:5px;accent-color:#fff}
 .circle-button{width:48px;height:48px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.15s}.circle-button:active{transform:scale(.9)}.circle-button.active{background:#fff;color:#000;border:2px solid #fff}.circle-button:not(.active){background:#000;color:#fff;border:2px solid #fff}
 .icon{position:relative;display:block;width:22px;height:22px;color:currentColor;pointer-events:none}.flashlight-icon:before{content:"";position:absolute;left:7px;top:2px;width:9px;height:15px;border:2px solid currentColor;border-radius:3px}.flashlight-icon:after{content:"";position:absolute;left:8px;bottom:1px;width:7px;height:5px;border-left:2px solid currentColor;border-right:2px solid currentColor}.sound-icon:before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;background:currentColor}.sound-icon:after{content:"";position:absolute;left:7px;top:4px;width:9px;height:14px;background:currentColor;clip-path:polygon(0 35%,35% 35%,100% 0,100% 100%,35% 65%,0 65%)}
+
+/* Refined QR / Bar Code quick-change icon */
 .mode-quick-button{position:relative}
 .mode-quick-icon{position:relative;display:block;width:22px;height:22px;pointer-events:none}
 .mode-quick-icon:before,
@@ -68,17 +70,16 @@ body.barcode-mode .mode-quick-mark{width:2px;height:20px;left:6px;top:1px;backgr
 .catalog-toolbar{display:flex;gap:8px;margin-bottom:12px}.catalog-search,.catalog-filter,.code-form input,.code-form select{padding:12px;border:1px solid #444;border-radius:12px;background:#22252b;color:#fff;outline:0}.catalog-search{flex:1;min-width:0}.catalog-filter{width:120px}
 .catalog-item{padding:14px;margin:8px 0;background:#202329;border:1px solid #333842;border-radius:14px}.catalog-name{color:#fff;font-size:18px;font-weight:700;margin-bottom:6px}.catalog-type{display:inline-block;padding:4px 8px;margin-bottom:7px;border-radius:999px;background:#353a44;color:#bbb;font-size:11px;font-weight:700}.catalog-code{color:#999;font-size:12px;word-break:break-all;margin-bottom:10px}.catalog-thumb{width:100%;max-height:150px;object-fit:contain;background:#fff;border-radius:10px;margin:4px 0 10px}.catalog-actions{display:flex;gap:7px}.catalog-button{flex:1;border:0;border-radius:10px;padding:10px;background:#343943;color:#fff}.catalog-button.delete{background:#541414}.catalog-empty{color:#777;text-align:center;padding:30px 10px}
 .code-form label{display:block;color:#fff;font-size:14px;font-weight:700;margin:12px 0 6px}.code-form input,.code-form select{width:100%;padding:13px}.form-button{width:100%;margin-top:15px;padding:14px;border:0;border-radius:12px;background:#fff;color:#000;font-size:16px;font-weight:700}
-#notes-panel{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;box-sizing:border-box!important;border-radius:0!important;overflow-y:auto!important;position:absolute;inset:0;z-index:2000;background:#000;padding:30px 20px;overflow-y:auto;display:none;pointer-events:none}#notes-title{color:#fff;font-size:30px;font-weight:700;text-align:center;margin-bottom:30px}.note-section{width:100%;max-width:600px;margin:0 auto 22px}.note-section label{display:block;color:#fff;font-size:18px;font-weight:700;margin-bottom:8px}.status-select{width:100%;padding:14px;border:2px solid #444;border-radius:14px;background:#111;color:#fff;font-size:17px;font-weight:600}.status-online{color:#3f9b50!important}.status-printing{color:#c09a2e!important}.status-offline{color:#c34a4a!important}.notes-save,.notes-back{position:relative;left:auto;top:auto;transform:none;display:block;width:min(90%,400px);margin:12px auto}
+#notes-panel{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;box-sizing:border-box!important;border-radius:0!important;overflow-y:auto!important;position:absolute;inset:0;z-index:2000;background:#000;padding:30px 20px;overflow-y:auto;display:none;pointer-events:none}
+#notes-title{color:#fff;font-size:30px;font-weight:700;text-align:center;margin-bottom:30px}.note-section{width:100%;max-width:600px;margin:0 auto 22px}.note-section label{display:block;color:#fff;font-size:18px;font-weight:700;margin-bottom:8px}.status-select{width:100%;padding:14px;border:2px solid #444;border-radius:14px;background:#111;color:#fff;font-size:17px;font-weight:600}.status-online{color:#3f9b50!important}.status-printing{color:#c09a2e!important}.status-offline{color:#c34a4a!important}.notes-save,.notes-back{position:relative;left:auto;top:auto;transform:none;display:block;width:min(90%,400px);margin:12px auto}
 .history-item{padding:12px;margin:6px 0;background:#222;border-radius:12px;color:#fff}.history-name{font-weight:700}.history-url{margin-top:4px;font-size:11px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.history-time{margin-top:4px;font-size:10px;color:#777}
 #history-panel{position:absolute;inset:0;width:100%;height:100%;max-height:none;left:0;top:0;transform:none;padding:30px 20px;background:#000;border:0;border-radius:0;overflow-y:auto;z-index:2500}#history-list{width:100%;max-width:900px;margin:0 auto}
 #dev-panel{display:none;width:100%;height:50%;background:#000;border-top:2px solid #333;color:#fff;overflow:hidden;flex-direction:column}#dev-header{height:40px;display:flex;align-items:center;padding-left:14px;background:#111;border-bottom:1px solid #333;font-size:14px;font-weight:700}#dev-output{flex:1;overflow-y:auto;padding:10px;font:12px/1.5 monospace;white-space:pre-wrap}#dev-stats{padding:10px;border-top:1px solid #333;background:#111;color:#aaa;font:11px monospace}#dev-buttons{display:flex;gap:6px;padding:8px;background:#111}.dev-button{flex:1;border:0;border-radius:8px;padding:8px;background:#222;color:#fff;font-size:11px}
 body.dev-mode #top-bar{height:50px}body.dev-mode #camera{height:calc(50% - 25px);border-radius:0}body.dev-mode #dev-panel{display:flex}
 body.light-mode #home-screen{background:linear-gradient(145deg,#eef2f7,#dfe5ed)}body.light-mode #scanner-screen,body.light-mode #notes-panel,body.light-mode #history-panel{background:#edf1f5}body.light-mode #top-bar{background:#f7f9fb;border-bottom:1px solid #d6dce4}body.light-mode #site-title{color:#15181d}body.light-mode #home-button{background:#fff;color:#111;border-color:#111}body.light-mode .home-app{background:linear-gradient(145deg,#fff,#f3f5f8);color:#111;border-color:#cbd2dc;box-shadow:0 8px 22px #7b87951c}body.light-mode .home-app.start{background:#15181d;color:#fff;border-color:#15181d}body.light-mode #home-title,body.light-mode #notes-title,body.light-mode .note-section label{color:#111}body.light-mode #home-subtitle{color:#66707d}body.light-mode .home-logo{color:#111}body.light-mode #home-menu,body.light-mode .panel{background:#f8fafc;border-color:#cbd2dc;color:#111}body.light-mode .panel-title,body.light-mode .catalog-name{color:#111}body.light-mode .catalog-item{background:#fff;border-color:#d5dbe3}body.light-mode .catalog-code{color:#69717d}body.light-mode .catalog-search,body.light-mode .catalog-filter,body.light-mode .code-form input,body.light-mode .code-form select{background:#fff;color:#111;border-color:#c5ccd6}body.light-mode .catalog-button{background:#e3e7ed;color:#111}body.light-mode .panel-close{background:#dfe4eb;color:#111}body.light-mode #zoom-container{background:#fffffff2}body.light-mode #zoom-label,body.light-mode #zoom-value{color:#111}body.light-mode .circle-button.active{background:#111;color:#fff;border-color:#111}body.light-mode .circle-button:not(.active){background:#fff;color:#111;border-color:#111}body.light-mode .status-select{background:#fff;color:#111}body.light-mode #history-panel .history-item{background:#fff;color:#111;border:1px solid #d5dbe3}
-
 .settings-list{display:flex;flex-direction:column;gap:10px}.settings-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 15px;background:#202329;border:1px solid #333842;border-radius:14px}.settings-copy{min-width:0}.settings-name{color:#fff;font-size:16px;font-weight:700}.settings-desc{color:#999;font-size:12px;line-height:1.4;margin-top:3px}.switch{position:relative;width:52px;height:30px;flex:0 0 auto}.switch input{opacity:0;width:0;height:0}.switch-slider{position:absolute;inset:0;background:#424752;border-radius:999px;transition:.18s}.switch-slider:before{content:"";position:absolute;width:22px;height:22px;left:4px;top:4px;border-radius:50%;background:#fff;transition:.18s}.switch input:checked+.switch-slider{background:#fff}.switch input:checked+.switch-slider:before{transform:translateX(22px);background:#111}.settings-value{color:#aaa;font-size:12px;margin-left:auto}.settings-note{color:#777;text-align:center;font-size:12px;line-height:1.45;padding:4px 8px 0}
 body.light-mode .settings-row{background:#fff;border-color:#d5dbe3}.light-mode .settings-name{color:#111}.light-mode .settings-desc,.light-mode .settings-note{color:#68717d}.light-mode .switch-slider{background:#b8c0cb}.light-mode .switch input:checked+.switch-slider{background:#111}.light-mode .switch input:checked+.switch-slider:before{background:#fff}
 body.tracking-active #scan-box{transition:left .16s ease-out,top .16s ease-out,width .16s ease-out,height .16s ease-out,border-radius .16s ease-out;will-change:left,top,width,height}
-
 .catalog-item.catalog-highlight{animation:catalogHighlight 1.8s ease-in-out 2;outline:2px solid #fff;outline-offset:3px}
 @keyframes catalogHighlight{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 #catalog-fullscreen{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(3,4,7,.97);color:#fff;overflow:auto}
@@ -99,149 +100,6 @@ body.tracking-active #scan-box{transition:left .16s ease-out,top .16s ease-out,w
 .light-mode .catalog-fullscreen-code{color:#4f5661}
 .light-mode .catalog-fullscreen-type{background:#e2e6eb;color:#303640}
 @media(max-width:500px){.home-grid{grid-template-columns:1fr}.home-app.start{grid-column:auto}#home-title{font-size:26px}#site-title{font-size:20px}#result-text{font-size:28px}.catalog-toolbar{flex-direction:column}.catalog-filter{width:100%}.catalog-actions{flex-direction:column}#notes-panel,#history-panel{padding:25px 14px}}
-
-/* v6.5 — polished Printer Status */
-#notes-panel{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;box-sizing:border-box!important;border-radius:0!important;overflow-y:auto!important;
-  position:fixed!important;inset:0!important;z-index:10000;display:none;pointer-events:none;
-  padding:0;overflow-y:auto;
-  background:
-    radial-gradient(circle at 50% -15%,#242831 0,#111318 42%,#08090c 100%);
-  color:#fff;
-}
-#notes-panel .notes-shell{
-  width:100%;
-  max-width:none;
-  min-height:100%;
-  margin:0;
-  padding:28px clamp(18px,4vw,60px) 34px;
-}
-#notes-panel .notes-top{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:14px;margin-bottom:26px;
-}
-#notes-panel .notes-heading{
-  display:flex;align-items:center;gap:13px;min-width:0;
-}
-#notes-panel .notes-heading-icon{
-  width:46px;height:46px;flex:0 0 46px;border:1px solid #3a3f49;
-  border-radius:15px;background:linear-gradient(145deg,#1c1f26,#101217);
-  display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px #0005;
-}
-#notes-panel .notes-heading-icon::before{
-  content:"";width:19px;height:19px;border:2px solid currentColor;border-radius:6px;
-  box-shadow:inset 0 0 0 3px #101217;
-}
-#notes-panel .notes-heading-text{min-width:0}
-#notes-panel #notes-title{
-  margin:0;color:#fff;font-size:27px;line-height:1.05;font-weight:800;text-align:left;
-}
-#notes-panel .notes-subtitle{
-  margin-top:5px;color:#9299a5;font-size:13px;line-height:1.4;
-}
-#notes-panel .notes-back-top{
-  width:44px;height:44px;flex:0 0 44px;border:1px solid #3a3f49;border-radius:13px;
-  background:#15171c;color:#fff;font-size:20px;font-weight:700;
-}
-#notes-panel .notes-grid{width:100%;
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
-}
-#notes-panel .printer-status-card{
-  position:relative;padding:16px;border:1px solid #30343d;border-radius:18px;
-  background:linear-gradient(145deg,#17191f,#101216);
-  box-shadow:0 12px 32px #0005;overflow:hidden;
-}
-#notes-panel .printer-status-card::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:2px;
-  background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.35;
-}
-#notes-panel .printer-status-card.status-card-online{color:#65d68a}
-#notes-panel .printer-status-card.status-card-printing{color:#e6b84e}
-#notes-panel .printer-status-card.status-card-offline{color:#e46a6a}
-#notes-panel .printer-card-top{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;
-}
-#notes-panel .printer-name{
-  color:#fff;font-size:17px;font-weight:800;letter-spacing:.01em;
-}
-#notes-panel .printer-live{
-  display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;
-  background:#ffffff0a;border:1px solid #ffffff12;color:#9fa6b1;font-size:10px;
-  font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-}
-#notes-panel .printer-live-dot{
-  width:6px;height:6px;border-radius:50%;background:currentColor;
-  box-shadow:0 0 10px currentColor;
-}
-#notes-panel .printer-status-label{
-  display:block;margin:0 0 7px;color:#7f8793;font-size:11px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-}
-#notes-panel .status-select{
-  width:100%;appearance:none;-webkit-appearance:none;
-  padding:12px 38px 12px 13px;border:1px solid #353a44;border-radius:12px;
-  background:
-    linear-gradient(45deg,transparent 50%,#aeb4bd 50%) calc(100% - 17px) 52%/6px 6px no-repeat,
-    linear-gradient(135deg,#aeb4bd 50%,transparent 50%) calc(100% - 12px) 52%/6px 6px no-repeat,
-    #0f1115;
-  color:#fff;font-size:14px;font-weight:700;outline:none;
-  transition:border-color .15s,box-shadow .15s,background .15s;
-}
-#notes-panel .status-select:focus{
-  border-color:#727985;box-shadow:0 0 0 3px #ffffff0b;
-}
-#notes-panel .notes-footer{
-  display:flex;gap:10px;margin-top:18px;
-}
-#notes-panel .notes-save-btn,#notes-panel .notes-cancel-btn{
-  flex:1;position:relative;left:auto;top:auto;transform:none;
-  border-radius:13px;padding:13px 16px;font-size:15px;font-weight:800;
-}
-#notes-panel .notes-save-btn{
-  border:1px solid #fff;background:#fff;color:#0b0c10;
-}
-#notes-panel .notes-cancel-btn{
-  border:1px solid #363b45;background:#191b21;color:#fff;
-}
-#notes-panel .notes-tip{
-  margin-top:14px;padding:12px 13px;border:1px solid #2c3038;border-radius:13px;
-  background:#ffffff05;color:#777f8b;font-size:11px;line-height:1.45;text-align:center;
-}
-@media(max-width:700px){
-  #notes-panel .notes-shell{padding:22px 14px 28px}
-  #notes-panel .notes-grid{width:100%;grid-template-columns:1fr}
-  #notes-panel .printer-status-card{padding:15px}
-}
-body.light-mode #notes-panel{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;box-sizing:border-box!important;border-radius:0!important;overflow-y:auto!important;
-  background:radial-gradient(circle at 50% -15%,#fff 0,#eef2f6 48%,#e3e8ef 100%);
-  color:#111;
-}
-body.light-mode #notes-panel .notes-heading-icon{
-  background:linear-gradient(145deg,#fff,#e8ecf1);border-color:#cdd3dc;color:#111;
-  box-shadow:0 8px 24px #6877891c;
-}
-body.light-mode #notes-panel #notes-title,
-body.light-mode #notes-panel .printer-name{color:#111}
-body.light-mode #notes-panel .notes-subtitle{color:#69727f}
-body.light-mode #notes-panel .notes-back-top{
-  background:#fff;color:#111;border-color:#cdd3dc;
-}
-body.light-mode #notes-panel .printer-status-card{
-  background:linear-gradient(145deg,#fff,#f5f7fa);border-color:#d3d9e1;
-  box-shadow:0 12px 30px #68778918;
-}
-body.light-mode #notes-panel .printer-live{background:#11111108;border-color:#11111112;color:#68717d}
-body.light-mode #notes-panel .printer-status-label{color:#737c88}
-body.light-mode #notes-panel .status-select{
-  background:
-    linear-gradient(45deg,transparent 50%,#68717d 50%) calc(100% - 17px) 52%/6px 6px no-repeat,
-    linear-gradient(135deg,#68717d 50%,transparent 50%) calc(100% - 12px) 52%/6px 6px no-repeat,
-    #fff;
-  color:#111;border-color:#c7ced7;
-}
-body.light-mode #notes-panel .notes-save-btn{background:#15181d;color:#fff;border-color:#15181d}
-body.light-mode #notes-panel .notes-cancel-btn{background:#e5e9ee;color:#111;border-color:#cbd2dc}
-body.light-mode #notes-panel .notes-tip{background:#11111105;border-color:#d4dae2;color:#7a838e}
-
 </style>
 </head>
 <body class="qr-mode">
@@ -291,6 +149,7 @@ body.light-mode #notes-panel .notes-tip{background:#11111105;border-color:#d4dae
     <div class="catalog-toolbar"><input id="catalog-search" class="catalog-search" placeholder="Search codes or names..." oninput="renderCatalog()"><select id="catalog-filter" class="catalog-filter" onchange="renderCatalog()"><option value="all">All</option><option value="qr">QR Codes</option><option value="barcode">Bar Codes</option></select></div>
     <div id="catalog-list"></div><button class="form-button" onclick="showAddCodeForm()">+ Add Code</button><button class="panel-close" onclick="hideCatalog()">Close</button>
   </div>
+
   <div id="catalog-fullscreen" aria-hidden="true">
     <div class="catalog-fullscreen-card">
       <button class="catalog-fullscreen-close" onclick="closeCatalogFullscreen()" aria-label="Close fullscreen">×</button>
@@ -314,11 +173,13 @@ body.light-mode #notes-panel .notes-tip{background:#11111105;border-color:#d4dae
       <button class="form-button" onclick="saveManualCode()">Save Code</button><button class="panel-close" onclick="hideCodeForm()">Cancel</button>
     </div>
   </div>
+
   <div id="mode-panel" class="panel"><div class="panel-title">Scanner Mode</div>
     <button class="home-app" style="width:100%;min-height:110px;margin-bottom:10px" onclick="setScannerMode('qr')"><span class="home-app-icon">▣</span>QR Code Mode</button>
     <button class="home-app" style="width:100%;min-height:110px" onclick="setScannerMode('barcode')"><span class="home-app-icon">▥</span>Bar Code Mode</button>
     <div id="mode-description" style="color:#888;text-align:center;padding:14px;font-size:13px"></div><button class="panel-close" onclick="hideModePanel()">Close</button>
   </div>
+
   <div id="settings-panel" class="panel">
     <div class="panel-title">Settings</div>
     <div class="settings-list">
@@ -338,6 +199,7 @@ body.light-mode #notes-panel .notes-tip{background:#11111105;border-color:#d4dae
     </div>
     <button class="panel-close" onclick="hideSettings()">Close</button>
   </div>
+
   <div id="printers-panel" class="panel"><div class="panel-title">Printer Apps</div>
     <button class="home-app" style="width:100%;min-height:100px;margin-bottom:10px" onclick="openPrinterLink('https://apps.apple.com/app/id1625671285')">H2D</button>
     <button class="home-app" style="width:100%;min-height:100px;margin-bottom:10px" onclick="openPrinterLink('https://apps.apple.com/app/id1166269606')">TOYBOX</button>
@@ -500,7 +362,6 @@ function positionScanRegion(){const r=document.getElementById("reader__scan_regi
 function resetScanBoxPosition(){const b=document.getElementById("scan-box");if(!b)return;b.style.transform="translate(-50%,-50%)";b.style.left="50%";b.style.top="50%";b.style.borderRadius="";if(trackingEnabled){const w=scannerMode==="barcode"?BARCODE_WIDTH:QR_SIZE,h=scannerMode==="barcode"?BARCODE_HEIGHT:QR_SIZE;b.style.setProperty("width",w+"px","important");b.style.setProperty("height",h+"px","important");b.classList.add("tracking-ready")}else{b.style.removeProperty("width");b.style.removeProperty("height");b.classList.remove("tracking-ready")}}
 function getTrackedPoints(decodedResult){try{const r=decodedResult?.result;let pts=null;if(r?.getResultPoints)pts=r.getResultPoints();else if(Array.isArray(r?.resultPoints))pts=r.resultPoints;else if(Array.isArray(decodedResult?.resultPoints))pts=decodedResult.resultPoints;if(!Array.isArray(pts)||pts.length<2)return null;return pts.map(p=>({x:Number(p.x),y:Number(p.y)})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y))}catch{return null}}
 function updateTrackingBox(decodedResult){if(!trackingEnabled)return;const pts=getTrackedPoints(decodedResult),box=document.getElementById("scan-box"),v=document.querySelector("#reader video"),camera=document.getElementById("camera");if(!box||!v||!camera||!pts||pts.length<2)return;const vr=v.getBoundingClientRect(),cr=camera.getBoundingClientRect();if(!v.videoWidth||!v.videoHeight||!vr.width||!vr.height)return;const scale=Math.max(vr.width/v.videoWidth,vr.height/v.videoHeight),renderW=v.videoWidth*scale,renderH=v.videoHeight*scale,offX=(vr.width-renderW)/2,offY=(vr.height-renderH)/2;const mapped=pts.map(p=>({x:(p.x*scale)+offX+(vr.left-cr.left),y:(p.y*scale)+offY+(vr.top-cr.top)}));const xs=mapped.map(p=>p.x),ys=mapped.map(p=>p.y);let left=Math.min(...xs),top=Math.min(...ys),right=Math.max(...xs),bottom=Math.max(...ys);const pad=scannerMode==="barcode"?10:12;left=Math.max(2,left-pad);top=Math.max(2,top-pad);right=Math.min(cr.width-2,right+pad);bottom=Math.min(cr.height-2,bottom+pad);const w=Math.max(30,right-left),h=Math.max(30,bottom-top);box.style.transform="none";box.style.left=left+"px";box.style.top=top+"px";box.style.setProperty("width",w+"px","important");box.style.setProperty("height",h+"px","important");box.style.borderRadius=scannerMode==="barcode"?"10px":"18px";box.classList.add("tracking-ready")}
-
 function captureScanImage(){return new Promise(resolve=>{const v=document.querySelector("#reader video");if(!v||!v.videoWidth){resolve(null);return}const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext("2d");ctx.drawImage(v,0,0,c.width,c.height);const box=document.getElementById("scan-box").getBoundingClientRect(),vr=v.getBoundingClientRect();const sx=Math.max(0,(box.left-vr.left)*v.videoWidth/vr.width),sy=Math.max(0,(box.top-vr.top)*v.videoHeight/vr.height),sw=Math.min(v.videoWidth-sx,box.width*v.videoWidth/vr.width),sh=Math.min(v.videoHeight-sy,box.height*v.videoHeight/vr.height);const out=document.createElement("canvas");out.width=Math.max(1,Math.round(sw));out.height=Math.max(1,Math.round(sh));out.getContext("2d").drawImage(c,sx,sy,sw,sh,0,0,out.width,out.height);resolve(out.toDataURL("image/jpeg",.82))})}
 
 async function startScanner(){
