@@ -1,24 +1,16 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 4.9
+  VERSION: 5.0
 
-  Features:
-  - QR scanner
-  - Fixed 250x250 scan area
-  - Actual QR scan region aligned with visible square
-  - Flashlight
-  - Sound
-  - Zoom
-  - QR detected / Ready to scan
-  - Scan history
-  - Printer shortcuts
-  - Printer status notes
-  - LocalStorage printer status saving
-  - Developer mode
-  - Light mode
-  - Orientation/resize protection
-  - Vibration removed
-  - Scan success message removed
+  FIXES:
+  - Fixed camera freezing after saving Notes
+  - Fixed Home menu becoming unclickable after Notes
+  - Saving Notes never reloads or stops the scanner
+  - Notes overlay cannot block the Home button after closing
+  - Camera track is safely reacquired after Notes
+  - Printer statuses remain saved locally
+  - Fixed 250x250 QR scanning region retained
+  - Existing scanner features retained
 -->
 
 <!DOCTYPE html>
@@ -30,7 +22,7 @@
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  content="width=device-width, initial-scale=1.0"
 >
 
 <title>Printer Scanner 5000</title>
@@ -47,24 +39,25 @@ html,
 body {
   margin: 0;
   padding: 0;
+
   width: 100%;
   height: 100%;
+
   background: #000;
+
   overflow: hidden;
+
   font-family: Arial, sans-serif;
 }
 
-body {
-  position: fixed;
-  inset: 0;
-}
-
 #app {
-  position: relative;
   width: 100%;
   height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
   background: #000;
-  overflow: hidden;
 }
 
 
@@ -73,50 +66,63 @@ body {
 ========================= */
 
 #top-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
+
+  position: relative;
+
   width: 100%;
   height: 65px;
 
+  flex-shrink: 0;
+
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   background: #000;
 
-  z-index: 100;
+  z-index: 1000;
 }
 
 #site-title {
+
   color: white;
+
   font-size: 24px;
+
   font-weight: 700;
+
   text-align: center;
+
   white-space: nowrap;
+
   user-select: none;
 }
 
 
 /* =========================
-   HOME
+   HOME BUTTON
 ========================= */
 
 #home-button {
+
   position: absolute;
 
   left: 12px;
   top: 50%;
 
-  transform: translateY(-50%);
+  transform:
+    translateY(-50%);
 
   width: 42px;
   height: 42px;
 
   border: none;
+
   border-radius: 12px;
 
   background: #222;
+
   color: white;
 
   font-size: 22px;
@@ -124,19 +130,27 @@ body {
   cursor: pointer;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  z-index: 200;
+  z-index: 3000;
 }
 
 #home-button:active {
+
   transform:
     translateY(-50%)
     scale(.94);
 }
 
+
+/* =========================
+   HOME MENU
+========================= */
+
 #home-menu {
+
   position: absolute;
 
   left: 12px;
@@ -153,39 +167,49 @@ body {
 
   background: #111;
 
-  border: 1px solid #333;
+  border:
+    1px solid #333;
 
   border-radius: 18px;
 
   box-shadow:
-    0 8px 30px rgba(0,0,0,.5);
+    0 8px 30px
+    rgba(0,0,0,.5);
 
-  z-index: 300;
+  z-index: 3000;
 
   display: none;
 }
 
 .menu-button {
+
   width: 100%;
 
   border: none;
+
   border-radius: 12px;
 
   padding: 13px 10px;
+
   margin: 4px 0;
 
   background: #222;
+
   color: white;
 
   font-size: 17px;
+
   font-weight: 600;
 
   cursor: pointer;
 }
 
 .menu-button:active {
+
   background: #333;
-  transform: scale(.98);
+
+  transform:
+    scale(.98);
 }
 
 
@@ -194,28 +218,26 @@ body {
 ========================= */
 
 #camera {
-  position: absolute;
 
-  left: 0;
-  right: 0;
-  top: 65px;
-  bottom: 0;
+  position: relative;
+
+  width: 100%;
+
+  height:
+    calc(100% - 65px);
 
   overflow: hidden;
 
-  background: #000;
+  border-radius:
+    28px 28px 0 0;
 
-  border-radius: 28px 28px 0 0;
+  background: #000;
 
   z-index: 1;
 }
 
-
-/* =========================
-   HTML5 QR CODE
-========================= */
-
 #reader {
+
   position: absolute;
 
   inset: 0;
@@ -231,9 +253,6 @@ body {
 }
 
 #reader video {
-  position: absolute !important;
-
-  inset: 0 !important;
 
   width: 100% !important;
   height: 100% !important;
@@ -245,18 +264,16 @@ body {
 
 #reader__dashboard,
 #reader__header_message {
+
   display: none !important;
 }
 
 
-/*
-   IMPORTANT:
-   The library's scan region is forced into
-   the exact same coordinate system as #scan-box.
-*/
+/* =========================
+   FIXED SCAN REGION
+========================= */
 
 #reader__scan_region {
-  position: absolute !important;
 
   width: 250px !important;
   height: 250px !important;
@@ -267,6 +284,8 @@ body {
   max-width: 250px !important;
   max-height: 250px !important;
 
+  position: absolute !important;
+
   left: 50% !important;
   top: 50% !important;
 
@@ -274,9 +293,10 @@ body {
     translate(-50%, -50%) !important;
 
   margin: 0 !important;
+
   padding: 0 !important;
 
-  border: 0 !important;
+  border: none !important;
 
   overflow: hidden !important;
 
@@ -284,19 +304,27 @@ body {
 }
 
 #reader__scan_region img {
+
   display: none !important;
 }
 
 
 /* =========================
-   VISIBLE SCAN BOX
+   SCAN BOX
 ========================= */
 
 #scan-box {
+
   position: absolute;
 
-  width: 250px;
-  height: 250px;
+  width: 250px !important;
+  height: 250px !important;
+
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
 
   left: 50%;
   top: 50%;
@@ -304,7 +332,8 @@ body {
   transform:
     translate(-50%, -50%);
 
-  border: 3px solid white;
+  border:
+    3px solid white;
 
   border-radius: 18px;
 
@@ -319,6 +348,7 @@ body {
 ========================= */
 
 #status-bar {
+
   position: absolute;
 
   left: 50%;
@@ -331,7 +361,8 @@ body {
 
   z-index: 40;
 
-  padding: 9px 18px;
+  padding:
+    9px 18px;
 
   border-radius: 999px;
 
@@ -341,22 +372,25 @@ body {
   color: white;
 
   font-size: 14px;
+
   font-weight: 600;
 
   white-space: nowrap;
 }
 
 #status-bar.detected {
+
   background:
     rgba(255,170,0,.8);
 }
 
 
 /* =========================
-   HOLD STILL
+   BLUR MESSAGE
 ========================= */
 
 #hold-still {
+
   position: absolute;
 
   left: 50%;
@@ -369,7 +403,8 @@ body {
 
   z-index: 30;
 
-  padding: 9px 16px;
+  padding:
+    9px 16px;
 
   border-radius: 999px;
 
@@ -379,6 +414,7 @@ body {
   color: white;
 
   font-size: 15px;
+
   font-weight: 600;
 
   white-space: nowrap;
@@ -392,6 +428,7 @@ body {
 ========================= */
 
 #control-bar {
+
   position: absolute;
 
   left: 50%;
@@ -418,6 +455,7 @@ body {
 ========================= */
 
 #zoom-container {
+
   height: 48px;
 
   flex: 1;
@@ -425,7 +463,8 @@ body {
   min-width: 180px;
   max-width: 350px;
 
-  padding: 10px 16px;
+  padding:
+    10px 16px;
 
   border-radius: 999px;
 
@@ -440,15 +479,18 @@ body {
 }
 
 #zoom-label {
+
   color: white;
 
   font-size: 13px;
+
   font-weight: 600;
 
   white-space: nowrap;
 }
 
 #zoom-slider {
+
   width: 100%;
   height: 5px;
 
@@ -458,6 +500,7 @@ body {
 }
 
 #zoom-value {
+
   min-width: 35px;
 
   color: white;
@@ -473,6 +516,7 @@ body {
 ========================= */
 
 .circle-button {
+
   width: 48px;
   height: 48px;
 
@@ -491,21 +535,29 @@ body {
 }
 
 .circle-button:active {
-  transform: scale(.9);
+
+  transform:
+    scale(.9);
 }
 
 .circle-button.active {
+
   background: white;
+
   color: black;
 
-  border: 2px solid white;
+  border:
+    2px solid white;
 }
 
 .circle-button:not(.active) {
+
   background: black;
+
   color: white;
 
-  border: 2px solid white;
+  border:
+    2px solid white;
 }
 
 
@@ -514,6 +566,7 @@ body {
 ========================= */
 
 .icon {
+
   position: relative;
 
   display: block;
@@ -527,6 +580,7 @@ body {
 }
 
 .flashlight-icon::before {
+
   content: "";
 
   position: absolute;
@@ -544,6 +598,7 @@ body {
 }
 
 .flashlight-icon::after {
+
   content: "";
 
   position: absolute;
@@ -562,6 +617,7 @@ body {
 }
 
 .sound-icon::before {
+
   content: "";
 
   position: absolute;
@@ -572,12 +628,14 @@ body {
   width: 7px;
   height: 7px;
 
-  background: currentColor;
+  background:
+    currentColor;
 
   border-radius: 1px;
 }
 
 .sound-icon::after {
+
   content: "";
 
   position: absolute;
@@ -588,7 +646,8 @@ body {
   width: 9px;
   height: 14px;
 
-  background: currentColor;
+  background:
+    currentColor;
 
   clip-path:
     polygon(
@@ -607,6 +666,7 @@ body {
 ========================= */
 
 #loading {
+
   position: absolute;
 
   inset: 0;
@@ -622,6 +682,7 @@ body {
 }
 
 .spinner {
+
   width: 28px;
   height: 28px;
 
@@ -638,10 +699,13 @@ body {
 }
 
 @keyframes spin {
+
   to {
+
     transform:
       rotate(360deg);
   }
+
 }
 
 
@@ -650,6 +714,7 @@ body {
 ========================= */
 
 #result-text {
+
   position: absolute;
 
   left: 50%;
@@ -661,11 +726,13 @@ body {
   z-index: 50;
 
   width: 85%;
+
   max-width: 700px;
 
   color: white;
 
   font-size: 36px;
+
   font-weight: 700;
 
   text-align: center;
@@ -681,6 +748,7 @@ body {
 ========================= */
 
 .action-button {
+
   position: absolute;
 
   left: 50%;
@@ -702,24 +770,30 @@ body {
   color: #111;
 
   font-size: 20px;
+
   font-weight: 600;
 
   cursor: pointer;
 }
 
 .action-button:active {
+
   transform:
     translateX(-50%)
     scale(.95);
 }
 
 #open-button {
+
   top: 55%;
+
   display: none;
 }
 
 #rescan {
+
   top: 70%;
+
   display: none;
 }
 
@@ -729,6 +803,7 @@ body {
 ========================= */
 
 #version-number {
+
   position: absolute;
 
   left: 50%;
@@ -753,6 +828,7 @@ body {
 ========================= */
 
 #history-panel {
+
   position: absolute;
 
   left: 50%;
@@ -782,15 +858,18 @@ body {
 }
 
 #history-title {
+
   color: white;
 
   font-size: 20px;
+
   font-weight: 700;
 
   margin-bottom: 12px;
 }
 
 .history-item {
+
   padding: 12px;
 
   margin: 6px 0;
@@ -809,6 +888,7 @@ body {
 }
 
 .history-url {
+
   margin-top: 4px;
 
   font-size: 11px;
@@ -823,6 +903,7 @@ body {
 }
 
 .history-time {
+
   margin-top: 4px;
 
   font-size: 10px;
@@ -831,6 +912,7 @@ body {
 }
 
 .history-close {
+
   width: 100%;
 
   margin-top: 10px;
@@ -854,11 +936,12 @@ body {
 ========================= */
 
 #notes-panel {
+
   position: absolute;
 
   inset: 0;
 
-  z-index: 600;
+  z-index: 2000;
 
   background: #000;
 
@@ -868,12 +951,16 @@ body {
   overflow-y: auto;
 
   display: none;
+
+  pointer-events: none;
 }
 
 #notes-title {
+
   color: white;
 
   font-size: 30px;
+
   font-weight: 700;
 
   text-align: center;
@@ -882,6 +969,7 @@ body {
 }
 
 .note-section {
+
   width: 100%;
 
   max-width: 600px;
@@ -891,17 +979,20 @@ body {
 }
 
 .note-section label {
+
   display: block;
 
   color: white;
 
   font-size: 18px;
+
   font-weight: 700;
 
   margin-bottom: 8px;
 }
 
 .status-select {
+
   width: 100%;
 
   padding:
@@ -919,19 +1010,24 @@ body {
   font-family: Arial, sans-serif;
 
   font-size: 17px;
+
   font-weight: 600;
 
   outline: none;
 
   cursor: pointer;
+
+  appearance: auto;
 }
 
 .status-select:focus {
+
   border-color: white;
 }
 
 .notes-save,
 .notes-back {
+
   position: relative;
 
   left: auto;
@@ -949,6 +1045,7 @@ body {
 
 .notes-save:active,
 .notes-back:active {
+
   transform:
     scale(.95);
 }
@@ -959,16 +1056,14 @@ body {
 ========================= */
 
 #dev-panel {
+
   display: none;
 
-  position: absolute;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
   width: 100%;
+
   height: 50%;
+
+  flex-shrink: 0;
 
   background: #000;
 
@@ -980,11 +1075,10 @@ body {
   overflow: hidden;
 
   flex-direction: column;
-
-  z-index: 700;
 }
 
 #dev-header {
+
   height: 40px;
 
   flex-shrink: 0;
@@ -1001,10 +1095,12 @@ body {
     1px solid #333;
 
   font-size: 14px;
+
   font-weight: 700;
 }
 
 #dev-output {
+
   flex: 1;
 
   overflow-y: auto;
@@ -1029,6 +1125,7 @@ body {
 }
 
 #dev-stats {
+
   padding: 10px;
 
   border-top:
@@ -1046,6 +1143,7 @@ body {
 }
 
 #dev-buttons {
+
   display: flex;
 
   gap: 6px;
@@ -1056,6 +1154,7 @@ body {
 }
 
 .dev-button {
+
   flex: 1;
 
   border: none;
@@ -1081,9 +1180,9 @@ body.dev-mode #top-bar {
 }
 
 body.dev-mode #camera {
-  top: 50px;
-  bottom: 50%;
-  height: auto;
+
+  height:
+    calc(50% - 25px);
 
   border-radius: 0;
 }
@@ -1097,57 +1196,79 @@ body.dev-mode #dev-panel {
    LIGHT MODE
 ========================= */
 
-body.light-mode,
+body.light-mode {
+
+  background: #f2f2f2;
+}
+
 body.light-mode #app {
+
   background: #f2f2f2;
 }
 
 body.light-mode #top-bar {
+
   background: #f2f2f2;
 }
 
 body.light-mode #site-title {
+
   color: #000;
 }
 
 body.light-mode #home-button {
+
   background: #ddd;
+
   color: #000;
 }
 
 body.light-mode #home-menu {
+
   background: #f5f5f5;
+
   border-color: #ccc;
 }
 
 body.light-mode .menu-button {
+
   background: #ddd;
+
   color: #000;
 }
 
 body.light-mode #zoom-container {
+
   background:
     rgba(255,255,255,.8);
 }
 
 body.light-mode #zoom-label,
 body.light-mode #zoom-value {
+
   color: #000;
 }
 
 body.light-mode .circle-button.active {
+
   background: #000;
+
   color: white;
+
   border-color: #000;
 }
 
 body.light-mode .circle-button:not(.active) {
+
   background: white;
+
   color: #000;
+
   border-color: #000;
 }
 
 body.light-mode #status-bar {
+
   background:
     rgba(255,255,255,.85);
 
@@ -1155,6 +1276,7 @@ body.light-mode #status-bar {
 }
 
 body.light-mode #hold-still {
+
   background:
     rgba(255,255,255,.85);
 
@@ -1162,38 +1284,50 @@ body.light-mode #hold-still {
 }
 
 body.light-mode #history-panel {
+
   background: #f5f5f5;
+
   border-color: #ccc;
 }
 
 body.light-mode #history-title {
+
   color: #000;
 }
 
 body.light-mode .history-item {
+
   background: #ddd;
+
   color: #000;
 }
 
 body.light-mode #notes-panel {
+
   background: #f2f2f2;
 }
 
 body.light-mode #notes-title {
+
   color: #000;
 }
 
 body.light-mode .note-section label {
+
   color: #000;
 }
 
 body.light-mode .status-select {
+
   background: white;
+
   color: #000;
+
   border-color: #bbb;
 }
 
 body.light-mode .status-select:focus {
+
   border-color: #000;
 }
 
@@ -1204,65 +1338,29 @@ body.light-mode .status-select:focus {
 
 @media (max-width: 500px) {
 
-  #site-title {
-    font-size: 20px;
-  }
-
-  #control-bar {
-    width: 94%;
-    gap: 8px;
-  }
-
-  #zoom-container {
-    min-width: 0;
-  }
-
-  #zoom-label {
-    display: none;
-  }
-
   #notes-panel {
+
     padding:
       25px 14px;
   }
 
   #notes-title {
+
     font-size: 26px;
+
     margin-bottom: 24px;
   }
 
   .note-section label {
+
     font-size: 16px;
   }
 
   .status-select {
+
     font-size: 15px;
+
     padding: 13px;
-  }
-
-}
-
-
-/* =========================
-   SAFE AREA
-========================= */
-
-@supports (padding: env(safe-area-inset-bottom)) {
-
-  #control-bar {
-    bottom:
-      calc(
-        45px +
-        env(safe-area-inset-bottom)
-      );
-  }
-
-  #version-number {
-    bottom:
-      calc(
-        6px +
-        env(safe-area-inset-bottom)
-      );
   }
 
 }
@@ -1271,13 +1369,10 @@ body.light-mode .status-select:focus {
 
 </head>
 
-
 <body>
 
 <div id="app">
 
-
-<!-- TOP BAR -->
 
 <div id="top-bar">
 
@@ -1298,21 +1393,33 @@ body.light-mode .status-select:focus {
 
 <button
   class="menu-button"
-  onclick="openPrinterLink('https://apps.apple.com/app/id1625671285')"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1625671285'
+    )
+  "
 >
   H2D
 </button>
 
 <button
   class="menu-button"
-  onclick="openPrinterLink('https://www.make.toys/toys')"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1166269606'
+    )
+  "
 >
   TOYBOX
 </button>
 
 <button
   class="menu-button"
-  onclick="openPrinterLink('https://apps.apple.com/app/id1658133862')"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1658133862'
+    )
+  "
 >
   Ender 3
 </button>
@@ -1364,8 +1471,6 @@ body.light-mode .status-select:focus {
 </div>
 
 
-<!-- CAMERA -->
-
 <div id="camera">
 
 <div id="reader"></div>
@@ -1381,18 +1486,14 @@ body.light-mode .status-select:focus {
 </div>
 
 
-<!-- CONTROLS -->
-
 <div id="control-bar">
 
 <button
   id="flashlight-button"
   class="circle-button"
   onclick="toggleFlashlight()"
-  title="Flashlight"
-  aria-label="Flashlight"
 >
-  <span class="icon flashlight-icon"></span>
+<span class="icon flashlight-icon"></span>
 </button>
 
 
@@ -1423,23 +1524,22 @@ body.light-mode .status-select:focus {
   id="sound-button"
   class="circle-button active"
   onclick="toggleSound()"
-  title="Scan sound"
-  aria-label="Scan sound"
 >
-  <span class="icon sound-icon"></span>
+<span class="icon sound-icon"></span>
 </button>
 
 </div>
 
 
 <div id="loading">
-  <div class="spinner"></div>
+
+<div class="spinner"></div>
+
 </div>
 
 
-<!-- RESULT -->
-
 <div id="result-text"></div>
+
 
 <button
   id="open-button"
@@ -1448,6 +1548,7 @@ body.light-mode .status-select:focus {
 >
   Open
 </button>
+
 
 <button
   id="rescan"
@@ -1459,11 +1560,9 @@ body.light-mode .status-select:focus {
 
 
 <div id="version-number">
-  v4.9
+  v5.0
 </div>
 
-
-<!-- HISTORY -->
 
 <div id="history-panel">
 
@@ -1483,9 +1582,10 @@ body.light-mode .status-select:focus {
 </div>
 
 
-<!-- NOTES -->
-
-<div id="notes-panel">
+<div
+  id="notes-panel"
+  onclick="event.stopPropagation()"
+>
 
 <div id="notes-title">
   Printer Status
@@ -1502,19 +1602,9 @@ body.light-mode .status-select:focus {
   id="h2d-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -1530,19 +1620,9 @@ body.light-mode .status-select:focus {
   id="toybox-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -1558,19 +1638,9 @@ body.light-mode .status-select:focus {
   id="ender-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -1583,6 +1653,7 @@ body.light-mode .status-select:focus {
   Save Status
 </button>
 
+
 <button
   class="action-button notes-back"
   onclick="hideNotes()"
@@ -1594,8 +1665,6 @@ body.light-mode .status-select:focus {
 
 </div>
 
-
-<!-- DEV PANEL -->
 
 <div id="dev-panel">
 
@@ -1629,6 +1698,8 @@ body.light-mode .status-select:focus {
 >
   Clear
 </button>
+
+</div>
 
 </div>
 
@@ -1691,8 +1762,6 @@ function devLog(message) {
 
   if (!output) return;
 
-  const now = new Date();
-
   const line =
     document.createElement(
       "div"
@@ -1703,7 +1772,7 @@ function devLog(message) {
 
   line.textContent =
     "[" +
-    now.toLocaleTimeString() +
+    new Date().toLocaleTimeString() +
     "] " +
     message;
 
@@ -1741,7 +1810,7 @@ function updateStats() {
 
 
 /* =========================
-   HOME
+   HOME MENU
 ========================= */
 
 function toggleHomeMenu() {
@@ -1751,10 +1820,20 @@ function toggleHomeMenu() {
       "home-menu"
     );
 
-  menu.style.display =
-    menu.style.display === "block"
-      ? "none"
-      : "block";
+  if (
+    menu.style.display ===
+    "block"
+  ) {
+
+    menu.style.display =
+      "none";
+
+  } else {
+
+    menu.style.display =
+      "block";
+
+  }
 
 }
 
@@ -1762,7 +1841,7 @@ function toggleHomeMenu() {
 function openPrinterLink(url) {
 
   devLog(
-    "Opening printer shortcut: " +
+    "Printer shortcut: " +
     url
   );
 
@@ -1780,7 +1859,9 @@ function openPrinterLink(url) {
 
 
 function refreshPage() {
+
   window.location.reload();
+
 }
 
 
@@ -1790,17 +1871,31 @@ function refreshPage() {
 
 function showNotes() {
 
-  document.getElementById(
-    "home-menu"
-  ).style.display =
+  const menu =
+    document.getElementById(
+      "home-menu"
+    );
+
+  const notes =
+    document.getElementById(
+      "notes-panel"
+    );
+
+
+  menu.style.display =
     "none";
+
 
   loadNotes();
 
-  document.getElementById(
-    "notes-panel"
-  ).style.display =
+
+  notes.style.display =
     "block";
+
+
+  notes.style.pointerEvents =
+    "auto";
+
 
   devLog(
     "Opened printer status"
@@ -1811,60 +1906,142 @@ function showNotes() {
 
 function hideNotes() {
 
+  const notes =
+    document.getElementById(
+      "notes-panel"
+    );
+
+
+  /*
+    IMPORTANT:
+
+    We only hide the Notes page.
+
+    We DO NOT:
+    - reload the page
+    - stop the scanner
+    - restart the scanner
+    - change the video element
+  */
+
+  notes.style.display =
+    "none";
+
+
+  notes.style.pointerEvents =
+    "none";
+
+
   document.getElementById(
-    "notes-panel"
+    "home-menu"
   ).style.display =
     "none";
+
 
   devLog(
     "Closed printer status"
   );
 
+
+  /*
+    Give the browser a moment to
+    finish removing the overlay,
+    then reconnect our reference
+    to the existing camera track.
+  */
+
+  setTimeout(
+    reacquireCameraTrack,
+    50
+  );
+
 }
 
 
+/* =========================
+   SAVE NOTES
+========================= */
+
 function saveNotes() {
+
+  const h2d =
+    document.getElementById(
+      "h2d-status"
+    ).value;
+
+
+  const toybox =
+    document.getElementById(
+      "toybox-status"
+    ).value;
+
+
+  const ender =
+    document.getElementById(
+      "ender-status"
+    ).value;
+
 
   const data = {
 
     h2d:
-      document.getElementById(
-        "h2d-status"
-      ).value,
+      h2d,
 
     toybox:
-      document.getElementById(
-        "toybox-status"
-      ).value,
+      toybox,
 
     ender:
-      document.getElementById(
-        "ender-status"
-      ).value
+      ender
 
   };
 
 
-  localStorage.setItem(
+  try {
 
-    "printerNotes",
+    localStorage.setItem(
 
-    JSON.stringify(data)
+      "printerNotes",
 
-  );
+      JSON.stringify(
+        data
+      )
+
+    );
 
 
-  devLog(
-    "Printer statuses saved"
-  );
+    /*
+      This is intentionally the ONLY
+      thing Save Status does to the data.
+
+      It does NOT reload the page.
+
+      It does NOT stop the camera.
+
+      It does NOT restart the scanner.
+    */
+
+    devLog(
+      "Printer statuses saved"
+    );
 
 
-  alert(
-    "Printer statuses saved!"
-  );
+  } catch(error) {
+
+    devLog(
+
+      "Could not save statuses: " +
+      error.message
+
+    );
+
+  }
 
 }
 
+
+/* =========================
+   LOAD NOTES
+========================= */
 
 function loadNotes() {
 
@@ -1908,11 +2085,66 @@ function loadNotes() {
   } catch(error) {
 
     devLog(
+
       "Could not load printer statuses: " +
       error.message
+
     );
 
   }
+
+}
+
+
+/* =========================
+   CAMERA TRACK RECOVERY
+========================= */
+
+function reacquireCameraTrack() {
+
+  /*
+    We don't create a new camera.
+
+    We simply find the existing
+    video stream again.
+  */
+
+  const video =
+    document.querySelector(
+      "#reader video"
+    );
+
+
+  if (
+    video &&
+    video.srcObject
+  ) {
+
+    const tracks =
+      video.srcObject
+        .getVideoTracks();
+
+
+    if (
+      tracks.length > 0
+    ) {
+
+      cameraTrack =
+        tracks[0];
+
+
+      devLog(
+        "Camera track reference restored"
+      );
+
+      return true;
+
+    }
+
+  }
+
+
+  return false;
 
 }
 
@@ -1942,7 +2174,10 @@ function getHistory() {
 }
 
 
-function saveHistory(url, name) {
+function saveHistory(
+  url,
+  name
+) {
 
   const history =
     getHistory();
@@ -1950,9 +2185,11 @@ function saveHistory(url, name) {
 
   history.unshift({
 
-    url: url,
+    url:
+      url,
 
-    name: name,
+    name:
+      name,
 
     time:
       new Date()
@@ -1966,7 +2203,10 @@ function saveHistory(url, name) {
     "printerScannerHistory",
 
     JSON.stringify(
-      history.slice(0, 20)
+      history.slice(
+        0,
+        20
+      )
     )
 
   );
@@ -1995,13 +2235,19 @@ function showHistory() {
     getHistory();
 
 
-  list.innerHTML = "";
+  list.innerHTML =
+    "";
 
 
-  if (!history.length) {
+  if (
+    history.length ===
+    0
+  ) {
 
     list.innerHTML =
-      '<div class="history-item">No scans yet.</div>';
+      '<div class="history-item">' +
+      'No scans yet.' +
+      '</div>';
 
   } else {
 
@@ -2013,21 +2259,29 @@ function showHistory() {
             "div"
           );
 
+
         div.className =
           "history-item";
+
 
         div.innerHTML =
 
           '<div class="history-name">' +
-          escapeHTML(item.name) +
+          escapeHTML(
+            item.name
+          ) +
           "</div>" +
 
           '<div class="history-url">' +
-          escapeHTML(item.url) +
+          escapeHTML(
+            item.url
+          ) +
           "</div>" +
 
           '<div class="history-time">' +
-          escapeHTML(item.time) +
+          escapeHTML(
+            item.time
+          ) +
           "</div>";
 
 
@@ -2042,7 +2296,9 @@ function showHistory() {
           };
 
 
-        list.appendChild(div);
+        list.appendChild(
+          div
+        );
 
       }
     );
@@ -2052,6 +2308,7 @@ function showHistory() {
 
   panel.style.display =
     "block";
+
 
   document.getElementById(
     "home-menu"
@@ -2077,9 +2334,11 @@ function clearHistory() {
     "printerScannerHistory"
   );
 
+
   devLog(
     "Scan history cleared"
   );
+
 
   document.getElementById(
     "home-menu"
@@ -2110,10 +2369,11 @@ function escapeHTML(text) {
 
 async function toggleFlashlight() {
 
-  const button =
-    document.getElementById(
-      "flashlight-button"
-    );
+  if (!cameraTrack) {
+
+    reacquireCameraTrack();
+
+  }
 
 
   if (!cameraTrack) {
@@ -2133,7 +2393,9 @@ async function toggleFlashlight() {
       cameraTrack.getCapabilities();
 
 
-    if (!capabilities.torch) {
+    if (
+      !capabilities.torch
+    ) {
 
       devLog(
         "Camera does not support flashlight"
@@ -2162,29 +2424,21 @@ async function toggleFlashlight() {
     });
 
 
-    button.classList.toggle(
-      "active",
-      flashlightOn
-    );
-
-
-    devLog(
-      "Flashlight: " +
-      (
-        flashlightOn
-          ? "ON"
-          : "OFF"
+    document
+      .getElementById(
+        "flashlight-button"
       )
-    );
+      .classList.toggle(
+        "active",
+        flashlightOn
+      );
 
 
   } catch(error) {
 
-    flashlightOn = false;
+    flashlightOn =
+      false;
 
-    button.classList.remove(
-      "active"
-    );
 
     devLog(
       "Flashlight error: " +
@@ -2206,22 +2460,14 @@ function toggleSound() {
     !soundEnabled;
 
 
-  document.getElementById(
-    "sound-button"
-  ).classList.toggle(
-    "active",
-    soundEnabled
-  );
-
-
-  devLog(
-    "Scan sound: " +
-    (
-      soundEnabled
-        ? "ON"
-        : "OFF"
+  document
+    .getElementById(
+      "sound-button"
     )
-  );
+    .classList.toggle(
+      "active",
+      soundEnabled
+    );
 
 }
 
@@ -2246,8 +2492,10 @@ function playScanSound() {
     const audio =
       new AudioContext();
 
+
     const oscillator =
       audio.createOscillator();
+
 
     const gain =
       audio.createGain();
@@ -2256,14 +2504,19 @@ function playScanSound() {
     oscillator.frequency.value =
       880;
 
+
     oscillator.type =
       "sine";
+
 
     gain.gain.value =
       0.08;
 
 
-    oscillator.connect(gain);
+    oscillator.connect(
+      gain
+    );
+
 
     gain.connect(
       audio.destination
@@ -2272,90 +2525,17 @@ function playScanSound() {
 
     oscillator.start();
 
+
     oscillator.stop(
-      audio.currentTime + 0.12
+      audio.currentTime +
+      0.12
     );
+
 
   } catch {
 
     devLog(
       "Sound error"
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ZOOM
-========================= */
-
-async function setZoom(value) {
-
-  const zoom =
-    parseFloat(value);
-
-
-  document.getElementById(
-    "zoom-value"
-  ).textContent =
-    zoom.toFixed(1) + "×";
-
-
-  if (!cameraTrack)
-    return;
-
-
-  try {
-
-    const capabilities =
-      cameraTrack.getCapabilities();
-
-
-    if (!capabilities.zoom) {
-
-      devLog(
-        "Camera does not support zoom"
-      );
-
-      return;
-
-    }
-
-
-    const min =
-      capabilities.zoom.min;
-
-    const max =
-      capabilities.zoom.max;
-
-
-    const actualZoom =
-      min +
-      ((zoom - 1) / 4) *
-      (max - min);
-
-
-    await cameraTrack.applyConstraints({
-
-      advanced: [
-
-        {
-          zoom:
-            actualZoom
-        }
-
-      ]
-
-    });
-
-
-  } catch(error) {
-
-    devLog(
-      "Zoom error: " +
-      error.message
     );
 
   }
@@ -2401,36 +2581,28 @@ function clearDevOutput() {
 
   document.getElementById(
     "dev-output"
-  ).innerHTML = "";
-
-  devLog(
-    "Developer output cleared"
-  );
+  ).innerHTML =
+    "";
 
 }
 
 
 async function copyDevOutput() {
 
-  const text =
-    document.getElementById(
-      "dev-output"
-    ).innerText;
-
-
   try {
 
-    await navigator.clipboard
-      .writeText(text);
+    await navigator.clipboard.writeText(
 
-    devLog(
-      "Developer output copied"
+      document.getElementById(
+        "dev-output"
+      ).innerText
+
     );
 
   } catch {
 
     devLog(
-      "Could not copy developer output"
+      "Could not copy output"
     );
 
   }
@@ -2440,19 +2612,20 @@ async function copyDevOutput() {
 
 function exportDevOutput() {
 
-  const text =
-    document.getElementById(
-      "dev-output"
-    ).innerText;
-
-
   const blob =
     new Blob(
-      [text],
+
+      [
+        document.getElementById(
+          "dev-output"
+        ).innerText
+      ],
+
       {
         type:
           "text/plain"
       }
+
     );
 
 
@@ -2470,6 +2643,7 @@ function exportDevOutput() {
 
   link.href =
     url;
+
 
   link.download =
     "printer-scanner-log.txt";
@@ -2506,25 +2680,17 @@ function toggleLightMode() {
   ).style.display =
     "none";
 
-
-  devLog(
-    "Light Mode: " +
-    (
-      lightMode
-        ? "ON"
-        : "OFF"
-    )
-  );
-
 }
 
 
 /* =========================
-   MENU CLOSE
+   CLOSE MENU
 ========================= */
 
 document.addEventListener(
+
   "click",
+
   function(event) {
 
     const menu =
@@ -2539,8 +2705,17 @@ document.addEventListener(
 
 
     if (
-      !menu.contains(event.target) &&
-      !button.contains(event.target)
+
+      !menu.contains(
+        event.target
+      )
+
+      &&
+
+      !button.contains(
+        event.target
+      )
+
     ) {
 
       menu.style.display =
@@ -2549,6 +2724,7 @@ document.addEventListener(
     }
 
   }
+
 );
 
 
@@ -2565,8 +2741,17 @@ function getSiteName(url) {
 
 
     if (
-      !fixedURL.startsWith("http://") &&
-      !fixedURL.startsWith("https://")
+
+      !fixedURL.startsWith(
+        "http://"
+      )
+
+      &&
+
+      !fixedURL.startsWith(
+        "https://"
+      )
+
     ) {
 
       fixedURL =
@@ -2577,10 +2762,12 @@ function getSiteName(url) {
 
 
     const parsed =
-      new URL(fixedURL);
+      new URL(
+        fixedURL
+      );
 
 
-    const hostname =
+    let hostname =
       parsed.hostname.replace(
         /^www\./,
         ""
@@ -2632,7 +2819,9 @@ function getSiteName(url) {
       knownSites[hostname]
     ) {
 
-      return knownSites[hostname];
+      return knownSites[
+        hostname
+      ];
 
     }
 
@@ -2641,21 +2830,31 @@ function getSiteName(url) {
       hostname.split(".");
 
 
-    if (parts.length >= 2) {
+    if (
+      parts.length >= 2
+    ) {
 
       const name =
-        parts[parts.length - 2];
+        parts[
+          parts.length - 2
+        ];
 
 
       return (
-        name.charAt(0).toUpperCase() +
+
+        name
+          .charAt(0)
+          .toUpperCase() +
+
         name.slice(1)
+
       );
 
     }
 
 
     return hostname;
+
 
   } catch {
 
@@ -2676,9 +2875,11 @@ function getQRText(url) {
 
     const parsedURL =
       new URL(
+
         url.startsWith("http")
           ? url
           : "https://" + url
+
       );
 
 
@@ -2688,11 +2889,14 @@ function getQRText(url) {
 
 
     if (
+
       cleanURL ===
       "https://apps.apple.com/app/id1166269606"
+
     ) {
 
-      isPrinterLink = true;
+      isPrinterLink =
+        true;
 
       return "TOYBOX Found";
 
@@ -2700,11 +2904,14 @@ function getQRText(url) {
 
 
     if (
+
       cleanURL ===
       "https://apps.apple.com/app/id1658133862"
+
     ) {
 
-      isPrinterLink = true;
+      isPrinterLink =
+        true;
 
       return "Ender 3 Found";
 
@@ -2712,11 +2919,14 @@ function getQRText(url) {
 
 
     if (
+
       cleanURL ===
       "https://apps.apple.com/app/id1625671285"
+
     ) {
 
-      isPrinterLink = true;
+      isPrinterLink =
+        true;
 
       return "This is to print with the H2D";
 
@@ -2724,39 +2934,129 @@ function getQRText(url) {
 
 
     if (
-      cleanURL ===
-      "https://www.make.toys/toys"
-    ) {
 
-      isPrinterLink = true;
-
-      return "TOYBOX Found";
-
-    }
-
-
-    if (
       parsedURL.origin ===
-        "https://makerworld.com" &&
-      parsedURL.pathname === "/en"
+      "https://makerworld.com"
+
+      &&
+
+      parsedURL.pathname ===
+      "/en"
+
     ) {
 
-      isPrinterLink = false;
+      isPrinterLink =
+        false;
 
       return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
 
     }
 
 
-    isPrinterLink = false;
+    isPrinterLink =
+      false;
 
-    return getSiteName(url);
+
+    return getSiteName(
+      url
+    );
+
 
   } catch {
 
-    isPrinterLink = false;
+    isPrinterLink =
+      false;
 
     return "QR Code Found";
+
+  }
+
+}
+
+
+/* =========================
+   ZOOM
+========================= */
+
+async function setZoom(value) {
+
+  const zoom =
+    parseFloat(
+      value
+    );
+
+
+  document.getElementById(
+    "zoom-value"
+  ).textContent =
+
+    zoom.toFixed(1) +
+    "×";
+
+
+  if (!cameraTrack) {
+
+    reacquireCameraTrack();
+
+  }
+
+
+  if (!cameraTrack)
+    return;
+
+
+  try {
+
+    const capabilities =
+      cameraTrack
+        .getCapabilities();
+
+
+    if (!capabilities.zoom) {
+
+      devLog(
+        "Camera does not support zoom"
+      );
+
+      return;
+
+    }
+
+
+    const actualZoom =
+
+      capabilities.zoom.min +
+
+      (
+        (zoom - 1) / 4
+      ) *
+
+      (
+        capabilities.zoom.max -
+        capabilities.zoom.min
+      );
+
+
+    await cameraTrack.applyConstraints({
+
+      advanced: [
+
+        {
+          zoom:
+            actualZoom
+        }
+
+      ]
+
+    });
+
+
+  } catch(error) {
+
+    devLog(
+      "Zoom error: " +
+      error.message
+    );
 
   }
 
@@ -2774,116 +3074,49 @@ function positionScanRegion() {
       "reader__scan_region"
     );
 
-  const box =
-    document.getElementById(
-      "scan-box"
-    );
 
-
-  if (!region || !box)
+  if (!region)
     return;
 
 
-  /*
-    Both elements use exactly the same
-    dimensions and center position.
-  */
+  region.style.position =
+    "absolute";
 
-  const styles = {
-
-    position: "absolute",
-
-    width: QR_SIZE + "px",
-    height: QR_SIZE + "px",
-
-    minWidth: QR_SIZE + "px",
-    minHeight: QR_SIZE + "px",
-
-    maxWidth: QR_SIZE + "px",
-    maxHeight: QR_SIZE + "px",
-
-    left: "50%",
-    top: "50%",
-
-    transform:
-      "translate(-50%, -50%)",
-
-    margin: "0",
-    padding: "0",
-
-    border: "none"
-
-  };
-
-
-  Object.assign(
-    region.style,
-    styles
-  );
-
-
-  /*
-    Force the visible box to the same
-    exact coordinates.
-  */
-
-  box.style.width =
+  region.style.width =
     QR_SIZE + "px";
 
-  box.style.height =
+  region.style.height =
     QR_SIZE + "px";
 
-  box.style.left =
+  region.style.minWidth =
+    QR_SIZE + "px";
+
+  region.style.minHeight =
+    QR_SIZE + "px";
+
+  region.style.maxWidth =
+    QR_SIZE + "px";
+
+  region.style.maxHeight =
+    QR_SIZE + "px";
+
+  region.style.left =
     "50%";
 
-  box.style.top =
+  region.style.top =
     "50%";
 
-  box.style.transform =
+  region.style.transform =
     "translate(-50%, -50%)";
 
-}
+  region.style.margin =
+    "0";
 
+  region.style.padding =
+    "0";
 
-/* =========================
-   GET CAMERA TRACK
-========================= */
-
-function updateCameraTrack() {
-
-  const video =
-    document.querySelector(
-      "#reader video"
-    );
-
-
-  if (
-    video &&
-    video.srcObject
-  ) {
-
-    const tracks =
-      video.srcObject
-        .getVideoTracks();
-
-
-    if (tracks.length) {
-
-      cameraTrack =
-        tracks[0];
-
-      devLog(
-        "Camera track ready"
-      );
-
-      return true;
-
-    }
-
-  }
-
-
-  return false;
+  region.style.border =
+    "none";
 
 }
 
@@ -2925,37 +3158,50 @@ async function startScanner() {
 
       {
 
-        fps: 30,
+        fps:
+          30,
 
         qrbox: {
-          width: QR_SIZE,
-          height: QR_SIZE
+
+          width:
+            QR_SIZE,
+
+          height:
+            QR_SIZE
+
         },
 
-        disableFlip: false
+        disableFlip:
+          false
 
       },
 
 
       async function(decodedText) {
 
-        if (scanConfirmed)
+        if (
+          scanConfirmed
+        ) {
+
           return;
+
+        }
 
 
         status.textContent =
           "QR detected";
 
+
         status.className =
           "detected";
 
 
-        if (!cameraTrack)
-          updateCameraTrack();
+        reacquireCameraTrack();
 
 
         if (
-          firstDetection === null
+          firstDetection ===
+          null
         ) {
 
           firstDetection =
@@ -2970,10 +3216,6 @@ async function startScanner() {
           ).style.display =
             "block";
 
-
-          devLog(
-            "First QR detection"
-          );
 
           return;
 
@@ -2991,25 +3233,30 @@ async function startScanner() {
           detectedText =
             decodedText;
 
+
           return;
 
         }
 
 
         if (
+
           Date.now() -
           firstDetection >=
           HOLD_TIME
+
         ) {
 
           scanConfirmed =
             true;
+
 
           scannedURL =
             decodedText;
 
 
           successfulScans++;
+
           scanCount++;
 
 
@@ -3033,7 +3280,9 @@ async function startScanner() {
           );
 
 
-          status.style.display =
+          document.getElementById(
+            "status-bar"
+          ).style.display =
             "none";
 
 
@@ -3056,7 +3305,9 @@ async function startScanner() {
 
 
           try {
+
             await scanner.stop();
+
           } catch {}
 
 
@@ -3076,16 +3327,15 @@ async function startScanner() {
             "none";
 
 
-          const resultText =
-            document.getElementById(
-              "result-text"
-            );
-
-
-          resultText.textContent =
+          document.getElementById(
+            "result-text"
+          ).textContent =
             result;
 
-          resultText.style.display =
+
+          document.getElementById(
+            "result-text"
+          ).style.display =
             "block";
 
 
@@ -3126,31 +3376,19 @@ async function startScanner() {
     );
 
 
-    /*
-      html5-qrcode can modify its internal
-      scan-region after start(), so lock it
-      repeatedly during startup.
-    */
+    setTimeout(
+      positionScanRegion,
+      100
+    );
 
-    const lockTimes =
-      [50, 150, 300, 600, 1000];
+    setTimeout(
+      positionScanRegion,
+      300
+    );
 
-
-    lockTimes.forEach(
-      function(delay) {
-
-        setTimeout(
-          function() {
-
-            positionScanRegion();
-
-            updateCameraTrack();
-
-          },
-          delay
-        );
-
-      }
+    setTimeout(
+      positionScanRegion,
+      700
     );
 
 
@@ -3163,17 +3401,19 @@ async function startScanner() {
     status.textContent =
       "Ready to scan";
 
+
     status.className =
       "";
 
 
-    devLog(
-      "Camera started"
+    setTimeout(
+      reacquireCameraTrack,
+      700
     );
 
 
     devLog(
-      "QR area locked: 250x250"
+      "Camera started"
     );
 
 
@@ -3203,7 +3443,7 @@ async function startScanner() {
 
 
 /* =========================
-   OPEN RESULT
+   OPEN SCANNED SITE
 ========================= */
 
 function openScannedSite() {
@@ -3217,8 +3457,17 @@ function openScannedSite() {
 
 
   if (
-    !url.startsWith("http://") &&
-    !url.startsWith("https://")
+
+    !url.startsWith(
+      "http://"
+    )
+
+    &&
+
+    !url.startsWith(
+      "https://"
+    )
+
   ) {
 
     url =
@@ -3248,10 +3497,11 @@ function rescan() {
 
 
 /* =========================
-   RESIZE / ROTATION
+   RESIZE
 ========================= */
 
-let resizeTimer = null;
+let resizeTimer =
+  null;
 
 
 function keepScannerLocked() {
@@ -3263,12 +3513,15 @@ function keepScannerLocked() {
 
   resizeTimer =
     setTimeout(
+
       function() {
 
         positionScanRegion();
 
       },
+
       50
+
     );
 
 }
@@ -3281,47 +3534,22 @@ window.addEventListener(
 
 
 window.addEventListener(
+
   "orientationchange",
+
   function() {
 
     setTimeout(
-      function() {
 
-        positionScanRegion();
+      keepScannerLocked,
 
-      },
       100
-    );
 
-
-    setTimeout(
-      function() {
-
-        positionScanRegion();
-
-      },
-      500
     );
 
   }
+
 );
-
-
-/*
-  Also re-lock when the browser changes
-  the viewport dimensions.
-*/
-
-if (
-  window.visualViewport
-) {
-
-  window.visualViewport.addEventListener(
-    "resize",
-    keepScannerLocked
-  );
-
-}
 
 
 /* =========================
@@ -3329,43 +3557,73 @@ if (
 ========================= */
 
 window.addEventListener(
+
   "load",
+
   function() {
+
+    /*
+      Make absolutely sure the
+      Notes overlay cannot intercept
+      clicks while hidden.
+    */
+
+    const notes =
+      document.getElementById(
+        "notes-panel"
+      );
+
+
+    notes.style.display =
+      "none";
+
+
+    notes.style.pointerEvents =
+      "none";
+
 
     devLog(
       "Printer Scanner 5000"
     );
 
+
     devLog(
-      "Version 4.9"
+      "Version 5.0"
     );
+
 
     devLog(
       "QR area: FIXED 250x250"
     );
 
-    devLog(
-      "Visible box and scan region synchronized"
-    );
 
     devLog(
       "Vibration: REMOVED"
     );
 
+
     devLog(
       "Scan success status: REMOVED"
     );
+
 
     devLog(
       "Printer status dropdowns enabled"
     );
 
 
+    devLog(
+      "Notes camera protection enabled"
+    );
+
+
     loadNotes();
+
 
     startScanner();
 
   }
+
 );
 
 </script>
