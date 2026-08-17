@@ -1,15 +1,23 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 5.0
+  VERSION: 5.1
 
-  FIXES:
+  FIXES / FEATURES:
   - Fixed camera freezing after saving Notes
   - Fixed Home menu becoming unclickable after Notes
   - Saving Notes never reloads or stops the scanner
   - Notes overlay cannot block the Home button after closing
   - Camera track is safely reacquired after Notes
   - Printer statuses remain saved locally
-  - Fixed 250x250 QR scanning region retained
+  - Fixed 250x250 scan region retained
+  - Scanner Mode added
+  - QR Code mode added
+  - Barcode mode added
+  - All Codes mode added
+  - Scanner mode saved locally
+  - Unknown Barcode Identifier added
+  - Barcode format identification added
+  - Barcode search added
   - Existing scanner features retained
 -->
 
@@ -156,7 +164,7 @@ body {
   left: 12px;
   top: 58px;
 
-  width: 190px;
+  width: 210px;
 
   max-height:
     calc(100vh - 75px);
@@ -1052,6 +1060,293 @@ body {
 
 
 /* =========================
+   SCANNER MODE
+========================= */
+
+#scanner-mode-panel {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2100;
+
+  background: #000;
+
+  padding:
+    30px 20px;
+
+  overflow-y: auto;
+
+  display: none;
+
+  pointer-events: none;
+}
+
+#scanner-mode-title {
+
+  color: white;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  margin-bottom: 10px;
+}
+
+#scanner-mode-current {
+
+  color: #aaa;
+
+  font-size: 15px;
+
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+.scanner-mode-option {
+
+  width: min(90%, 500px);
+
+  margin: 10px auto;
+
+  padding: 18px;
+
+  border:
+    2px solid #444;
+
+  border-radius: 16px;
+
+  background: #111;
+
+  color: white;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.scanner-mode-option.active {
+
+  border-color: white;
+
+  background: #222;
+}
+
+.scanner-mode-option-title {
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  margin-bottom: 5px;
+}
+
+.scanner-mode-option-description {
+
+  color: #aaa;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+}
+
+.scanner-mode-back {
+
+  width: min(90%, 400px);
+
+  display: block;
+
+  margin: 25px auto;
+
+  border: none;
+
+  border-radius: 999px;
+
+  padding: 15px;
+
+  background: white;
+
+  color: #111;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================
+   BARCODE IDENTIFIER
+========================= */
+
+#barcode-identifier-panel {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2200;
+
+  background: #000;
+
+  padding:
+    30px 20px;
+
+  overflow-y: auto;
+
+  display: none;
+
+  pointer-events: none;
+}
+
+#barcode-identifier-title {
+
+  color: white;
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  margin-bottom: 8px;
+}
+
+#barcode-identifier-description {
+
+  width: min(90%, 600px);
+
+  margin: 0 auto 25px;
+
+  color: #aaa;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+#barcode-code-input {
+
+  display: block;
+
+  width: min(90%, 600px);
+
+  margin: 0 auto 12px;
+
+  padding: 16px;
+
+  border:
+    2px solid #444;
+
+  border-radius: 14px;
+
+  background: #111;
+
+  color: white;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 20px;
+
+  text-align: center;
+
+  outline: none;
+}
+
+#barcode-code-input:focus {
+
+  border-color: white;
+}
+
+.barcode-identifier-button {
+
+  display: block;
+
+  width: min(90%, 400px);
+
+  margin: 10px auto;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #111;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.barcode-identifier-secondary {
+
+  background: #222;
+
+  color: white;
+}
+
+#barcode-identification-result {
+
+  width: min(90%, 600px);
+
+  margin: 25px auto;
+
+  padding: 18px;
+
+  border:
+    1px solid #333;
+
+  border-radius: 16px;
+
+  background: #111;
+
+  color: white;
+
+  display: none;
+
+  line-height: 1.5;
+}
+
+.barcode-result-title {
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  margin-bottom: 10px;
+}
+
+.barcode-result-row {
+
+  margin:
+    7px 0;
+
+  color: #ccc;
+}
+
+.barcode-result-value {
+
+  color: white;
+
+  font-weight: 700;
+}
+
+
+/* =========================
    DEV PANEL
 ========================= */
 
@@ -1331,6 +1626,69 @@ body.light-mode .status-select:focus {
   border-color: #000;
 }
 
+body.light-mode #scanner-mode-panel,
+body.light-mode #barcode-identifier-panel {
+
+  background: #f2f2f2;
+}
+
+body.light-mode #scanner-mode-title,
+body.light-mode #barcode-identifier-title {
+
+  color: #000;
+}
+
+body.light-mode .scanner-mode-option {
+
+  background: white;
+
+  color: #000;
+
+  border-color: #ccc;
+}
+
+body.light-mode .scanner-mode-option.active {
+
+  background: #ddd;
+
+  border-color: #000;
+}
+
+body.light-mode .scanner-mode-option-description,
+body.light-mode #scanner-mode-current,
+body.light-mode #barcode-identifier-description {
+
+  color: #555;
+}
+
+body.light-mode #barcode-code-input {
+
+  background: white;
+
+  color: #000;
+
+  border-color: #bbb;
+}
+
+body.light-mode #barcode-identification-result {
+
+  background: white;
+
+  color: #000;
+
+  border-color: #ccc;
+}
+
+body.light-mode .barcode-result-row {
+
+  color: #555;
+}
+
+body.light-mode .barcode-result-value {
+
+  color: #000;
+}
+
 
 /* =========================
    MOBILE
@@ -1338,7 +1696,9 @@ body.light-mode .status-select:focus {
 
 @media (max-width: 500px) {
 
-  #notes-panel {
+  #notes-panel,
+  #scanner-mode-panel,
+  #barcode-identifier-panel {
 
     padding:
       25px 14px;
@@ -1361,6 +1721,16 @@ body.light-mode .status-select:focus {
     font-size: 15px;
 
     padding: 13px;
+  }
+
+  #scanner-mode-title {
+
+    font-size: 26px;
+  }
+
+  #barcode-identifier-title {
+
+    font-size: 25px;
   }
 
 }
@@ -1424,12 +1794,30 @@ body.light-mode .status-select:focus {
   Ender 3
 </button>
 
+
 <button
   class="menu-button"
   onclick="showNotes()"
 >
   Notes
 </button>
+
+
+<button
+  class="menu-button"
+  onclick="showScannerMode()"
+>
+  Scanner Mode
+</button>
+
+
+<button
+  class="menu-button"
+  onclick="showBarcodeIdentifier()"
+>
+  Identify Barcode
+</button>
+
 
 <button
   class="menu-button"
@@ -1438,12 +1826,14 @@ body.light-mode .status-select:focus {
   Refresh
 </button>
 
+
 <button
   class="menu-button"
   onclick="showHistory()"
 >
   Scan History
 </button>
+
 
 <button
   class="menu-button"
@@ -1452,12 +1842,14 @@ body.light-mode .status-select:focus {
   Clear History
 </button>
 
+
 <button
   class="menu-button"
   onclick="toggleDevMode()"
 >
   Dev Mode
 </button>
+
 
 <button
   class="menu-button"
@@ -1560,9 +1952,13 @@ body.light-mode .status-select:focus {
 
 
 <div id="version-number">
-  v5.0
+  v5.1
 </div>
 
+
+<!-- =========================
+     HISTORY
+========================= -->
 
 <div id="history-panel">
 
@@ -1581,6 +1977,10 @@ body.light-mode .status-select:focus {
 
 </div>
 
+
+<!-- =========================
+     NOTES
+========================= -->
 
 <div
   id="notes-panel"
@@ -1663,8 +2063,157 @@ body.light-mode .status-select:focus {
 
 </div>
 
+
+<!-- =========================
+     SCANNER MODE
+========================= -->
+
+<div
+  id="scanner-mode-panel"
+  onclick="event.stopPropagation()"
+>
+
+<div id="scanner-mode-title">
+  Scanner Mode
 </div>
 
+<div id="scanner-mode-current">
+  Current mode: QR Codes
+</div>
+
+
+<div
+  id="scanner-mode-qr"
+  class="scanner-mode-option active"
+  onclick="setScannerMode('qr')"
+>
+
+<div class="scanner-mode-option-title">
+  QR Codes
+</div>
+
+<div class="scanner-mode-option-description">
+  Scans QR codes only. This is the original scanner mode.
+</div>
+
+</div>
+
+
+<div
+  id="scanner-mode-barcode"
+  class="scanner-mode-option"
+  onclick="setScannerMode('barcode')"
+>
+
+<div class="scanner-mode-option-title">
+  Barcodes
+</div>
+
+<div class="scanner-mode-option-description">
+  Scans common 1D barcodes including UPC, EAN,
+  Code 39, Code 93, Code 128 and ITF.
+</div>
+
+</div>
+
+
+<div
+  id="scanner-mode-all"
+  class="scanner-mode-option"
+  onclick="setScannerMode('all')"
+>
+
+<div class="scanner-mode-option-title">
+  All Codes
+</div>
+
+<div class="scanner-mode-option-description">
+  Scans QR codes and supported barcode formats.
+</div>
+
+</div>
+
+
+<button
+  class="scanner-mode-back"
+  onclick="hideScannerMode()"
+>
+  Back
+</button>
+
+</div>
+
+
+<!-- =========================
+     BARCODE IDENTIFIER
+========================= -->
+
+<div
+  id="barcode-identifier-panel"
+  onclick="event.stopPropagation()"
+>
+
+<div id="barcode-identifier-title">
+  Identify Barcode
+</div>
+
+<div id="barcode-identifier-description">
+
+Enter an unknown barcode number below.
+The scanner can identify common numeric
+barcode formats from their length and
+check digit.
+
+</div>
+
+
+<input
+  id="barcode-code-input"
+  type="text"
+  inputmode="numeric"
+  autocomplete="off"
+  placeholder="Enter barcode number"
+  onkeydown="
+    if (event.key === 'Enter')
+      identifyBarcode()
+  "
+>
+
+
+<button
+  class="barcode-identifier-button"
+  onclick="identifyBarcode()"
+>
+  Identify
+</button>
+
+
+<button
+  class="barcode-identifier-button barcode-identifier-secondary"
+  onclick="searchBarcode()"
+>
+  Search Code
+</button>
+
+
+<div id="barcode-identification-result"></div>
+
+
+<button
+  class="scanner-mode-back"
+  onclick="hideBarcodeIdentifier()"
+>
+  Back
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     DEV PANEL
+========================= -->
 
 <div id="dev-panel">
 
@@ -1747,6 +2296,114 @@ let lastScanTime = 0;
 const HOLD_TIME = 600;
 
 const QR_SIZE = 250;
+
+
+/* =========================
+   SCANNER MODE
+========================= */
+
+let scannerMode =
+  localStorage.getItem(
+    "printerScannerMode"
+  ) || "qr";
+
+
+/*
+  Barcode formats supported by
+  html5-qrcode.
+*/
+
+const BARCODE_FORMATS = [
+
+  Html5QrcodeSupportedFormats.CODABAR,
+
+  Html5QrcodeSupportedFormats.CODE_39,
+
+  Html5QrcodeSupportedFormats.CODE_93,
+
+  Html5QrcodeSupportedFormats.CODE_128,
+
+  Html5QrcodeSupportedFormats.ITF,
+
+  Html5QrcodeSupportedFormats.EAN_13,
+
+  Html5QrcodeSupportedFormats.EAN_8,
+
+  Html5QrcodeSupportedFormats.RSS_14,
+
+  Html5QrcodeSupportedFormats.RSS_EXPANDED,
+
+  Html5QrcodeSupportedFormats.UPC_A,
+
+  Html5QrcodeSupportedFormats.UPC_E,
+
+  Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION
+
+];
+
+
+function getScannerFormats() {
+
+  if (
+    scannerMode ===
+    "barcode"
+  ) {
+
+    return BARCODE_FORMATS;
+
+  }
+
+
+  if (
+    scannerMode ===
+    "all"
+  ) {
+
+    return [
+
+      Html5QrcodeSupportedFormats.QR_CODE,
+
+      ...BARCODE_FORMATS
+
+    ];
+
+  }
+
+
+  return [
+
+    Html5QrcodeSupportedFormats.QR_CODE
+
+  ];
+
+}
+
+
+function getScannerModeName() {
+
+  if (
+    scannerMode ===
+    "barcode"
+  ) {
+
+    return "Barcodes";
+
+  }
+
+
+  if (
+    scannerMode ===
+    "all"
+  ) {
+
+    return "All Codes";
+
+  }
+
+
+  return "QR Codes";
+
+}
 
 
 /* =========================
@@ -1866,6 +2523,291 @@ function refreshPage() {
 
 
 /* =========================
+   SCANNER MODE SCREEN
+========================= */
+
+function showScannerMode() {
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+
+  updateScannerModeUI();
+
+
+  const panel =
+    document.getElementById(
+      "scanner-mode-panel"
+    );
+
+
+  panel.style.display =
+    "block";
+
+
+  panel.style.pointerEvents =
+    "auto";
+
+
+  devLog(
+    "Opened scanner mode settings"
+  );
+
+}
+
+
+function hideScannerMode() {
+
+  const panel =
+    document.getElementById(
+      "scanner-mode-panel"
+    );
+
+
+  panel.style.display =
+    "none";
+
+
+  panel.style.pointerEvents =
+    "none";
+
+
+  devLog(
+    "Closed scanner mode settings"
+  );
+
+}
+
+
+function updateScannerModeUI() {
+
+  const current =
+    document.getElementById(
+      "scanner-mode-current"
+    );
+
+
+  if (!current)
+    return;
+
+
+  current.textContent =
+    "Current mode: " +
+    getScannerModeName();
+
+
+  document
+    .getElementById(
+      "scanner-mode-qr"
+    )
+    .classList.toggle(
+      "active",
+      scannerMode === "qr"
+    );
+
+
+  document
+    .getElementById(
+      "scanner-mode-barcode"
+    )
+    .classList.toggle(
+      "active",
+      scannerMode === "barcode"
+    );
+
+
+  document
+    .getElementById(
+      "scanner-mode-all"
+    )
+    .classList.toggle(
+      "active",
+      scannerMode === "all"
+    );
+
+}
+
+
+async function setScannerMode(mode) {
+
+  if (
+    mode !== "qr" &&
+    mode !== "barcode" &&
+    mode !== "all"
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    scannerMode === mode
+  ) {
+
+    hideScannerMode();
+
+    return;
+
+  }
+
+
+  scannerMode =
+    mode;
+
+
+  localStorage.setItem(
+    "printerScannerMode",
+    scannerMode
+  );
+
+
+  updateScannerModeUI();
+
+
+  devLog(
+    "Scanner mode changed to: " +
+    getScannerModeName()
+  );
+
+
+  hideScannerMode();
+
+
+  /*
+    Stop the old scanner.
+
+    The scanner must be recreated
+    because formatsToSupport is set
+    when Html5Qrcode is created.
+  */
+
+  try {
+
+    if (
+      scanner &&
+      scanner.isScanning
+    ) {
+
+      await scanner.stop();
+
+    }
+
+  } catch(error) {
+
+    devLog(
+      "Scanner stop during mode change: " +
+      error.message
+    );
+
+  }
+
+
+  scanner =
+    null;
+
+  cameraTrack =
+    null;
+
+
+  firstDetection =
+    null;
+
+  detectedText =
+    null;
+
+  scanConfirmed =
+    false;
+
+  scannedURL =
+    null;
+
+  isPrinterLink =
+    false;
+
+
+  document.getElementById(
+    "reader"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "scan-box"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "status-bar"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "control-bar"
+  ).style.display =
+    "flex";
+
+
+  document.getElementById(
+    "version-number"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "result-text"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "open-button"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "rescan"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "hold-still"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "status-bar"
+  ).textContent =
+    "Starting " +
+    getScannerModeName() +
+    "...";
+
+
+  document.getElementById(
+    "status-bar"
+  ).className =
+    "";
+
+
+  document.getElementById(
+    "loading"
+  ).style.display =
+    "flex";
+
+
+  startScanner();
+
+}
+
+
+/* =========================
    NOTES
 ========================= */
 
@@ -1912,18 +2854,6 @@ function hideNotes() {
     );
 
 
-  /*
-    IMPORTANT:
-
-    We only hide the Notes page.
-
-    We DO NOT:
-    - reload the page
-    - stop the scanner
-    - restart the scanner
-    - change the video element
-  */
-
   notes.style.display =
     "none";
 
@@ -1942,13 +2872,6 @@ function hideNotes() {
     "Closed printer status"
   );
 
-
-  /*
-    Give the browser a moment to
-    finish removing the overlay,
-    then reconnect our reference
-    to the existing camera track.
-  */
 
   setTimeout(
     reacquireCameraTrack,
@@ -2008,17 +2931,6 @@ function saveNotes() {
 
     );
 
-
-    /*
-      This is intentionally the ONLY
-      thing Save Status does to the data.
-
-      It does NOT reload the page.
-
-      It does NOT stop the camera.
-
-      It does NOT restart the scanner.
-    */
 
     devLog(
       "Printer statuses saved"
@@ -2101,13 +3013,6 @@ function loadNotes() {
 ========================= */
 
 function reacquireCameraTrack() {
-
-  /*
-    We don't create a new camera.
-
-    We simply find the existing
-    video stream again.
-  */
 
   const video =
     document.querySelector(
@@ -2288,10 +3193,32 @@ function showHistory() {
         div.onclick =
           function() {
 
-            window.open(
-              item.url,
-              "_blank"
-            );
+            /*
+              Only open URLs from history.
+            */
+
+            if (
+              /^https?:\/\//i.test(
+                item.url
+              )
+            ) {
+
+              window.open(
+                item.url,
+                "_blank"
+              );
+
+            } else {
+
+              showBarcodeIdentifier();
+
+
+              document.getElementById(
+                "barcode-code-input"
+              ).value =
+                item.url;
+
+            }
 
           };
 
@@ -2975,6 +3902,701 @@ function getQRText(url) {
 
 
 /* =========================
+   GENERIC SCAN RESULT
+========================= */
+
+function getScanText(code) {
+
+  /*
+    QR mode keeps the original
+    printer and website behavior.
+  */
+
+  if (
+    scannerMode ===
+    "qr"
+  ) {
+
+    return getQRText(
+      code
+    );
+
+  }
+
+
+  isPrinterLink =
+    false;
+
+
+  const identification =
+    identifyBarcodeValue(
+      code
+    );
+
+
+  if (
+    identification.type
+  ) {
+
+    return (
+      identification.type +
+      ": " +
+      code
+    );
+
+  }
+
+
+  return (
+    "Barcode Found: " +
+    code
+  );
+
+}
+
+
+/* =========================
+   BARCODE IDENTIFICATION
+========================= */
+
+function onlyDigits(value) {
+
+  return String(value)
+    .replace(
+      /\D/g,
+      ""
+    );
+
+}
+
+
+function calculateEANCheckDigit(
+  digits
+) {
+
+  if (
+    digits.length !== 12
+  ) {
+
+    return null;
+
+  }
+
+
+  let sum = 0;
+
+
+  for (
+    let i = 0;
+    i < digits.length;
+    i++
+  ) {
+
+    const digit =
+      parseInt(
+        digits[i],
+        10
+      );
+
+
+    sum +=
+      i % 2 === 0
+        ? digit
+        : digit * 3;
+
+  }
+
+
+  return (
+    (
+      10 -
+      (
+        sum % 10
+      )
+    ) % 10
+  );
+
+}
+
+
+function isValidEAN13(
+  code
+) {
+
+  if (
+    !/^\d{13}$/.test(code)
+  ) {
+
+    return false;
+
+  }
+
+
+  let sum = 0;
+
+
+  for (
+    let i = 0;
+    i < 12;
+    i++
+  ) {
+
+    const digit =
+      parseInt(
+        code[i],
+        10
+      );
+
+
+    sum +=
+      i % 2 === 0
+        ? digit
+        : digit * 3;
+
+  }
+
+
+  const check =
+    (
+      10 -
+      (
+        sum % 10
+      )
+    ) % 10;
+
+
+  return (
+    check ===
+    parseInt(
+      code[12],
+      10
+    )
+  );
+
+}
+
+
+function isValidEAN8(
+  code
+) {
+
+  if (
+    !/^\d{8}$/.test(code)
+  ) {
+
+    return false;
+
+  }
+
+
+  let sum = 0;
+
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+
+    const digit =
+      parseInt(
+        code[i],
+        10
+      );
+
+
+    sum +=
+      i % 2 === 0
+        ? digit * 3
+        : digit;
+
+  }
+
+
+  const check =
+    (
+      10 -
+      (
+        sum % 10
+      )
+    ) % 10;
+
+
+  return (
+    check ===
+    parseInt(
+      code[7],
+      10
+    )
+  );
+
+}
+
+
+function isValidUPCA(
+  code
+) {
+
+  if (
+    !/^\d{12}$/.test(code)
+  ) {
+
+    return false;
+
+  }
+
+
+  let sum = 0;
+
+
+  for (
+    let i = 0;
+    i < 11;
+    i++
+  ) {
+
+    const digit =
+      parseInt(
+        code[i],
+        10
+      );
+
+
+    sum +=
+      i % 2 === 0
+        ? digit * 3
+        : digit;
+
+  }
+
+
+  const check =
+    (
+      10 -
+      (
+        sum % 10
+      )
+    ) % 10;
+
+
+  return (
+    check ===
+    parseInt(
+      code[11],
+      10
+    )
+  );
+
+}
+
+
+function identifyBarcodeValue(
+  rawCode
+) {
+
+  const code =
+    String(
+      rawCode || ""
+    ).trim();
+
+
+  const digits =
+    onlyDigits(
+      code
+    );
+
+
+  if (
+    isValidUPCA(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "UPC-A",
+
+      description:
+        "12-digit Universal Product Code"
+
+    };
+
+  }
+
+
+  if (
+    isValidEAN13(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "EAN-13",
+
+      description:
+        "13-digit European/International Article Number"
+
+    };
+
+  }
+
+
+  if (
+    isValidEAN8(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "EAN-8",
+
+      description:
+        "8-digit compact EAN barcode"
+
+    };
+
+  }
+
+
+  if (
+    /^\d{14}$/.test(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "GTIN-14 / ITF-14",
+
+      description:
+        "14-digit trade-item identifier"
+
+    };
+
+  }
+
+
+  if (
+    /^\d{12}$/.test(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "Possible UPC-A",
+
+      description:
+        "12 numeric digits, but the check digit did not validate"
+
+    };
+
+  }
+
+
+  if (
+    /^\d{13}$/.test(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "Possible EAN-13",
+
+      description:
+        "13 numeric digits, but the check digit did not validate"
+
+    };
+
+  }
+
+
+  if (
+    /^\d{8}$/.test(
+      digits
+    )
+  ) {
+
+    return {
+
+      type:
+        "Possible EAN-8",
+
+      description:
+        "8 numeric digits, but the check digit did not validate"
+
+    };
+
+  }
+
+
+  if (
+    /^[0-9A-Z\-\.\ \$\/\+\%]+$/i.test(
+      code
+    )
+  ) {
+
+    return {
+
+      type:
+        "Possible Code 39 / Code 128",
+
+      description:
+        "Alphanumeric barcode; the exact symbology cannot be guaranteed from the text alone"
+
+    };
+
+  }
+
+
+  return {
+
+    type:
+      "",
+
+    description:
+      "Unknown barcode format"
+
+  };
+
+}
+
+
+/* =========================
+   UNKNOWN BARCODE SCREEN
+========================= */
+
+function showBarcodeIdentifier() {
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+
+  const panel =
+    document.getElementById(
+      "barcode-identifier-panel"
+    );
+
+
+  panel.style.display =
+    "block";
+
+
+  panel.style.pointerEvents =
+    "auto";
+
+
+  document.getElementById(
+    "barcode-code-input"
+  ).focus();
+
+
+  devLog(
+    "Opened barcode identifier"
+  );
+
+}
+
+
+function hideBarcodeIdentifier() {
+
+  const panel =
+    document.getElementById(
+      "barcode-identifier-panel"
+    );
+
+
+  panel.style.display =
+    "none";
+
+
+  panel.style.pointerEvents =
+    "none";
+
+
+  document.getElementById(
+    "barcode-identification-result"
+  ).style.display =
+    "none";
+
+
+  devLog(
+    "Closed barcode identifier"
+  );
+
+}
+
+
+function identifyBarcode() {
+
+  const input =
+    document.getElementById(
+      "barcode-code-input"
+    );
+
+
+  const code =
+    input.value.trim();
+
+
+  if (!code) {
+
+    showBarcodeIdentificationResult(
+
+      "No barcode entered",
+
+      "Enter the numbers or characters printed below the barcode."
+
+    );
+
+    return;
+
+  }
+
+
+  const result =
+    identifyBarcodeValue(
+      code
+    );
+
+
+  if (
+    result.type
+  ) {
+
+    showBarcodeIdentificationResult(
+
+      result.type,
+
+      result.description +
+
+      "<br><br>" +
+
+      "<strong>Code:</strong> " +
+
+      escapeHTML(
+        code
+      )
+
+    );
+
+  } else {
+
+    showBarcodeIdentificationResult(
+
+      "Unknown Barcode",
+
+      "This code could not be confidently identified from its text value." +
+
+      "<br><br>" +
+
+      "<strong>Code:</strong> " +
+
+      escapeHTML(
+        code
+      ) +
+
+      "<br><br>" +
+
+      "Try Search Code to look for the number online."
+
+    );
+
+  }
+
+
+  devLog(
+    "Barcode identified: " +
+    code
+  );
+
+}
+
+
+function showBarcodeIdentificationResult(
+  title,
+  description
+) {
+
+  const result =
+    document.getElementById(
+      "barcode-identification-result"
+    );
+
+
+  result.innerHTML =
+
+    '<div class="barcode-result-title">' +
+
+    escapeHTML(
+      title
+    ) +
+
+    "</div>" +
+
+    '<div class="barcode-result-row">' +
+
+    description +
+
+    "</div>";
+
+
+  result.style.display =
+    "block";
+
+}
+
+
+function searchBarcode() {
+
+  const code =
+    document.getElementById(
+      "barcode-code-input"
+    ).value.trim();
+
+
+  if (!code) {
+
+    return;
+
+  }
+
+
+  const searchURL =
+    "https://www.google.com/search?q=" +
+    encodeURIComponent(
+      '"' +
+      code +
+      '" barcode'
+    );
+
+
+  window.open(
+    searchURL,
+    "_blank"
+  );
+
+
+  devLog(
+    "Searched barcode: " +
+    code
+  );
+
+}
+
+
+/* =========================
    ZOOM
 ========================= */
 
@@ -3138,12 +4760,27 @@ async function startScanner() {
 
 
   status.textContent =
-    "Starting camera...";
+    "Starting " +
+    getScannerModeName() +
+    "...";
+
+
+  status.className =
+    "";
 
 
   scanner =
     new Html5Qrcode(
-      "reader"
+
+      "reader",
+
+      {
+
+        formatsToSupport:
+          getScannerFormats()
+
+      }
+
     );
 
 
@@ -3177,7 +4814,10 @@ async function startScanner() {
       },
 
 
-      async function(decodedText) {
+      async function(
+        decodedText,
+        decodedResult
+      ) {
 
         if (
           scanConfirmed
@@ -3189,7 +4829,8 @@ async function startScanner() {
 
 
         status.textContent =
-          "QR detected";
+          getScannerModeName() +
+          " detected";
 
 
         status.className =
@@ -3268,8 +4909,44 @@ async function startScanner() {
           playScanSound();
 
 
+          /*
+            Get the actual format reported
+            by html5-qrcode when available.
+          */
+
+          let detectedFormat =
+            null;
+
+
+          if (
+            decodedResult &&
+            decodedResult.result &&
+            decodedResult.result.format
+          ) {
+
+            detectedFormat =
+              decodedResult
+                .result
+                .format
+                .formatName;
+
+          }
+
+
+          if (
+            detectedFormat
+          ) {
+
+            devLog(
+              "Detected format: " +
+              detectedFormat
+            );
+
+          }
+
+
           const result =
-            getQRText(
+            getScanText(
               decodedText
             );
 
@@ -3308,7 +4985,14 @@ async function startScanner() {
 
             await scanner.stop();
 
-          } catch {}
+          } catch(error) {
+
+            devLog(
+              "Scanner stop error: " +
+              error.message
+            );
+
+          }
 
 
           cameraTrack =
@@ -3346,9 +5030,14 @@ async function startScanner() {
 
 
           openButton.textContent =
+
             isPrinterLink
               ? "Print"
-              : "Open";
+              : (
+                  scannerMode === "qr"
+                    ? "Open"
+                    : "Identify"
+                );
 
 
           openButton.style.display =
@@ -3362,7 +5051,8 @@ async function startScanner() {
 
 
           devLog(
-            "QR accepted: " +
+            getScannerModeName() +
+            " accepted: " +
             result
           );
 
@@ -3399,7 +5089,8 @@ async function startScanner() {
 
 
     status.textContent =
-      "Ready to scan";
+      "Ready: " +
+      getScannerModeName();
 
 
     status.className =
@@ -3414,6 +5105,12 @@ async function startScanner() {
 
     devLog(
       "Camera started"
+    );
+
+
+    devLog(
+      "Scanner mode: " +
+      getScannerModeName()
     );
 
 
@@ -3450,6 +5147,34 @@ function openScannedSite() {
 
   if (!scannedURL)
     return;
+
+
+  /*
+    Barcode modes should open the
+    identification screen instead
+    of treating the barcode number
+    as a URL.
+  */
+
+  if (
+    scannerMode !== "qr"
+  ) {
+
+    showBarcodeIdentifier();
+
+
+    document.getElementById(
+      "barcode-code-input"
+    ).value =
+      scannedURL;
+
+
+    identifyBarcode();
+
+
+    return;
+
+  }
 
 
   let url =
@@ -3563,14 +5288,26 @@ window.addEventListener(
   function() {
 
     /*
-      Make absolutely sure the
-      Notes overlay cannot intercept
-      clicks while hidden.
+      Make absolutely sure overlays
+      cannot intercept clicks while
+      hidden.
     */
 
     const notes =
       document.getElementById(
         "notes-panel"
+      );
+
+
+    const scannerModePanel =
+      document.getElementById(
+        "scanner-mode-panel"
+      );
+
+
+    const barcodePanel =
+      document.getElementById(
+        "barcode-identifier-panel"
       );
 
 
@@ -3582,18 +5319,40 @@ window.addEventListener(
       "none";
 
 
+    scannerModePanel.style.display =
+      "none";
+
+
+    scannerModePanel.style.pointerEvents =
+      "none";
+
+
+    barcodePanel.style.display =
+      "none";
+
+
+    barcodePanel.style.pointerEvents =
+      "none";
+
+
     devLog(
       "Printer Scanner 5000"
     );
 
 
     devLog(
-      "Version 5.0"
+      "Version 5.1"
     );
 
 
     devLog(
-      "QR area: FIXED 250x250"
+      "Scanner mode: " +
+      getScannerModeName()
+    );
+
+
+    devLog(
+      "QR/barcode area: FIXED 250x250"
     );
 
 
@@ -3617,7 +5376,15 @@ window.addEventListener(
     );
 
 
+    devLog(
+      "Barcode identifier enabled"
+    );
+
+
     loadNotes();
+
+
+    updateScannerModeUI();
 
 
     startScanner();
