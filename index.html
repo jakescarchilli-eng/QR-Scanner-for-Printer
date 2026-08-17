@@ -1,23 +1,24 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 5.4
+  VERSION: 5.2
 
-  NEW IN VERSION 5.4:
-  - Replaced hamburger menu with a house icon
-  - Added full Home screen
-  - Home screen uses large app-style buttons
-  - Added Barcode / QR scanner mode switching
+  NEW IN 5.2:
+  - Home screen is now the startup screen
+  - Small tap-friendly home icon
+  - Large app-style Home menu
+  - Start Scanning button
+  - QR / Barcode scanner modes
   - Barcode mode uses a rectangular scan region
   - QR mode uses a square 250x250 scan region
-  - Added Barcode & QR Catalog
-  - Catalog remembers every scanned code
-  - Catalog supports custom names
-  - Custom names are displayed when codes are scanned again
-  - Raw barcode / QR value remains visible
-  - Catalog supports sorting
-  - Scanner mode is saved locally
-  - Printer status remains saved locally
-  - Scan history remains saved locally
+  - Barcode and QR catalog
+  - Custom names for scanned codes
+  - Custom names are shown when codes are scanned again
+  - Catalog search
+  - Catalog sorting
+  - QR / Barcode filtering
+  - Original code remains visible with custom name
+  - Catalog saved locally
+  - Existing features retained
 -->
 
 <!DOCTYPE html>
@@ -59,9 +60,7 @@ body {
 
   overflow: hidden;
 
-  font-family:
-    Arial,
-    sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
@@ -74,7 +73,6 @@ body {
   height: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   background: #000;
@@ -121,25 +119,27 @@ body {
 
 
 /* =========================================================
-   HOUSE BUTTON
+   SMALL HOME ICON
 ========================================================= */
 
 #home-button {
 
   position: absolute;
 
-  left: 12px;
+  left: 10px;
   top: 50%;
 
   transform:
     translateY(-50%);
 
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
 
   border: none;
 
-  background: transparent;
+  border-radius: 11px;
+
+  background: #222;
 
   color: white;
 
@@ -150,7 +150,7 @@ body {
   align-items: center;
   justify-content: center;
 
-  z-index: 5000;
+  z-index: 3000;
 
   padding: 0;
 }
@@ -163,28 +163,16 @@ body {
 }
 
 
-/*
-  Simple black-and-white house icon
-*/
+/* Simple black-and-white house */
 
 .house-icon {
 
   position: relative;
 
+  width: 20px;
+  height: 20px;
+
   display: block;
-
-  width: 27px;
-  height: 27px;
-
-  border:
-    3px solid currentColor;
-
-  border-top: none;
-
-  border-radius:
-    2px 2px 5px 5px;
-
-  margin-top: 7px;
 }
 
 .house-icon::before {
@@ -193,22 +181,13 @@ body {
 
   position: absolute;
 
-  width: 19px;
-  height: 19px;
+  left: 3px;
+  top: 8px;
 
-  left: 1px;
-  top: -10px;
+  width: 14px;
+  height: 10px;
 
-  border-left:
-    3px solid currentColor;
-
-  border-top:
-    3px solid currentColor;
-
-  transform:
-    rotate(45deg);
-
-  background: #000;
+  background: currentColor;
 
   border-radius: 2px;
 }
@@ -219,34 +198,282 @@ body {
 
   position: absolute;
 
-  width: 7px;
-  height: 12px;
+  left: 3px;
+  top: 2px;
 
-  left: 7px;
-  bottom: 0;
+  width: 14px;
+  height: 14px;
 
-  border:
-    2px solid currentColor;
+  background: currentColor;
 
-  border-bottom: none;
+  clip-path:
+    polygon(
+      50% 0%,
+      100% 42%,
+      100% 58%,
+      0% 58%,
+      0% 42%
+    );
+}
 
-  border-radius:
-    4px 4px 0 0;
+.house-door {
+
+  position: absolute;
+
+  left: 8px;
+  bottom: 1px;
+
+  width: 4px;
+  height: 7px;
+
+  background: #222;
+
+  z-index: 2;
+
+  border-radius: 1px;
 }
 
 
 /* =========================================================
-   CAMERA
+   PAGE SYSTEM
 ========================================================= */
+
+.page {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: none;
+
+  background: #000;
+}
+
+.page.active {
+  display: block;
+}
+
+
+/* =========================================================
+   HOME PAGE
+========================================================= */
+
+#home-page {
+
+  position: absolute;
+
+  inset: 0;
+
+  overflow-y: auto;
+
+  padding:
+    85px 18px 30px;
+
+  background: #000;
+}
+
+.home-container {
+
+  width: min(900px, 100%);
+
+  margin: 0 auto;
+}
+
+.home-title {
+
+  color: white;
+
+  font-size: 38px;
+
+  font-weight: 800;
+
+  text-align: center;
+
+  margin:
+    10px 0 8px;
+}
+
+.home-subtitle {
+
+  color: #888;
+
+  text-align: center;
+
+  font-size: 15px;
+
+  margin:
+    0 0 30px;
+}
+
+.home-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+
+  width: 100%;
+}
+
+.home-app {
+
+  min-height: 145px;
+
+  border:
+    1px solid #333;
+
+  border-radius: 22px;
+
+  background: #111;
+
+  color: white;
+
+  cursor: pointer;
+
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  transition:
+    transform .12s,
+    background .12s;
+}
+
+.home-app:hover {
+  background: #181818;
+}
+
+.home-app:active {
+
+  transform:
+    scale(.97);
+
+  background: #222;
+}
+
+.home-app.primary {
+
+  grid-column:
+    1 / -1;
+
+  min-height: 165px;
+
+  background: white;
+
+  color: black;
+
+  border-color: white;
+}
+
+.home-app.primary:hover {
+  background: #eee;
+}
+
+.home-app.primary:active {
+  background: #ddd;
+}
+
+.home-app-icon {
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #222;
+
+  color: white;
+
+  font-size: 25px;
+
+  font-weight: 700;
+}
+
+.home-app.primary
+.home-app-icon {
+
+  background: black;
+
+  color: white;
+}
+
+.home-app-title {
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  text-align: center;
+}
+
+.home-app-description {
+
+  font-size: 12px;
+
+  color: #888;
+
+  text-align: center;
+}
+
+.home-app.primary
+.home-app-description {
+
+  color: #555;
+}
+
+.home-version {
+
+  text-align: center;
+
+  color: #555;
+
+  font-size: 10px;
+
+  margin-top: 25px;
+}
+
+
+/* =========================================================
+   CAMERA PAGE
+========================================================= */
+
+#scanner-page {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: none;
+
+  background: #000;
+}
+
+#scanner-page.active {
+  display: block;
+}
 
 #camera {
 
-  position: relative;
+  position: absolute;
 
-  width: 100%;
-
-  height:
-    calc(100% - 65px);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 
   overflow: hidden;
 
@@ -295,42 +522,6 @@ body {
    SCAN REGIONS
 ========================================================= */
 
-/*
-  QR MODE
-  Square 250x250
-*/
-
-body.qr-mode #reader__scan_region {
-
-  width: 250px !important;
-  height: 250px !important;
-
-  min-width: 250px !important;
-  min-height: 250px !important;
-
-  max-width: 250px !important;
-  max-height: 250px !important;
-}
-
-
-/*
-  BARCODE MODE
-  Wide rectangular region
-*/
-
-body.barcode-mode #reader__scan_region {
-
-  width: 330px !important;
-  height: 145px !important;
-
-  min-width: 330px !important;
-  min-height: 145px !important;
-
-  max-width: 330px !important;
-  max-height: 145px !important;
-}
-
-
 #reader__scan_region {
 
   position: absolute !important;
@@ -352,8 +543,39 @@ body.barcode-mode #reader__scan_region {
   pointer-events: none !important;
 }
 
-#reader__scan_region img {
 
+/* QR MODE */
+
+body.qr-mode
+#reader__scan_region {
+
+  width: 250px !important;
+  height: 250px !important;
+
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
+}
+
+
+/* BARCODE MODE */
+
+body.barcode-mode
+#reader__scan_region {
+
+  width: 330px !important;
+  height: 145px !important;
+
+  min-width: 330px !important;
+  min-height: 145px !important;
+
+  max-width: 330px !important;
+  max-height: 145px !important;
+}
+
+#reader__scan_region img {
   display: none !important;
 }
 
@@ -378,12 +600,13 @@ body.barcode-mode #reader__scan_region {
 
   border:
     3px solid white;
-
-  background:
-    transparent;
 }
 
-body.qr-mode #scan-box {
+
+/* QR */
+
+body.qr-mode
+#scan-box {
 
   width: 250px;
   height: 250px;
@@ -391,26 +614,32 @@ body.qr-mode #scan-box {
   border-radius: 18px;
 }
 
-body.barcode-mode #scan-box {
+
+/* BARCODE */
+
+body.barcode-mode
+#scan-box {
 
   width: 330px;
   height: 145px;
 
-  border-radius: 14px;
+  border-radius: 12px;
+
+  border-width: 3px;
 }
 
 
 /* =========================================================
-   MODE INDICATOR
+   MODE LABEL
 ========================================================= */
 
-#mode-indicator {
+#mode-label {
 
   position: absolute;
 
   left: 50%;
 
-  top: 20px;
+  top: 85px;
 
   transform:
     translateX(-50%);
@@ -418,22 +647,18 @@ body.barcode-mode #scan-box {
   z-index: 40;
 
   padding:
-    7px 15px;
+    8px 16px;
 
   border-radius: 999px;
 
   background:
-    rgba(0,0,0,.65);
+    rgba(0,0,0,.7);
 
   color: white;
 
-  font-size: 12px;
+  font-size: 13px;
 
   font-weight: 700;
-
-  letter-spacing: .5px;
-
-  text-transform: uppercase;
 
   white-space: nowrap;
 }
@@ -472,6 +697,13 @@ body.barcode-mode #scan-box {
   font-weight: 600;
 
   white-space: nowrap;
+}
+
+body.barcode-mode
+#status-bar {
+
+  top:
+    calc(50% - 115px);
 }
 
 #status-bar.detected {
@@ -626,8 +858,6 @@ body.barcode-mode #scan-box {
 
   align-items: center;
   justify-content: center;
-
-  transition: .15s;
 }
 
 .circle-button:active {
@@ -812,20 +1042,20 @@ body.barcode-mode #scan-box {
   position: absolute;
 
   left: 50%;
-  top: 12%;
+  top: 18%;
 
   transform:
     translateX(-50%);
 
   z-index: 50;
 
-  width: 85%;
+  width: 90%;
 
   max-width: 700px;
 
   color: white;
 
-  font-size: 36px;
+  font-size: 34px;
 
   font-weight: 700;
 
@@ -841,20 +1071,18 @@ body.barcode-mode #scan-box {
   position: absolute;
 
   left: 50%;
-
-  top: 34%;
+  top: 43%;
 
   transform:
     translateX(-50%);
 
   z-index: 50;
 
-  width: 85%;
+  width: 90%;
 
   max-width: 700px;
 
-  color:
-    rgba(255,255,255,.65);
+  color: #999;
 
   font-size: 15px;
 
@@ -947,236 +1175,377 @@ body.barcode-mode #scan-box {
 
 
 /* =========================================================
-   HOME PAGE
+   GENERIC FULL PAGE
 ========================================================= */
 
-#home-page {
+.full-page {
 
   position: absolute;
 
   inset: 0;
 
-  z-index: 4000;
-
-  background: #000;
-
-  display: none;
-
   overflow-y: auto;
 
   padding:
-    30px 18px 40px;
+    90px 18px 35px;
+
+  background: #000;
 }
 
-#home-page.visible {
+.page-container {
 
+  width: min(900px, 100%);
+
+  margin: 0 auto;
+}
+
+.page-title {
+
+  color: white;
+
+  text-align: center;
+
+  font-size: 32px;
+
+  font-weight: 800;
+
+  margin:
+    0 0 8px;
+}
+
+.page-subtitle {
+
+  color: #888;
+
+  text-align: center;
+
+  margin:
+    0 0 25px;
+
+  font-size: 14px;
+}
+
+.back-button {
+
+  display: block;
+
+  width: min(500px, 100%);
+
+  margin:
+    0 auto 18px;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: #222;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   CATALOG
+========================================================= */
+
+#catalog-page {
+  display: none;
+}
+
+#catalog-page.active {
   display: block;
 }
 
-#home-page-header {
+.catalog-tools {
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-bottom: 18px;
+}
+
+.catalog-input,
+.catalog-select {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid #444;
+
+  border-radius: 13px;
+
+  background: #111;
+
+  color: white;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+.catalog-input:focus,
+.catalog-select:focus {
+
+  border-color: white;
+}
+
+.catalog-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.catalog-item {
+
+  background: #111;
+
+  border:
+    1px solid #333;
+
+  border-radius: 17px;
+
+  padding: 15px;
+}
+
+.catalog-item-header {
 
   display: flex;
 
   align-items: center;
+
   justify-content: space-between;
 
-  width: 100%;
-
-  max-width: 850px;
-
-  margin:
-    0 auto 25px;
+  gap: 10px;
 }
 
-#home-page-title {
+.catalog-item-name {
 
-  font-size: 34px;
+  font-size: 19px;
 
   font-weight: 800;
 
   color: white;
 }
 
-.home-close {
+.catalog-type {
 
-  width: 48px;
-  height: 48px;
+  padding:
+    5px 9px;
+
+  border-radius: 999px;
+
+  background: #222;
+
+  color: #aaa;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.catalog-code {
+
+  margin-top: 8px;
+
+  color: #aaa;
+
+  font-size: 12px;
+
+  word-break: break-all;
+
+  line-height: 1.4;
+}
+
+.catalog-date {
+
+  margin-top: 6px;
+
+  color: #555;
+
+  font-size: 10px;
+}
+
+.catalog-actions {
+
+  display: flex;
+
+  gap: 7px;
+
+  margin-top: 12px;
+}
+
+.catalog-action {
+
+  flex: 1;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px;
+
+  background: #222;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.catalog-action.delete {
+
+  background: #321515;
+
+  color: #ffaaaa;
+}
+
+.catalog-empty {
+
+  padding: 30px;
+
+  text-align: center;
+
+  color: #777;
+
+  background: #111;
+
+  border-radius: 17px;
+}
+
+
+/* =========================================================
+   NAME DIALOG
+========================================================= */
+
+#name-dialog {
+
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(0,0,0,.75);
+
+  z-index: 5000;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+#name-dialog-box {
+
+  width: min(450px, 100%);
+
+  background: #111;
 
   border:
-    2px solid white;
+    1px solid #444;
 
-  border-radius: 50%;
+  border-radius: 20px;
+
+  padding: 22px;
+}
+
+#name-dialog-title {
+
+  color: white;
+
+  font-size: 22px;
+
+  font-weight: 800;
+
+  margin-bottom: 8px;
+}
+
+#name-dialog-code {
+
+  color: #888;
+
+  font-size: 11px;
+
+  word-break: break-all;
+
+  margin-bottom: 15px;
+}
+
+#name-input {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid #444;
+
+  border-radius: 12px;
 
   background: #000;
 
   color: white;
 
-  font-size: 25px;
+  font-size: 16px;
 
-  cursor: pointer;
+  outline: none;
 }
 
-.home-close:active {
+.dialog-buttons {
 
-  transform: scale(.9);
+  display: flex;
+
+  gap: 8px;
+
+  margin-top: 12px;
 }
 
+.dialog-button {
 
-/* =========================================================
-   HOME APP GRID
-========================================================= */
+  flex: 1;
 
-#home-grid {
+  border: none;
 
-  width: 100%;
+  border-radius: 12px;
 
-  max-width: 850px;
+  padding: 13px;
 
-  margin: 0 auto;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(150px, 1fr)
-    );
-
-  gap: 14px;
-}
-
-.home-app {
-
-  min-height: 135px;
-
-  border:
-    2px solid #333;
-
-  border-radius: 22px;
-
-  background: #111;
+  background: #222;
 
   color: white;
 
+  font-weight: 700;
+
   cursor: pointer;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 12px;
-
-  transition: .15s;
-
-  padding: 15px;
 }
 
-.home-app:hover {
-
-  border-color: white;
-
-  background: #181818;
-}
-
-.home-app:active {
-
-  transform: scale(.96);
-}
-
-.home-app-icon {
-
-  font-size: 38px;
-
-  line-height: 1;
-}
-
-.home-app-title {
-
-  font-size: 16px;
-
-  font-weight: 700;
-
-  text-align: center;
-}
-
-.home-app-description {
-
-  font-size: 11px;
-
-  color: #888;
-
-  text-align: center;
-}
-
-
-/* =========================================================
-   SCANNER MODE APP
-========================================================= */
-
-#mode-card {
-
-  grid-column:
-    1 / -1;
-
-  min-height: 100px;
-
-  flex-direction: row;
-
-  justify-content: space-between;
-
-  padding:
-    20px 25px;
-}
-
-#mode-card-left {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 15px;
-}
-
-#current-mode-name {
-
-  font-size: 18px;
-
-  font-weight: 700;
-}
-
-#current-mode-description {
-
-  color: #888;
-
-  font-size: 12px;
-
-  margin-top: 4px;
-}
-
-.mode-switch {
-
-  min-width: 135px;
-
-  border:
-    2px solid white;
-
-  border-radius: 999px;
+.dialog-button.save {
 
   background: white;
 
   color: black;
-
-  padding:
-    12px 16px;
-
-  font-size: 14px;
-
-  font-weight: 700;
-
-  cursor: pointer;
 }
 
 
@@ -1241,7 +1610,6 @@ body.barcode-mode #scan-box {
 }
 
 .history-name {
-
   font-weight: 700;
 }
 
@@ -1290,389 +1658,6 @@ body.barcode-mode #scan-box {
 
 
 /* =========================================================
-   CATALOG
-========================================================= */
-
-#catalog-panel {
-
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 3500;
-
-  background: #000;
-
-  display: none;
-
-  overflow-y: auto;
-
-  padding:
-    25px 18px 40px;
-}
-
-#catalog-panel.visible {
-
-  display: block;
-}
-
-#catalog-header {
-
-  width: 100%;
-
-  max-width: 850px;
-
-  margin:
-    0 auto 20px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-}
-
-#catalog-title {
-
-  font-size: 30px;
-
-  font-weight: 800;
-}
-
-.catalog-back {
-
-  border:
-    2px solid white;
-
-  background: #000;
-
-  color: white;
-
-  border-radius: 999px;
-
-  padding:
-    10px 18px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-/* =========================================================
-   CATALOG CONTROLS
-========================================================= */
-
-#catalog-controls {
-
-  width: 100%;
-
-  max-width: 850px;
-
-  margin: 0 auto 18px;
-
-  display: flex;
-
-  gap: 10px;
-
-  flex-wrap: wrap;
-}
-
-.catalog-select,
-.catalog-search {
-
-  flex: 1;
-
-  min-width: 160px;
-
-  padding:
-    13px 14px;
-
-  border:
-    2px solid #333;
-
-  border-radius: 13px;
-
-  background: #111;
-
-  color: white;
-
-  font-size: 14px;
-
-  outline: none;
-}
-
-.catalog-select:focus,
-.catalog-search:focus {
-
-  border-color: white;
-}
-
-
-/* =========================================================
-   CATALOG LIST
-========================================================= */
-
-#catalog-list {
-
-  width: 100%;
-
-  max-width: 850px;
-
-  margin: 0 auto;
-}
-
-.catalog-item {
-
-  background: #111;
-
-  border:
-    1px solid #333;
-
-  border-radius: 18px;
-
-  padding: 17px;
-
-  margin-bottom: 10px;
-}
-
-.catalog-item-top {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  gap: 10px;
-}
-
-.catalog-item-name {
-
-  font-size: 18px;
-
-  font-weight: 800;
-
-  word-break: break-word;
-}
-
-.catalog-item-type {
-
-  flex-shrink: 0;
-
-  border-radius: 999px;
-
-  background: #222;
-
-  color: #aaa;
-
-  padding:
-    5px 9px;
-
-  font-size: 10px;
-
-  font-weight: 700;
-
-  text-transform: uppercase;
-}
-
-.catalog-item-code {
-
-  margin-top: 9px;
-
-  color: #aaa;
-
-  font-size: 12px;
-
-  word-break: break-all;
-
-  line-height: 1.4;
-}
-
-.catalog-item-time {
-
-  margin-top: 7px;
-
-  color: #666;
-
-  font-size: 10px;
-}
-
-.catalog-item-buttons {
-
-  display: flex;
-
-  gap: 8px;
-
-  margin-top: 12px;
-}
-
-.catalog-small-button {
-
-  flex: 1;
-
-  border: none;
-
-  border-radius: 10px;
-
-  background: #222;
-
-  color: white;
-
-  padding: 10px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-.catalog-small-button:active {
-
-  background: #333;
-}
-
-.catalog-empty {
-
-  padding: 40px 20px;
-
-  text-align: center;
-
-  color: #777;
-
-  border:
-    1px dashed #333;
-
-  border-radius: 18px;
-}
-
-
-/* =========================================================
-   CATALOG EDITOR
-========================================================= */
-
-#catalog-editor {
-
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 6000;
-
-  background:
-    rgba(0,0,0,.85);
-
-  display: none;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
-}
-
-#catalog-editor.visible {
-
-  display: flex;
-}
-
-#catalog-editor-box {
-
-  width: min(95%, 500px);
-
-  background: #111;
-
-  border:
-    1px solid #444;
-
-  border-radius: 22px;
-
-  padding: 22px;
-}
-
-#catalog-editor-title {
-
-  font-size: 22px;
-
-  font-weight: 800;
-
-  margin-bottom: 15px;
-}
-
-#catalog-editor-code {
-
-  color: #888;
-
-  font-size: 12px;
-
-  word-break: break-all;
-
-  margin-bottom: 15px;
-}
-
-#catalog-name-input {
-
-  width: 100%;
-
-  padding: 15px;
-
-  border:
-    2px solid #444;
-
-  border-radius: 13px;
-
-  background: #000;
-
-  color: white;
-
-  font-size: 17px;
-
-  outline: none;
-}
-
-#catalog-name-input:focus {
-
-  border-color: white;
-}
-
-.catalog-editor-buttons {
-
-  display: flex;
-
-  gap: 10px;
-
-  margin-top: 15px;
-}
-
-.catalog-editor-button {
-
-  flex: 1;
-
-  border: none;
-
-  border-radius: 12px;
-
-  padding: 13px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-.catalog-save {
-
-  background: white;
-
-  color: black;
-}
-
-.catalog-cancel {
-
-  background: #333;
-
-  color: white;
-}
-
-
-/* =========================================================
    NOTES
 ========================================================= */
 
@@ -1687,7 +1672,7 @@ body.barcode-mode #scan-box {
   background: #000;
 
   padding:
-    30px 20px;
+    90px 20px 30px;
 
   overflow-y: auto;
 
@@ -1748,8 +1733,6 @@ body.barcode-mode #scan-box {
 
   color: white;
 
-  font-family: Arial, sans-serif;
-
   font-size: 17px;
 
   font-weight: 600;
@@ -1757,13 +1740,6 @@ body.barcode-mode #scan-box {
   outline: none;
 
   cursor: pointer;
-
-  appearance: auto;
-}
-
-.status-select:focus {
-
-  border-color: white;
 }
 
 .notes-save,
@@ -1782,13 +1758,6 @@ body.barcode-mode #scan-box {
 
   margin:
     12px auto;
-}
-
-.notes-save:active,
-.notes-back:active {
-
-  transform:
-    scale(.95);
 }
 
 
@@ -1862,7 +1831,6 @@ body.barcode-mode #scan-box {
 }
 
 .dev-line {
-
   margin-bottom: 3px;
 }
 
@@ -1914,38 +1882,10 @@ body.barcode-mode #scan-box {
 
 
 /* =========================================================
-   DEV MODE
-========================================================= */
-
-body.dev-mode #top-bar {
-
-  height: 50px;
-}
-
-body.dev-mode #camera {
-
-  height:
-    calc(50% - 25px);
-
-  border-radius: 0;
-}
-
-body.dev-mode #dev-panel {
-
-  display: flex;
-}
-
-
-/* =========================================================
    LIGHT MODE
 ========================================================= */
 
-body.light-mode {
-
-  background: #f2f2f2;
-  color: #000;
-}
-
+body.light-mode,
 body.light-mode #app {
 
   background: #f2f2f2;
@@ -1963,45 +1903,37 @@ body.light-mode #site-title {
 
 body.light-mode #home-button {
 
-  color: #000;
-}
-
-body.light-mode .house-icon::before {
-
-  background: #f2f2f2;
-}
-
-body.light-mode #home-page {
-
-  background: #f2f2f2;
-}
-
-body.light-mode #home-page-title {
+  background: #ddd;
 
   color: #000;
 }
 
-body.light-mode .home-close {
+body.light-mode #home-page,
+body.light-mode .full-page {
 
   background: #f2f2f2;
+}
+
+body.light-mode .home-title,
+body.light-mode .page-title {
 
   color: #000;
-
-  border-color: #000;
 }
 
 body.light-mode .home-app {
 
   background: white;
 
-  color: #000;
-
   border-color: #ccc;
+
+  color: black;
 }
 
-body.light-mode .home-app:hover {
+body.light-mode .home-app.primary {
 
-  border-color: #000;
+  background: black;
+
+  color: white;
 }
 
 body.light-mode .home-app-description {
@@ -2009,92 +1941,57 @@ body.light-mode .home-app-description {
   color: #777;
 }
 
-body.light-mode .mode-switch {
+body.light-mode .home-app.primary
+.home-app-description {
 
-  background: #000;
-
-  color: white;
-
-  border-color: #000;
+  color: #aaa;
 }
 
-body.light-mode #current-mode-name {
+body.light-mode .home-app-icon {
+
+  background: #eee;
 
   color: #000;
 }
 
-body.light-mode #current-mode-description {
+body.light-mode .home-app.primary
+.home-app-icon {
 
-  color: #777;
+  background: #222;
+
+  color: white;
 }
 
-body.light-mode #zoom-container {
+body.light-mode .back-button {
 
-  background:
-    rgba(255,255,255,.8);
-}
-
-body.light-mode #zoom-label,
-body.light-mode #zoom-value {
+  background: #ddd;
 
   color: #000;
 }
 
-body.light-mode .circle-button.active {
-
-  background: #000;
-
-  color: white;
-
-  border-color: #000;
-}
-
-body.light-mode .circle-button:not(.active) {
+body.light-mode .catalog-input,
+body.light-mode .catalog-select {
 
   background: white;
 
-  color: #000;
+  color: black;
 
-  border-color: #000;
+  border-color: #bbb;
 }
 
-body.light-mode #status-bar {
+body.light-mode .catalog-item {
 
-  background:
-    rgba(255,255,255,.85);
-
-  color: #000;
-}
-
-body.light-mode #hold-still {
-
-  background:
-    rgba(255,255,255,.85);
-
-  color: #000;
-}
-
-body.light-mode #mode-indicator {
-
-  background:
-    rgba(255,255,255,.85);
-
-  color: #000;
-}
-
-body.light-mode #history-panel {
-
-  background: #f5f5f5;
+  background: white;
 
   border-color: #ccc;
 }
 
-body.light-mode #history-title {
+body.light-mode .catalog-item-name {
 
   color: #000;
 }
 
-body.light-mode .history-item {
+body.light-mode .catalog-action {
 
   background: #ddd;
 
@@ -2106,11 +2003,7 @@ body.light-mode #notes-panel {
   background: #f2f2f2;
 }
 
-body.light-mode #notes-title {
-
-  color: #000;
-}
-
+body.light-mode #notes-title,
 body.light-mode .note-section label {
 
   color: #000;
@@ -2125,236 +2018,97 @@ body.light-mode .status-select {
   border-color: #bbb;
 }
 
-body.light-mode .status-select:focus {
-
-  border-color: #000;
-}
-
-body.light-mode #catalog-panel {
-
-  background: #f2f2f2;
-
-  color: #000;
-}
-
-body.light-mode #catalog-title {
-
-  color: #000;
-}
-
-body.light-mode .catalog-back {
-
-  background: #f2f2f2;
-
-  color: #000;
-
-  border-color: #000;
-}
-
-body.light-mode .catalog-select,
-body.light-mode .catalog-search {
-
-  background: white;
-
-  color: #000;
-
-  border-color: #ccc;
-}
-
-body.light-mode .catalog-item {
-
-  background: white;
-
-  border-color: #ccc;
-
-  color: #000;
-}
-
-body.light-mode .catalog-item-code {
-
-  color: #777;
-}
-
-body.light-mode .catalog-item-time {
-
-  color: #999;
-}
-
-body.light-mode .catalog-item-type {
-
-  background: #eee;
-
-  color: #555;
-}
-
-body.light-mode .catalog-small-button {
-
-  background: #eee;
-
-  color: #000;
-}
-
-body.light-mode #catalog-editor-box {
-
-  background: white;
-
-  color: #000;
-}
-
-body.light-mode #catalog-editor-code {
-
-  color: #777;
-}
-
-body.light-mode #catalog-name-input {
-
-  background: #f5f5f5;
-
-  color: #000;
-
-  border-color: #ccc;
-}
-
-body.light-mode .catalog-cancel {
-
-  background: #ddd;
-
-  color: #000;
-}
-
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
 
-  #site-title {
-
-    font-size: 20px;
-  }
-
-  #home-page {
-
-    padding:
-      22px 13px 30px;
-  }
-
-  #home-page-title {
-
-    font-size: 29px;
-  }
-
-  #home-grid {
+  .home-grid {
 
     grid-template-columns:
-      repeat(2, 1fr);
+      1fr;
+  }
 
-    gap: 10px;
+  .home-app.primary {
+
+    grid-column:
+      auto;
+  }
+
+  .home-title {
+
+    font-size: 32px;
   }
 
   .home-app {
 
     min-height: 125px;
-
-    border-radius: 18px;
   }
 
-  .home-app-icon {
+  body.barcode-mode
+  #reader__scan_region,
+  body.barcode-mode
+  #scan-box {
 
-    font-size: 31px;
+    width: 300px !important;
   }
 
-  #mode-card {
-
-    grid-column:
-      1 / -1;
-
-    flex-direction: column;
-
-    align-items: stretch;
-
-    gap: 15px;
-  }
-
-  #mode-card-left {
-
-    justify-content: center;
-  }
-
-  .mode-switch {
-
-    width: 100%;
-  }
-
-  body.barcode-mode #scan-box {
-
-    width: min(330px, 88vw);
-
-    height: 130px;
-  }
-
-  body.barcode-mode #reader__scan_region {
-
-    width: min(330px, 88vw) !important;
-
-    min-width: min(330px, 88vw) !important;
-
-    max-width: min(330px, 88vw) !important;
+  body.barcode-mode
+  #reader__scan_region {
 
     height: 130px !important;
-
     min-height: 130px !important;
-
     max-height: 130px !important;
   }
 
-  #catalog-title {
+  body.barcode-mode
+  #scan-box {
 
-    font-size: 25px;
-  }
-
-  .catalog-item-top {
-
-    flex-direction: column;
+    height: 130px;
   }
 
 }
 
 
 /* =========================================================
-   HIDE HOME/CATALOG WHILE DEV MODE IS ACTIVE
+   DEV MODE
 ========================================================= */
 
-body.home-open #camera,
-body.catalog-open #camera {
+body.dev-mode #dev-panel {
+  display: flex;
+}
 
-  pointer-events: none;
+body.dev-mode #scanner-page.active {
+  bottom: 50%;
 }
 
 </style>
 
 </head>
 
+
 <body>
 
 <div id="app">
 
 
-<!-- =====================================================
+<!-- =======================================================
      TOP BAR
-===================================================== -->
+======================================================= -->
 
 <div id="top-bar">
 
 <button
   id="home-button"
-  onclick="showHomePage()"
+  onclick="goHome()"
   aria-label="Home"
+  title="Home"
 >
-
-<span class="house-icon"></span>
-
+  <span class="house-icon">
+    <span class="house-door"></span>
+  </span>
 </button>
 
 <div id="site-title">
@@ -2364,9 +2118,300 @@ body.catalog-open #camera {
 </div>
 
 
-<!-- =====================================================
-     CAMERA
-===================================================== -->
+<!-- =======================================================
+     HOME PAGE
+======================================================= -->
+
+<div
+  id="home-page"
+  class="page active"
+>
+
+<div class="home-container">
+
+<div class="home-title">
+  Printer Scanner 5000
+</div>
+
+<div class="home-subtitle">
+  Choose an app
+</div>
+
+
+<div class="home-grid">
+
+
+<button
+  class="home-app primary"
+  onclick="startScanning()"
+>
+
+<div class="home-app-icon">
+  ▶
+</div>
+
+<div class="home-app-title">
+  Start Scanning!
+</div>
+
+<div class="home-app-description">
+  Open the camera scanner
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="openCatalog()"
+>
+
+<div class="home-app-icon">
+  ▦
+</div>
+
+<div class="home-app-title">
+  Catalog
+</div>
+
+<div class="home-app-description">
+  Name and organize your QR codes and barcodes
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="selectScannerMode('qr')"
+>
+
+<div class="home-app-icon">
+  QR
+</div>
+
+<div class="home-app-title">
+  QR Scanner
+</div>
+
+<div class="home-app-description">
+  Scan square QR codes
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="selectScannerMode('barcode')"
+>
+
+<div class="home-app-icon">
+  |||
+</div>
+
+<div class="home-app-title">
+  Barcode Scanner
+</div>
+
+<div class="home-app-description">
+  Scan rectangular barcodes
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="showNotes()"
+>
+
+<div class="home-app-icon">
+  ✓
+</div>
+
+<div class="home-app-title">
+  Printer Status
+</div>
+
+<div class="home-app-description">
+  Check printer status
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="showHistory()"
+>
+
+<div class="home-app-icon">
+  ↶
+</div>
+
+<div class="home-app-title">
+  Scan History
+</div>
+
+<div class="home-app-description">
+  View previous scans
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="toggleLightMode()"
+>
+
+<div class="home-app-icon">
+  ◐
+</div>
+
+<div class="home-app-title">
+  Light Mode
+</div>
+
+<div class="home-app-description">
+  Change the website appearance
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="toggleDevMode()"
+>
+
+<div class="home-app-icon">
+  &lt;/&gt;
+</div>
+
+<div class="home-app-title">
+  Dev Mode
+</div>
+
+<div class="home-app-description">
+  Developer information
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="refreshPage()"
+>
+
+<div class="home-app-icon">
+  ↻
+</div>
+
+<div class="home-app-title">
+  Refresh
+</div>
+
+<div class="home-app-description">
+  Reload Printer Scanner 5000
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1625671285'
+    )
+  "
+>
+
+<div class="home-app-icon">
+  H2D
+</div>
+
+<div class="home-app-title">
+  H2D
+</div>
+
+<div class="home-app-description">
+  H2D printer app
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1166269606'
+    )
+  "
+>
+
+<div class="home-app-icon">
+  T
+</div>
+
+<div class="home-app-title">
+  TOYBOX
+</div>
+
+<div class="home-app-description">
+  TOYBOX printer app
+</div>
+
+</button>
+
+
+<button
+  class="home-app"
+  onclick="
+    openPrinterLink(
+      'https://apps.apple.com/app/id1658133862'
+    )
+  "
+>
+
+<div class="home-app-icon">
+  E3
+</div>
+
+<div class="home-app-title">
+  Ender 3
+</div>
+
+<div class="home-app-description">
+  Ender 3 printer app
+</div>
+
+</button>
+
+</div>
+
+
+<div class="home-version">
+  Printer Scanner 5000 · v5.2
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     SCANNER PAGE
+======================================================= -->
+
+<div
+  id="scanner-page"
+  class="page"
+>
 
 <div id="camera">
 
@@ -2374,8 +2419,8 @@ body.catalog-open #camera {
 
 <div id="scan-box"></div>
 
-<div id="mode-indicator">
-  QR MODE
+<div id="mode-label">
+  QR Mode
 </div>
 
 <div id="status-bar">
@@ -2388,6 +2433,7 @@ body.catalog-open #camera {
 
 
 <div id="control-bar">
+
 
 <button
   id="flashlight-button"
@@ -2463,13 +2509,9 @@ body.catalog-open #camera {
 
 
 <div id="version-number">
-  v5.4
+  v5.2
 </div>
 
-
-<!-- =====================================================
-     HISTORY
-===================================================== -->
 
 <div id="history-panel">
 
@@ -2489,9 +2531,7 @@ body.catalog-open #camera {
 </div>
 
 
-<!-- =====================================================
-     NOTES
-===================================================== -->
+<!-- NOTES -->
 
 <div
   id="notes-panel"
@@ -2513,19 +2553,9 @@ body.catalog-open #camera {
   id="h2d-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -2541,19 +2571,9 @@ body.catalog-open #camera {
   id="toybox-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -2569,19 +2589,9 @@ body.catalog-open #camera {
   id="ender-status"
   class="status-select"
 >
-
-<option value="online">
-  Online
-</option>
-
-<option value="printing">
-  Printing
-</option>
-
-<option value="offline">
-  Offline
-</option>
-
+<option value="online">Online</option>
+<option value="printing">Printing</option>
+<option value="offline">Offline</option>
 </select>
 
 </div>
@@ -2606,366 +2616,48 @@ body.catalog-open #camera {
 
 </div>
 
-
-<!-- =====================================================
-     HOME PAGE
-===================================================== -->
-
-<div id="home-page">
-
-<div id="home-page-header">
-
-<div id="home-page-title">
-  Home
-</div>
-
-<button
-  class="home-close"
-  onclick="hideHomePage()"
->
-  ×
-</button>
-
 </div>
 
 
-<div id="home-grid">
-
-
-<!-- SCANNER MODE -->
+<!-- =======================================================
+     CATALOG PAGE
+======================================================= -->
 
 <div
-  id="mode-card"
-  class="home-app"
+  id="catalog-page"
+  class="page"
 >
 
-<div id="mode-card-left">
+<div class="full-page">
 
-<div
-  class="home-app-icon"
-  id="mode-card-icon"
->
-  ▣
-</div>
+<div class="page-container">
 
-<div>
-
-<div id="current-mode-name">
-  QR Scanner
-</div>
-
-<div id="current-mode-description">
-  Square scanning area
-</div>
-
-</div>
-
-</div>
-
-<button
-  class="mode-switch"
-  onclick="toggleScannerMode()"
-  id="mode-switch-button"
->
-  Switch Mode
-</button>
-
-</div>
-
-
-<!-- CATALOG -->
-
-<button
-  class="home-app"
-  onclick="showCatalog()"
->
-
-<div class="home-app-icon">
-  ▦
-</div>
-
-<div class="home-app-title">
-  Catalog
-</div>
-
-<div class="home-app-description">
-  Name and organize codes
-</div>
-
-</button>
-
-
-<!-- NOTES -->
-
-<button
-  class="home-app"
-  onclick="showNotes()"
->
-
-<div class="home-app-icon">
-  ●
-</div>
-
-<div class="home-app-title">
-  Printer Status
-</div>
-
-<div class="home-app-description">
-  H2D, TOYBOX & Ender 3
-</div>
-
-</button>
-
-
-<!-- HISTORY -->
-
-<button
-  class="home-app"
-  onclick="showHistory()"
->
-
-<div class="home-app-icon">
-  ◷
-</div>
-
-<div class="home-app-title">
-  Scan History
-</div>
-
-<div class="home-app-description">
-  View previous scans
-</div>
-
-</button>
-
-
-<!-- H2D -->
-
-<button
-  class="home-app"
-  onclick="
-    openPrinterLink(
-      'https://apps.apple.com/app/id1625671285'
-    )
-  "
->
-
-<div class="home-app-icon">
-  H
-</div>
-
-<div class="home-app-title">
-  H2D
-</div>
-
-<div class="home-app-description">
-  Printer app
-</div>
-
-</button>
-
-
-<!-- TOYBOX -->
-
-<button
-  class="home-app"
-  onclick="
-    openPrinterLink(
-      'https://apps.apple.com/app/id1166269606'
-    )
-  "
->
-
-<div class="home-app-icon">
-  T
-</div>
-
-<div class="home-app-title">
-  TOYBOX
-</div>
-
-<div class="home-app-description">
-  Printer app
-</div>
-
-</button>
-
-
-<!-- ENDER -->
-
-<button
-  class="home-app"
-  onclick="
-    openPrinterLink(
-      'https://apps.apple.com/app/id1658133862'
-    )
-  "
->
-
-<div class="home-app-icon">
-  E
-</div>
-
-<div class="home-app-title">
-  Ender 3
-</div>
-
-<div class="home-app-description">
-  Printer app
-</div>
-
-</button>
-
-
-<!-- CLEAR HISTORY -->
-
-<button
-  class="home-app"
-  onclick="clearHistory()"
->
-
-<div class="home-app-icon">
-  ×
-</div>
-
-<div class="home-app-title">
-  Clear History
-</div>
-
-<div class="home-app-description">
-  Delete saved scans
-</div>
-
-</button>
-
-
-<!-- DEV -->
-
-<button
-  class="home-app"
-  onclick="toggleDevModeFromHome()"
->
-
-<div class="home-app-icon">
-  &lt;/&gt;
-</div>
-
-<div class="home-app-title">
-  Dev Mode
-</div>
-
-<div class="home-app-description">
-  Developer tools
-</div>
-
-</button>
-
-
-<!-- LIGHT MODE -->
-
-<button
-  class="home-app"
-  onclick="toggleLightModeFromHome()"
->
-
-<div class="home-app-icon">
-  ◐
-</div>
-
-<div class="home-app-title">
-  Light Mode
-</div>
-
-<div class="home-app-description">
-  Change appearance
-</div>
-
-</button>
-
-
-<!-- REFRESH -->
-
-<button
-  class="home-app"
-  onclick="refreshPage()"
->
-
-<div class="home-app-icon">
-  ↻
-</div>
-
-<div class="home-app-title">
-  Refresh
-</div>
-
-<div class="home-app-description">
-  Reload scanner
-</div>
-
-</button>
-
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     CATALOG
-===================================================== -->
-
-<div id="catalog-panel">
-
-<div id="catalog-header">
-
-<div id="catalog-title">
+<div class="page-title">
   Code Catalog
 </div>
 
-<button
-  class="catalog-back"
-  onclick="hideCatalog()"
->
-  Back
-</button>
-
+<div class="page-subtitle">
+  Name and organize every QR code and barcode you scan.
 </div>
 
 
-<div id="catalog-controls">
+<button
+  class="back-button"
+  onclick="goHome()"
+>
+  ← Home
+</button>
+
+
+<div class="catalog-tools">
 
 <input
   id="catalog-search"
-  class="catalog-search"
+  class="catalog-input"
   type="search"
-  placeholder="Search codes or names..."
+  placeholder="Search names or codes..."
   oninput="renderCatalog()"
 >
-
-
-<select
-  id="catalog-sort"
-  class="catalog-select"
-  onchange="renderCatalog()"
->
-
-<option value="recent">
-  Recently Scanned
-</option>
-
-<option value="name">
-  Name
-</option>
-
-<option value="code">
-  Code
-</option>
-
-<option value="type">
-  Type
-</option>
-
-</select>
 
 
 <select
@@ -2979,11 +2671,40 @@ body.catalog-open #camera {
 </option>
 
 <option value="qr">
-  QR Codes
+  QR Codes Only
 </option>
 
 <option value="barcode">
-  Bar Codes
+  Barcodes Only
+</option>
+
+</select>
+
+
+<select
+  id="catalog-sort"
+  class="catalog-select"
+  onchange="renderCatalog()"
+>
+
+<option value="recent">
+  Newest First
+</option>
+
+<option value="oldest">
+  Oldest First
+</option>
+
+<option value="name">
+  Name A-Z
+</option>
+
+<option value="nameReverse">
+  Name Z-A
+</option>
+
+<option value="code">
+  Code A-Z
 </option>
 
 </select>
@@ -2991,44 +2712,50 @@ body.catalog-open #camera {
 </div>
 
 
-<div id="catalog-list"></div>
+<div id="catalog-list"
+     class="catalog-list">
+</div>
+
+</div>
+
+</div>
 
 </div>
 
 
-<!-- =====================================================
-     CATALOG EDITOR
-===================================================== -->
+<!-- =======================================================
+     NAME DIALOG
+======================================================= -->
 
-<div id="catalog-editor">
+<div id="name-dialog">
 
-<div id="catalog-editor-box">
+<div id="name-dialog-box">
 
-<div id="catalog-editor-title">
+<div id="name-dialog-title">
   Name This Code
 </div>
 
-<div id="catalog-editor-code"></div>
+<div id="name-dialog-code"></div>
 
 <input
-  id="catalog-name-input"
+  id="name-input"
   type="text"
-  maxlength="80"
+  maxlength="100"
   placeholder="Enter a name..."
 >
 
-<div class="catalog-editor-buttons">
+<div class="dialog-buttons">
 
 <button
-  class="catalog-editor-button catalog-cancel"
-  onclick="closeCatalogEditor()"
+  class="dialog-button"
+  onclick="closeNameDialog()"
 >
   Cancel
 </button>
 
 <button
-  class="catalog-editor-button catalog-save"
-  onclick="saveCatalogName()"
+  class="dialog-button save"
+  onclick="saveCodeName()"
 >
   Save Name
 </button>
@@ -3040,9 +2767,9 @@ body.catalog-open #camera {
 </div>
 
 
-<!-- =====================================================
+<!-- =======================================================
      DEV PANEL
-===================================================== -->
+======================================================= -->
 
 <div id="dev-panel">
 
@@ -3082,9 +2809,6 @@ body.catalog-open #camera {
 </div>
 
 
-</div>
-
-
 <script>
 
 /* =========================================================
@@ -3093,15 +2817,22 @@ body.catalog-open #camera {
 
 let scanner = null;
 
+let scannerRunning = false;
+
+let scannerMode =
+  localStorage.getItem(
+    "scannerMode"
+  ) || "qr";
+
 let firstDetection = null;
 
 let detectedText = null;
 
-let detectedFormat = null;
-
 let scanConfirmed = false;
 
 let scannedURL = null;
+
+let scannedFormat = null;
 
 let isPrinterLink = false;
 
@@ -3125,18 +2856,7 @@ let scanStartTime = null;
 
 let lastScanTime = 0;
 
-let currentCatalogCode = null;
-
-let currentCatalogType = null;
-
-let scannerStarting = false;
-
-let scannerRestarting = false;
-
-
-/* =========================================================
-   SCANNER CONSTANTS
-========================================================= */
+let editingCatalogCode = null;
 
 const HOLD_TIME = 600;
 
@@ -3145,365 +2865,6 @@ const QR_SIZE = 250;
 const BARCODE_WIDTH = 330;
 
 const BARCODE_HEIGHT = 145;
-
-
-/* =========================================================
-   SCANNER MODE
-========================================================= */
-
-let scannerMode =
-  localStorage.getItem(
-    "printerScannerMode"
-  ) || "qr";
-
-
-/*
-  QR formats
-*/
-
-function getQRFormats() {
-
-  return [
-
-    Html5QrcodeSupportedFormats.QR_CODE
-
-  ];
-
-}
-
-
-/*
-  Barcode formats
-
-  This deliberately does NOT include QR_CODE.
-*/
-
-function getBarcodeFormats() {
-
-  const formats = [];
-
-  const possibleFormats = [
-
-    "CODE_128",
-    "CODE_39",
-    "CODE_93",
-    "CODABAR",
-    "EAN_13",
-    "EAN_8",
-    "ITF",
-    "UPC_A",
-    "UPC_E",
-    "DATA_MATRIX",
-    "PDF_417"
-
-  ];
-
-
-  possibleFormats.forEach(
-    function(name) {
-
-      if (
-        Html5QrcodeSupportedFormats[name]
-        !== undefined
-      ) {
-
-        formats.push(
-          Html5QrcodeSupportedFormats[name]
-        );
-
-      }
-
-    }
-  );
-
-
-  /*
-    Remove QR_CODE if somehow
-    included by the library.
-  */
-
-  return formats.filter(
-    function(format) {
-
-      return (
-        format !==
-        Html5QrcodeSupportedFormats.QR_CODE
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   APPLY MODE
-========================================================= */
-
-function applyScannerModeUI() {
-
-  document.body.classList.toggle(
-    "qr-mode",
-    scannerMode === "qr"
-  );
-
-  document.body.classList.toggle(
-    "barcode-mode",
-    scannerMode === "barcode"
-  );
-
-
-  const indicator =
-    document.getElementById(
-      "mode-indicator"
-    );
-
-
-  const name =
-    document.getElementById(
-      "current-mode-name"
-    );
-
-
-  const description =
-    document.getElementById(
-      "current-mode-description"
-    );
-
-
-  const icon =
-    document.getElementById(
-      "mode-card-icon"
-    );
-
-
-  if (
-    scannerMode === "barcode"
-  ) {
-
-    indicator.textContent =
-      "BARCODE MODE";
-
-    name.textContent =
-      "Barcode Scanner";
-
-    description.textContent =
-      "Wide rectangular scanning area";
-
-    icon.textContent =
-      "▤";
-
-  } else {
-
-    indicator.textContent =
-      "QR MODE";
-
-    name.textContent =
-      "QR Scanner";
-
-    description.textContent =
-      "Square 250×250 scanning area";
-
-    icon.textContent =
-      "▣";
-
-  }
-
-}
-
-
-/* =========================================================
-   SWITCH MODE
-========================================================= */
-
-async function toggleScannerMode() {
-
-  if (scannerRestarting)
-    return;
-
-
-  scannerMode =
-    scannerMode === "qr"
-      ? "barcode"
-      : "qr";
-
-
-  localStorage.setItem(
-
-    "printerScannerMode",
-
-    scannerMode
-
-  );
-
-
-  applyScannerModeUI();
-
-
-  devLog(
-    "Scanner mode changed to " +
-    scannerMode.toUpperCase()
-  );
-
-
-  hideHomePage();
-
-
-  /*
-    Restart the scanner so the
-    decoding format changes too.
-  */
-
-  await restartScanner();
-
-}
-
-
-/* =========================================================
-   RESTART SCANNER
-========================================================= */
-
-async function restartScanner() {
-
-  if (scannerRestarting)
-    return;
-
-
-  scannerRestarting = true;
-
-
-  const loading =
-    document.getElementById(
-      "loading"
-    );
-
-
-  loading.style.display =
-    "flex";
-
-
-  scanConfirmed =
-    false;
-
-  firstDetection =
-    null;
-
-  detectedText =
-    null;
-
-  detectedFormat =
-    null;
-
-  scannedURL =
-    null;
-
-  isPrinterLink =
-    false;
-
-
-  document.getElementById(
-    "result-text"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "result-code"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "open-button"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "rescan"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "control-bar"
-  ).style.display =
-    "flex";
-
-
-  document.getElementById(
-    "version-number"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "scan-box"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "reader"
-  ).style.display =
-    "block";
-
-
-  if (scanner) {
-
-    try {
-
-      await scanner.stop();
-
-    } catch(error) {
-
-      devLog(
-        "Scanner stop during mode change: " +
-        error.message
-      );
-
-    }
-
-    try {
-
-      scanner.clear();
-
-    } catch {}
-
-    scanner =
-      null;
-
-  }
-
-
-  cameraTrack =
-    null;
-
-
-  /*
-    Give html5-qrcode a moment to
-    clean up its video element.
-  */
-
-  await new Promise(
-    function(resolve) {
-
-      setTimeout(
-        resolve,
-        200
-      );
-
-    }
-  );
-
-
-  scannerRestarting =
-    false;
-
-
-  startScanner();
-
-}
 
 
 /* =========================================================
@@ -3517,19 +2878,15 @@ function devLog(message) {
       "dev-output"
     );
 
-  if (!output)
-    return;
-
+  if (!output) return;
 
   const line =
     document.createElement(
       "div"
     );
 
-
   line.className =
     "dev-line";
-
 
   line.textContent =
     "[" +
@@ -3537,18 +2894,12 @@ function devLog(message) {
     "] " +
     message;
 
-
-  output.appendChild(
-    line
-  );
-
+  output.appendChild(line);
 
   output.scrollTop =
     output.scrollHeight;
 
-
   updateStats();
-
 }
 
 
@@ -3559,9 +2910,7 @@ function updateStats() {
       "dev-stats"
     );
 
-  if (!stats)
-    return;
-
+  if (!stats) return;
 
   stats.textContent =
     "Scans: " +
@@ -3573,91 +2922,1150 @@ function updateStats() {
     " | Last scan: " +
     lastScanTime +
     " ms";
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function hideAllPages() {
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      page => {
+        page.classList.remove(
+          "active"
+        );
+      }
+    );
+}
+
+
+function goHome() {
+
+  stopScanner();
+
+  hideAllPages();
+
+  document
+    .getElementById(
+      "home-page"
+    )
+    .classList.add(
+      "active"
+    );
+
+  document
+    .getElementById(
+      "top-bar"
+    )
+    .style.display =
+    "flex";
+
+  document
+    .getElementById(
+      "site-title"
+    )
+    .textContent =
+    "Printer Scanner 5000";
+
+  document
+    .getElementById(
+      "dev-panel"
+    )
+    .style.display =
+    devMode
+      ? "flex"
+      : "none";
+
+  devLog(
+    "Returned to Home"
+  );
+}
+
+
+/* =========================================================
+   START SCANNING
+========================================================= */
+
+function startScanning() {
+
+  hideAllPages();
+
+  document
+    .getElementById(
+      "scanner-page"
+    )
+    .classList.add(
+      "active"
+    );
+
+  document
+    .getElementById(
+      "top-bar"
+    )
+    .style.display =
+    "flex";
+
+  resetScannerInterface();
+
+  applyScannerMode();
+
+  startScanner();
 
 }
 
 
 /* =========================================================
-   HOME PAGE
+   SELECT SCANNER MODE
 ========================================================= */
 
-function showHomePage() {
+function selectScannerMode(mode) {
 
-  document.body.classList.add(
-    "home-open"
+  scannerMode =
+    mode === "barcode"
+      ? "barcode"
+      : "qr";
+
+  localStorage.setItem(
+    "scannerMode",
+    scannerMode
   );
-
-
-  document.getElementById(
-    "home-page"
-  ).classList.add(
-    "visible"
-  );
-
-
-  document.getElementById(
-    "home-page"
-  ).scrollTop = 0;
-
-
-  applyScannerModeUI();
-
 
   devLog(
-    "Home screen opened"
+    "Scanner mode changed to " +
+    scannerMode
   );
 
+  startScanning();
 }
 
 
-function hideHomePage() {
+/* =========================================================
+   APPLY SCANNER MODE
+========================================================= */
 
-  document.body.classList.remove(
-    "home-open"
+function applyScannerMode() {
+
+  document.body.classList.toggle(
+    "qr-mode",
+    scannerMode === "qr"
+  );
+
+  document.body.classList.toggle(
+    "barcode-mode",
+    scannerMode === "barcode"
   );
 
 
+  const label =
+    document.getElementById(
+      "mode-label"
+    );
+
+
+  if (scannerMode === "barcode") {
+
+    label.textContent =
+      "Barcode Mode";
+
+  } else {
+
+    label.textContent =
+      "QR Mode";
+
+  }
+
+
+  positionScanRegion();
+}
+
+
+/* =========================================================
+   RESET SCANNER INTERFACE
+========================================================= */
+
+function resetScannerInterface() {
+
+  scanConfirmed =
+    false;
+
+  firstDetection =
+    null;
+
+  detectedText =
+    null;
+
+  scannedURL =
+    null;
+
+  scannedFormat =
+    null;
+
+  isPrinterLink =
+    false;
+
+  flashlightOn =
+    false;
+
   document.getElementById(
-    "home-page"
+    "reader"
+  ).style.display =
+    "block";
+
+  document.getElementById(
+    "scan-box"
+  ).style.display =
+    "block";
+
+  document.getElementById(
+    "control-bar"
+  ).style.display =
+    "flex";
+
+  document.getElementById(
+    "status-bar"
+  ).style.display =
+    "block";
+
+  document.getElementById(
+    "hold-still"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "result-text"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "result-code"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "open-button"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "rescan"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "version-number"
+  ).style.display =
+    "block";
+
+  document.getElementById(
+    "loading"
+  ).style.display =
+    "flex";
+
+  document.getElementById(
+    "flashlight-button"
   ).classList.remove(
-    "visible"
-  );
-
-
-  devLog(
-    "Home screen closed"
+    "active"
   );
 
 }
 
 
 /* =========================================================
-   PRINTER SHORTCUT
+   STOP SCANNER
 ========================================================= */
 
-function openPrinterLink(url) {
+async function stopScanner() {
 
-  devLog(
-    "Printer shortcut: " +
-    url
-  );
+  if (!scanner) {
 
+    scannerRunning =
+      false;
 
-  window.open(
-    url,
-    "_blank"
-  );
+    return;
+
+  }
 
 
-  hideHomePage();
+  try {
+
+    if (scannerRunning) {
+
+      await scanner.stop();
+
+    }
+
+  } catch(error) {
+
+    devLog(
+      "Scanner stop: " +
+      error.message
+    );
+
+  }
+
+
+  try {
+
+    scanner.clear();
+
+  } catch {}
+
+
+  scanner =
+    null;
+
+  scannerRunning =
+    false;
+
+  cameraTrack =
+    null;
 
 }
 
 
-function refreshPage() {
+/* =========================================================
+   CATALOG STORAGE
+========================================================= */
 
-  window.location.reload();
+function getCatalog() {
 
+  try {
+
+    return JSON.parse(
+
+      localStorage.getItem(
+        "printerScannerCatalog"
+      )
+
+    ) || [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveCatalog(catalog) {
+
+  localStorage.setItem(
+
+    "printerScannerCatalog",
+
+    JSON.stringify(
+      catalog
+    )
+
+  );
+}
+
+
+/* =========================================================
+   FIND CATALOG ENTRY
+========================================================= */
+
+function findCatalogEntry(code) {
+
+  const catalog =
+    getCatalog();
+
+  return catalog.find(
+    item =>
+      item.code === code
+  ) || null;
+}
+
+
+/* =========================================================
+   ADD CODE TO CATALOG
+========================================================= */
+
+function addToCatalog(
+  code,
+  type
+) {
+
+  const catalog =
+    getCatalog();
+
+  const existing =
+    catalog.find(
+      item =>
+        item.code === code
+    );
+
+
+  if (existing) {
+
+    existing.lastScanned =
+      Date.now();
+
+    saveCatalog(
+      catalog
+    );
+
+    return existing;
+
+  }
+
+
+  const entry = {
+
+    code:
+      code,
+
+    type:
+      type,
+
+    name:
+      "",
+
+    firstScanned:
+      Date.now(),
+
+    lastScanned:
+      Date.now()
+
+  };
+
+
+  catalog.unshift(
+    entry
+  );
+
+
+  saveCatalog(
+    catalog
+  );
+
+
+  devLog(
+    "Added " +
+    type +
+    " to catalog"
+  );
+
+
+  return entry;
+}
+
+
+/* =========================================================
+   GET DISPLAY NAME
+========================================================= */
+
+function getCatalogDisplayName(code) {
+
+  const entry =
+    findCatalogEntry(
+      code
+    );
+
+
+  if (
+    entry &&
+    entry.name &&
+    entry.name.trim()
+  ) {
+
+    return entry.name.trim();
+
+  }
+
+
+  return null;
+}
+
+
+/* =========================================================
+   OPEN CATALOG
+========================================================= */
+
+function openCatalog() {
+
+  stopScanner();
+
+  hideAllPages();
+
+  document
+    .getElementById(
+      "catalog-page"
+    )
+    .classList.add(
+      "active"
+    );
+
+  renderCatalog();
+
+  devLog(
+    "Opened Code Catalog"
+  );
+}
+
+
+/* =========================================================
+   RENDER CATALOG
+========================================================= */
+
+function renderCatalog() {
+
+  const list =
+    document.getElementById(
+      "catalog-list"
+    );
+
+  if (!list)
+    return;
+
+
+  let catalog =
+    getCatalog();
+
+
+  const search =
+    (
+      document.getElementById(
+        "catalog-search"
+      ).value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const filter =
+    document.getElementById(
+      "catalog-filter"
+    ).value;
+
+
+  const sort =
+    document.getElementById(
+      "catalog-sort"
+    ).value;
+
+
+  catalog =
+    catalog.filter(
+      item => {
+
+        const matchesSearch =
+
+          !search ||
+
+          item.code
+            .toLowerCase()
+            .includes(search) ||
+
+          (
+            item.name || ""
+          )
+            .toLowerCase()
+            .includes(search);
+
+
+        const matchesFilter =
+
+          filter === "all" ||
+
+          item.type === filter;
+
+
+        return (
+          matchesSearch &&
+          matchesFilter
+        );
+
+      }
+    );
+
+
+  catalog.sort(
+    (a,b) => {
+
+      if (
+        sort === "name"
+      ) {
+
+        return (
+          (a.name || a.code)
+            .localeCompare(
+              b.name || b.code
+            )
+        );
+
+      }
+
+
+      if (
+        sort === "nameReverse"
+      ) {
+
+        return (
+          (b.name || b.code)
+            .localeCompare(
+              a.name || a.code
+            )
+        );
+
+      }
+
+
+      if (
+        sort === "code"
+      ) {
+
+        return a.code.localeCompare(
+          b.code
+        );
+
+      }
+
+
+      if (
+        sort === "oldest"
+      ) {
+
+        return (
+          a.firstScanned -
+          b.firstScanned
+        );
+
+      }
+
+
+      return (
+        b.firstScanned -
+        a.firstScanned
+      );
+
+    }
+  );
+
+
+  list.innerHTML =
+    "";
+
+
+  if (
+    catalog.length === 0
+  ) {
+
+    list.innerHTML =
+
+      '<div class="catalog-empty">' +
+
+      "No codes found." +
+
+      "<br><br>" +
+
+      "Scan a QR code or barcode and it will appear here." +
+
+      "</div>";
+
+    return;
+
+  }
+
+
+  catalog.forEach(
+    item => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "catalog-item";
+
+
+      const displayName =
+        item.name &&
+        item.name.trim()
+          ? item.name
+          : "Unnamed Code";
+
+
+      const typeLabel =
+        item.type === "barcode"
+          ? "BARCODE"
+          : "QR CODE";
+
+
+      div.innerHTML =
+
+        '<div class="catalog-item-header">' +
+
+          '<div class="catalog-item-name">' +
+
+            escapeHTML(
+              displayName
+            ) +
+
+          "</div>" +
+
+          '<div class="catalog-type">' +
+
+            typeLabel +
+
+          "</div>" +
+
+        "</div>" +
+
+        '<div class="catalog-code">' +
+
+          escapeHTML(
+            item.code
+          ) +
+
+        "</div>" +
+
+        '<div class="catalog-date">' +
+
+          "Last scanned: " +
+
+          escapeHTML(
+            new Date(
+              item.lastScanned
+            ).toLocaleString()
+          ) +
+
+        "</div>" +
+
+        '<div class="catalog-actions">' +
+
+          '<button class="catalog-action" ' +
+
+            'onclick="openNameDialog(' +
+
+              "'" +
+              encodeURIComponent(
+                item.code
+              ) +
+              "'" +
+
+            ')">' +
+
+            "Name / Rename" +
+
+          "</button>" +
+
+          '<button class="catalog-action delete" ' +
+
+            'onclick="deleteCatalogCode(' +
+
+              "'" +
+              encodeURIComponent(
+                item.code
+              ) +
+              "'" +
+
+            ')">' +
+
+            "Delete" +
+
+          "</button>" +
+
+        "</div>";
+
+
+      list.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   NAME DIALOG
+========================================================= */
+
+function openNameDialog(
+  encodedCode
+) {
+
+  const code =
+    decodeURIComponent(
+      encodedCode
+    );
+
+
+  editingCatalogCode =
+    code;
+
+
+  const entry =
+    findCatalogEntry(
+      code
+    );
+
+
+  document.getElementById(
+    "name-dialog-code"
+  ).textContent =
+    code;
+
+
+  document.getElementById(
+    "name-input"
+  ).value =
+    entry
+      ? entry.name || ""
+      : "";
+
+
+  document.getElementById(
+    "name-dialog"
+  ).style.display =
+    "flex";
+
+
+  setTimeout(
+    function() {
+
+      document.getElementById(
+        "name-input"
+      ).focus();
+
+    },
+
+    50
+  );
+
+}
+
+
+function closeNameDialog() {
+
+  editingCatalogCode =
+    null;
+
+  document.getElementById(
+    "name-dialog"
+  ).style.display =
+    "none";
+}
+
+
+function saveCodeName() {
+
+  if (
+    !editingCatalogCode
+  )
+    return;
+
+
+  const input =
+    document.getElementById(
+      "name-input"
+    );
+
+
+  const newName =
+    input.value.trim();
+
+
+  const catalog =
+    getCatalog();
+
+
+  const entry =
+    catalog.find(
+      item =>
+        item.code ===
+        editingCatalogCode
+    );
+
+
+  if (!entry)
+    return;
+
+
+  entry.name =
+    newName;
+
+
+  saveCatalog(
+    catalog
+  );
+
+
+  devLog(
+    "Catalog name saved: " +
+    (
+      newName ||
+      "Unnamed Code"
+    )
+  );
+
+
+  closeNameDialog();
+
+  renderCatalog();
+}
+
+
+/* =========================================================
+   DELETE CATALOG ENTRY
+========================================================= */
+
+function deleteCatalogCode(
+  encodedCode
+) {
+
+  const code =
+    decodeURIComponent(
+      encodedCode
+    );
+
+
+  const catalog =
+    getCatalog();
+
+
+  const filtered =
+    catalog.filter(
+      item =>
+        item.code !== code
+    );
+
+
+  saveCatalog(
+    filtered
+  );
+
+
+  devLog(
+    "Removed code from catalog"
+  );
+
+
+  renderCatalog();
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function getHistory() {
+
+  try {
+
+    return JSON.parse(
+
+      localStorage.getItem(
+        "printerScannerHistory"
+      )
+
+    ) || [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveHistory(
+  url,
+  name
+) {
+
+  const history =
+    getHistory();
+
+
+  history.unshift({
+
+    url:
+      url,
+
+    name:
+      name,
+
+    time:
+      new Date()
+        .toLocaleString()
+
+  });
+
+
+  localStorage.setItem(
+
+    "printerScannerHistory",
+
+    JSON.stringify(
+      history.slice(
+        0,
+        20
+      )
+    )
+
+  );
+
+
+  devLog(
+    "Saved scan to history"
+  );
+
+}
+
+
+function showHistory() {
+
+  const panel =
+    document.getElementById(
+      "history-panel"
+    );
+
+  const list =
+    document.getElementById(
+      "history-list"
+    );
+
+  const history =
+    getHistory();
+
+
+  list.innerHTML =
+    "";
+
+
+  if (
+    history.length === 0
+  ) {
+
+    list.innerHTML =
+      '<div class="history-item">' +
+      "No scans yet." +
+      "</div>";
+
+  } else {
+
+    history.forEach(
+      function(item) {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "history-item";
+
+
+        div.innerHTML =
+
+          '<div class="history-name">' +
+          escapeHTML(
+            item.name
+          ) +
+          "</div>" +
+
+          '<div class="history-url">' +
+          escapeHTML(
+            item.url
+          ) +
+          "</div>" +
+
+          '<div class="history-time">' +
+          escapeHTML(
+            item.time
+          ) +
+          "</div>";
+
+
+        div.onclick =
+          function() {
+
+            if (
+              item.url
+                .startsWith(
+                  "http://"
+                ) ||
+              item.url
+                .startsWith(
+                  "https://"
+                )
+            ) {
+
+              window.open(
+                item.url,
+                "_blank"
+              );
+
+            }
+
+          };
+
+
+        list.appendChild(
+          div
+        );
+
+      }
+    );
+
+  }
+
+
+  panel.style.display =
+    "block";
+}
+
+
+function hideHistory() {
+
+  document.getElementById(
+    "history-panel"
+  ).style.display =
+    "none";
+}
+
+
+function clearHistory() {
+
+  localStorage.removeItem(
+    "printerScannerHistory"
+  );
+
+  devLog(
+    "Scan history cleared"
+  );
+
+  hideHistory();
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    String(text);
+
+  return div.innerHTML;
 }
 
 
@@ -3667,9 +4075,6 @@ function refreshPage() {
 
 function showNotes() {
 
-  hideHomePage();
-
-
   const notes =
     document.getElementById(
       "notes-panel"
@@ -3677,6 +4082,18 @@ function showNotes() {
 
 
   loadNotes();
+
+
+  hideAllPages();
+
+
+  document
+    .getElementById(
+      "scanner-page"
+    )
+    .classList.add(
+      "active"
+    );
 
 
   notes.style.display =
@@ -3690,7 +4107,6 @@ function showNotes() {
   devLog(
     "Opened printer status"
   );
-
 }
 
 
@@ -3710,53 +4126,28 @@ function hideNotes() {
     "none";
 
 
-  devLog(
-    "Closed printer status"
-  );
-
-
-  setTimeout(
-    reacquireCameraTrack,
-    50
-  );
-
+  goHome();
 }
 
 
-/* =========================================================
-   SAVE NOTES
-========================================================= */
-
 function saveNotes() {
-
-  const h2d =
-    document.getElementById(
-      "h2d-status"
-    ).value;
-
-
-  const toybox =
-    document.getElementById(
-      "toybox-status"
-    ).value;
-
-
-  const ender =
-    document.getElementById(
-      "ender-status"
-    ).value;
-
 
   const data = {
 
     h2d:
-      h2d,
+      document.getElementById(
+        "h2d-status"
+      ).value,
 
     toybox:
-      toybox,
+      document.getElementById(
+        "toybox-status"
+      ).value,
 
     ender:
-      ender
+      document.getElementById(
+        "ender-status"
+      ).value
 
   };
 
@@ -3778,7 +4169,6 @@ function saveNotes() {
       "Printer statuses saved"
     );
 
-
   } catch(error) {
 
     devLog(
@@ -3787,13 +4177,8 @@ function saveNotes() {
     );
 
   }
-
 }
 
-
-/* =========================================================
-   LOAD NOTES
-========================================================= */
 
 function loadNotes() {
 
@@ -3847,7 +4232,916 @@ function loadNotes() {
 
 
 /* =========================================================
-   CAMERA TRACK
+   PRINTER LINKS
+========================================================= */
+
+function openPrinterLink(url) {
+
+  window.open(
+    url,
+    "_blank"
+  );
+
+}
+
+
+/* =========================================================
+   SITE NAME
+========================================================= */
+
+function getSiteName(url) {
+
+  try {
+
+    let fixedURL =
+      url;
+
+
+    if (
+
+      !fixedURL.startsWith(
+        "http://"
+      )
+
+      &&
+
+      !fixedURL.startsWith(
+        "https://"
+      )
+
+    ) {
+
+      fixedURL =
+        "https://" +
+        fixedURL;
+
+    }
+
+
+    const parsed =
+      new URL(
+        fixedURL
+      );
+
+
+    let hostname =
+      parsed.hostname.replace(
+        /^www\./,
+        ""
+      );
+
+
+    const knownSites = {
+
+      "youtube.com":
+        "YouTube",
+
+      "google.com":
+        "Google",
+
+      "github.com":
+        "GitHub",
+
+      "amazon.com":
+        "Amazon",
+
+      "apple.com":
+        "Apple",
+
+      "facebook.com":
+        "Facebook",
+
+      "instagram.com":
+        "Instagram",
+
+      "tiktok.com":
+        "TikTok",
+
+      "reddit.com":
+        "Reddit",
+
+      "microsoft.com":
+        "Microsoft",
+
+      "bambulab.com":
+        "Bambu Lab",
+
+      "makerworld.com":
+        "MakerWorld"
+
+    };
+
+
+    if (
+      knownSites[hostname]
+    ) {
+
+      return knownSites[
+        hostname
+      ];
+
+    }
+
+
+    const parts =
+      hostname.split(".");
+
+
+    if (
+      parts.length >= 2
+    ) {
+
+      const name =
+        parts[
+          parts.length - 2
+        ];
+
+
+      return (
+
+        name
+          .charAt(0)
+          .toUpperCase() +
+
+        name.slice(1)
+
+      );
+
+    }
+
+
+    return hostname;
+
+
+  } catch {
+
+    return "Code Found";
+
+  }
+
+}
+
+
+/* =========================================================
+   QR TEXT
+========================================================= */
+
+function getQRText(url) {
+
+  try {
+
+    const parsedURL =
+      new URL(
+
+        url.startsWith("http")
+          ? url
+          : "https://" + url
+
+      );
+
+
+    const cleanURL =
+      parsedURL.origin +
+      parsedURL.pathname;
+
+
+    if (
+
+      cleanURL ===
+      "https://apps.apple.com/app/id1166269606"
+
+    ) {
+
+      isPrinterLink =
+        true;
+
+      return "TOYBOX Found";
+
+    }
+
+
+    if (
+
+      cleanURL ===
+      "https://apps.apple.com/app/id1658133862"
+
+    ) {
+
+      isPrinterLink =
+        true;
+
+      return "Ender 3 Found";
+
+    }
+
+
+    if (
+
+      cleanURL ===
+      "https://apps.apple.com/app/id1625671285"
+
+    ) {
+
+      isPrinterLink =
+        true;
+
+      return "This is to print with the H2D";
+
+    }
+
+
+    if (
+
+      parsedURL.origin ===
+      "https://makerworld.com"
+
+      &&
+
+      parsedURL.pathname ===
+      "/en"
+
+    ) {
+
+      isPrinterLink =
+        false;
+
+      return "This opens MakerWorld, which is for the H2D";
+
+    }
+
+
+    isPrinterLink =
+      false;
+
+
+    return getSiteName(
+      url
+    );
+
+
+  } catch {
+
+    isPrinterLink =
+      false;
+
+    return "QR Code Found";
+
+  }
+
+}
+
+
+/* =========================================================
+   GET FORMAT TYPE
+========================================================= */
+
+function getFormatType() {
+
+  if (
+    scannerMode ===
+    "barcode"
+  ) {
+
+    return "barcode";
+
+  }
+
+  return "qr";
+}
+
+
+/* =========================================================
+   GET RESULT DISPLAY
+========================================================= */
+
+function getResultDisplay(
+  decodedText
+) {
+
+  const entry =
+    findCatalogEntry(
+      decodedText
+    );
+
+
+  if (
+    entry &&
+    entry.name &&
+    entry.name.trim()
+  ) {
+
+    return {
+
+      title:
+        entry.name.trim(),
+
+      code:
+        decodedText
+
+    };
+
+  }
+
+
+  if (
+    scannerMode ===
+    "qr"
+  ) {
+
+    return {
+
+      title:
+        getQRText(
+          decodedText
+        ),
+
+      code:
+        decodedText
+
+    };
+
+  }
+
+
+  return {
+
+    title:
+      decodedText,
+
+    code:
+      decodedText
+
+  };
+
+}
+
+
+/* =========================================================
+   POSITION SCAN REGION
+========================================================= */
+
+function positionScanRegion() {
+
+  const region =
+    document.getElementById(
+      "reader__scan_region"
+    );
+
+
+  const box =
+    document.getElementById(
+      "scan-box"
+    );
+
+
+  if (!region)
+    return;
+
+
+  if (
+    scannerMode ===
+    "barcode"
+  ) {
+
+    region.style.width =
+      BARCODE_WIDTH + "px";
+
+    region.style.height =
+      BARCODE_HEIGHT + "px";
+
+    region.style.minWidth =
+      BARCODE_WIDTH + "px";
+
+    region.style.minHeight =
+      BARCODE_HEIGHT + "px";
+
+    region.style.maxWidth =
+      BARCODE_WIDTH + "px";
+
+    region.style.maxHeight =
+      BARCODE_HEIGHT + "px";
+
+
+    box.style.width =
+      BARCODE_WIDTH + "px";
+
+    box.style.height =
+      BARCODE_HEIGHT + "px";
+
+
+  } else {
+
+    region.style.width =
+      QR_SIZE + "px";
+
+    region.style.height =
+      QR_SIZE + "px";
+
+    region.style.minWidth =
+      QR_SIZE + "px";
+
+    region.style.minHeight =
+      QR_SIZE + "px";
+
+    region.style.maxWidth =
+      QR_SIZE + "px";
+
+    region.style.maxHeight =
+      QR_SIZE + "px";
+
+
+    box.style.width =
+      QR_SIZE + "px";
+
+    box.style.height =
+      QR_SIZE + "px";
+
+  }
+
+
+  region.style.position =
+    "absolute";
+
+  region.style.left =
+    "50%";
+
+  region.style.top =
+    "50%";
+
+  region.style.transform =
+    "translate(-50%, -50%)";
+
+  region.style.margin =
+    "0";
+
+  region.style.padding =
+    "0";
+
+  region.style.border =
+    "none";
+
+}
+
+
+/* =========================================================
+   START SCANNER
+========================================================= */
+
+async function startScanner() {
+
+  await stopScanner();
+
+
+  scanStartTime =
+    Date.now();
+
+
+  resetScannerInterface();
+
+
+  applyScannerMode();
+
+
+  const status =
+    document.getElementById(
+      "status-bar"
+    );
+
+
+  status.textContent =
+    scannerMode === "barcode"
+      ? "Starting barcode scanner..."
+      : "Starting QR scanner...";
+
+
+  scanner =
+    new Html5Qrcode(
+      "reader"
+    );
+
+
+  let formats;
+
+
+  if (
+    scannerMode ===
+    "barcode"
+  ) {
+
+    formats = [
+
+      Html5QrcodeSupportedFormats.CODE_128,
+
+      Html5QrcodeSupportedFormats.CODE_39,
+
+      Html5QrcodeSupportedFormats.CODE_93,
+
+      Html5QrcodeSupportedFormats.CODABAR,
+
+      Html5QrcodeSupportedFormats.EAN_13,
+
+      Html5QrcodeSupportedFormats.EAN_8,
+
+      Html5QrcodeSupportedFormats.ITF,
+
+      Html5QrcodeSupportedFormats.UPC_A,
+
+      Html5QrcodeSupportedFormats.UPC_E
+
+    ];
+
+  } else {
+
+    formats = [
+
+      Html5QrcodeSupportedFormats.QR_CODE
+
+    ];
+
+  }
+
+
+  try {
+
+    await scanner.start(
+
+      {
+        facingMode:
+          "environment"
+      },
+
+      {
+
+        fps:
+          scannerMode === "barcode"
+            ? 20
+            : 30,
+
+        qrbox:
+
+          scannerMode === "barcode"
+
+            ? {
+                width:
+                  BARCODE_WIDTH,
+
+                height:
+                  BARCODE_HEIGHT
+              }
+
+            : {
+                width:
+                  QR_SIZE,
+
+                height:
+                  QR_SIZE
+              },
+
+        formatsToSupport:
+          formats,
+
+        disableFlip:
+          false
+
+      },
+
+
+      async function(decodedText) {
+
+        if (
+          scanConfirmed
+        ) {
+
+          return;
+
+        }
+
+
+        status.textContent =
+          scannerMode === "barcode"
+            ? "Barcode detected"
+            : "QR detected";
+
+
+        status.className =
+          "detected";
+
+
+        reacquireCameraTrack();
+
+
+        if (
+          firstDetection ===
+          null
+        ) {
+
+          firstDetection =
+            Date.now();
+
+          detectedText =
+            decodedText;
+
+
+          document.getElementById(
+            "hold-still"
+          ).style.display =
+            "block";
+
+
+          return;
+
+        }
+
+
+        if (
+          decodedText !==
+          detectedText
+        ) {
+
+          firstDetection =
+            Date.now();
+
+          detectedText =
+            decodedText;
+
+          return;
+
+        }
+
+
+        if (
+
+          Date.now() -
+          firstDetection >=
+          HOLD_TIME
+
+        ) {
+
+          scanConfirmed =
+            true;
+
+
+          scannedURL =
+            decodedText;
+
+
+          scannedFormat =
+            getFormatType();
+
+
+          successfulScans++;
+
+          scanCount++;
+
+
+          lastScanTime =
+            Date.now() -
+            scanStartTime;
+
+
+          playScanSound();
+
+
+          const catalogEntry =
+            addToCatalog(
+              decodedText,
+              scannedFormat
+            );
+
+
+          const result =
+            getResultDisplay(
+              decodedText
+            );
+
+
+          saveHistory(
+            decodedText,
+            result.title
+          );
+
+
+          document.getElementById(
+            "status-bar"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "hold-still"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "control-bar"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "version-number"
+          ).style.display =
+            "none";
+
+
+          try {
+
+            await scanner.stop();
+
+          } catch {}
+
+
+          scannerRunning =
+            false;
+
+
+          cameraTrack =
+            null;
+
+
+          document.getElementById(
+            "reader"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "scan-box"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "result-text"
+          ).textContent =
+            result.title;
+
+
+          document.getElementById(
+            "result-text"
+          ).style.display =
+            "block";
+
+
+          document.getElementById(
+            "result-code"
+          ).textContent =
+            "Code: " +
+            result.code;
+
+
+          document.getElementById(
+            "result-code"
+          ).style.display =
+            "block";
+
+
+          const openButton =
+            document.getElementById(
+              "open-button"
+            );
+
+
+          if (
+            scannedFormat ===
+            "barcode"
+          ) {
+
+            openButton.textContent =
+              "Open Code";
+
+          } else {
+
+            openButton.textContent =
+              isPrinterLink
+                ? "Print"
+                : "Open";
+
+          }
+
+
+          openButton.style.display =
+            "block";
+
+
+          document.getElementById(
+            "rescan"
+          ).style.display =
+            "block";
+
+
+          devLog(
+
+            (
+              scannerMode ===
+              "barcode"
+                ? "Barcode"
+                : "QR"
+            ) +
+
+            " accepted: " +
+
+            result.title +
+
+            " | Code: " +
+
+            decodedText
+
+          );
+
+        }
+
+      },
+
+
+      function() {}
+
+    );
+
+
+    scannerRunning =
+      true;
+
+
+    setTimeout(
+      positionScanRegion,
+      100
+    );
+
+    setTimeout(
+      positionScanRegion,
+      300
+    );
+
+    setTimeout(
+      positionScanRegion,
+      700
+    );
+
+
+    document.getElementById(
+      "loading"
+    ).style.display =
+      "none";
+
+
+    status.textContent =
+      scannerMode === "barcode"
+        ? "Ready to scan barcode"
+        : "Ready to scan QR code";
+
+
+    status.className =
+      "";
+
+
+    setTimeout(
+      reacquireCameraTrack,
+      700
+    );
+
+
+    devLog(
+
+      scannerMode === "barcode"
+        ? "Barcode scanner started"
+        : "QR scanner started"
+
+    );
+
+
+  } catch(error) {
+
+    failedScans++;
+
+
+    scannerRunning =
+      false;
+
+
+    document.getElementById(
+      "loading"
+    ).style.display =
+      "none";
+
+
+    status.textContent =
+      "Camera unavailable";
+
+
+    devLog(
+      "CAMERA ERROR: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CAMERA TRACK RECOVERY
 ========================================================= */
 
 function reacquireCameraTrack() {
@@ -3875,7 +5169,6 @@ function reacquireCameraTrack() {
       cameraTrack =
         tracks[0];
 
-
       return true;
 
     }
@@ -3884,236 +5177,6 @@ function reacquireCameraTrack() {
 
 
   return false;
-
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function getHistory() {
-
-  try {
-
-    return JSON.parse(
-
-      localStorage.getItem(
-        "printerScannerHistory"
-      )
-
-    ) || [];
-
-  } catch {
-
-    return [];
-
-  }
-
-}
-
-
-function saveHistory(
-  url,
-  name,
-  type
-) {
-
-  const history =
-    getHistory();
-
-
-  history.unshift({
-
-    url:
-      url,
-
-    name:
-      name,
-
-    type:
-      type,
-
-    time:
-      new Date()
-        .toLocaleString()
-
-  });
-
-
-  localStorage.setItem(
-
-    "printerScannerHistory",
-
-    JSON.stringify(
-      history.slice(
-        0,
-        20
-      )
-    )
-
-  );
-
-
-  devLog(
-    "Saved scan to history"
-  );
-
-}
-
-
-function showHistory() {
-
-  hideHomePage();
-
-
-  const panel =
-    document.getElementById(
-      "history-panel"
-    );
-
-
-  const list =
-    document.getElementById(
-      "history-list"
-    );
-
-
-  const history =
-    getHistory();
-
-
-  list.innerHTML =
-    "";
-
-
-  if (
-    history.length === 0
-  ) {
-
-    list.innerHTML =
-      '<div class="history-item">' +
-      'No scans yet.' +
-      '</div>';
-
-  } else {
-
-    history.forEach(
-      function(item) {
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-
-        div.className =
-          "history-item";
-
-
-        div.innerHTML =
-
-          '<div class="history-name">' +
-          escapeHTML(
-            item.name
-          ) +
-          "</div>" +
-
-          '<div class="history-url">' +
-          escapeHTML(
-            item.url
-          ) +
-          "</div>" +
-
-          '<div class="history-time">' +
-          escapeHTML(
-            item.time
-          ) +
-          "</div>";
-
-
-        div.onclick =
-          function() {
-
-            if (
-              item.url
-                .startsWith(
-                  "http://"
-                )
-              ||
-              item.url
-                .startsWith(
-                  "https://"
-                )
-            ) {
-
-              window.open(
-                item.url,
-                "_blank"
-              );
-
-            }
-
-          };
-
-
-        list.appendChild(
-          div
-        );
-
-      }
-    );
-
-  }
-
-
-  panel.style.display =
-    "block";
-
-}
-
-
-function hideHistory() {
-
-  document.getElementById(
-    "history-panel"
-  ).style.display =
-    "none";
-
-}
-
-
-function clearHistory() {
-
-  localStorage.removeItem(
-    "printerScannerHistory"
-  );
-
-
-  devLog(
-    "Scan history cleared"
-  );
-
-
-  hideHomePage();
-
-}
-
-
-function escapeHTML(text) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-
-  div.textContent =
-    text;
-
-
-  return div.innerHTML;
-
 }
 
 
@@ -4256,7 +5319,9 @@ function playScanSound() {
 
 
     oscillator.frequency.value =
-      880;
+      scannerMode === "barcode"
+        ? 660
+        : 880;
 
 
     oscillator.type =
@@ -4285,1121 +5350,11 @@ function playScanSound() {
       0.12
     );
 
-
   } catch {
 
     devLog(
       "Sound error"
     );
-
-  }
-
-}
-
-
-/* =========================================================
-   DEV MODE
-========================================================= */
-
-function toggleDevMode() {
-
-  devMode =
-    !devMode;
-
-
-  document.body.classList.toggle(
-    "dev-mode",
-    devMode
-  );
-
-
-  devLog(
-    "Developer Mode: " +
-    (
-      devMode
-        ? "ON"
-        : "OFF"
-    )
-  );
-
-}
-
-
-function toggleDevModeFromHome() {
-
-  hideHomePage();
-
-  toggleDevMode();
-
-}
-
-
-function clearDevOutput() {
-
-  document.getElementById(
-    "dev-output"
-  ).innerHTML =
-    "";
-
-}
-
-
-async function copyDevOutput() {
-
-  try {
-
-    await navigator.clipboard.writeText(
-
-      document.getElementById(
-        "dev-output"
-      ).innerText
-
-    );
-
-  } catch {
-
-    devLog(
-      "Could not copy output"
-    );
-
-  }
-
-}
-
-
-function exportDevOutput() {
-
-  const blob =
-    new Blob(
-
-      [
-        document.getElementById(
-          "dev-output"
-        ).innerText
-      ],
-
-      {
-        type:
-          "text/plain"
-      }
-
-    );
-
-
-  const url =
-    URL.createObjectURL(
-      blob
-    );
-
-
-  const link =
-    document.createElement(
-      "a"
-    );
-
-
-  link.href =
-    url;
-
-
-  link.download =
-    "printer-scanner-log.txt";
-
-
-  link.click();
-
-
-  URL.revokeObjectURL(
-    url
-  );
-
-}
-
-
-/* =========================================================
-   LIGHT MODE
-========================================================= */
-
-function toggleLightMode() {
-
-  lightMode =
-    !lightMode;
-
-
-  document.body.classList.toggle(
-    "light-mode",
-    lightMode
-  );
-
-
-  devLog(
-    "Light Mode: " +
-    (
-      lightMode
-        ? "ON"
-        : "OFF"
-    )
-  );
-
-}
-
-
-function toggleLightModeFromHome() {
-
-  toggleLightMode();
-
-  applyScannerModeUI();
-
-}
-
-
-/* =========================================================
-   CATALOG DATABASE
-========================================================= */
-
-function getCatalog() {
-
-  try {
-
-    return JSON.parse(
-
-      localStorage.getItem(
-        "printerScannerCatalog"
-      )
-
-    ) || [];
-
-  } catch {
-
-    return [];
-
-  }
-
-}
-
-
-function saveCatalog(
-  catalog
-) {
-
-  localStorage.setItem(
-
-    "printerScannerCatalog",
-
-    JSON.stringify(
-      catalog
-    )
-
-  );
-
-}
-
-
-/*
-  Find a code in the catalog.
-*/
-
-function findCatalogItem(
-  code
-) {
-
-  const catalog =
-    getCatalog();
-
-
-  return catalog.find(
-    function(item) {
-
-      return item.code === code;
-
-    }
-  );
-
-}
-
-
-/*
-  Add or update a scanned code.
-*/
-
-function registerCatalogScan(
-  code,
-  type
-) {
-
-  if (!code)
-    return;
-
-
-  const catalog =
-    getCatalog();
-
-
-  let item =
-    catalog.find(
-      function(entry) {
-
-        return entry.code === code;
-
-      }
-    );
-
-
-  if (item) {
-
-    item.lastScanned =
-      Date.now();
-
-    item.type =
-      type;
-
-  } else {
-
-    item = {
-
-      code:
-        code,
-
-      type:
-        type,
-
-      name:
-        "",
-
-      firstScanned:
-        Date.now(),
-
-      lastScanned:
-        Date.now()
-
-    };
-
-
-    catalog.push(
-      item
-    );
-
-  }
-
-
-  saveCatalog(
-    catalog
-  );
-
-
-  return item;
-
-}
-
-
-/*
-  What should appear when a code
-  is scanned?
-*/
-
-function getDisplayName(
-  code,
-  type
-) {
-
-  const item =
-    findCatalogItem(
-      code
-    );
-
-
-  /*
-    If user named the code,
-    ALWAYS use their name.
-  */
-
-  if (
-    item &&
-    item.name &&
-    item.name.trim()
-  ) {
-
-    return item.name;
-
-  }
-
-
-  /*
-    QR codes can still use the
-    existing website recognition.
-  */
-
-  if (type === "qr") {
-
-    return getQRText(
-      code
-    );
-
-  }
-
-
-  /*
-    Unnamed barcode:
-    show the barcode number.
-  */
-
-  return code;
-
-}
-
-
-/* =========================================================
-   CATALOG SCREEN
-========================================================= */
-
-function showCatalog() {
-
-  hideHomePage();
-
-
-  hideHistory();
-
-
-  document.body.classList.add(
-    "catalog-open"
-  );
-
-
-  document.getElementById(
-    "catalog-panel"
-  ).classList.add(
-    "visible"
-  );
-
-
-  renderCatalog();
-
-
-  devLog(
-    "Catalog opened"
-  );
-
-}
-
-
-function hideCatalog() {
-
-  document.body.classList.remove(
-    "catalog-open"
-  );
-
-
-  document.getElementById(
-    "catalog-panel"
-  ).classList.remove(
-    "visible"
-  );
-
-
-  devLog(
-    "Catalog closed"
-  );
-
-}
-
-
-/* =========================================================
-   RENDER CATALOG
-========================================================= */
-
-function renderCatalog() {
-
-  const list =
-    document.getElementById(
-      "catalog-list"
-    );
-
-
-  const search =
-    (
-      document.getElementById(
-        "catalog-search"
-      ).value || ""
-    )
-      .toLowerCase()
-      .trim();
-
-
-  const sort =
-    document.getElementById(
-      "catalog-sort"
-    ).value;
-
-
-  const filter =
-    document.getElementById(
-      "catalog-filter"
-    ).value;
-
-
-  let catalog =
-    getCatalog();
-
-
-  /*
-    Filter type
-  */
-
-  if (
-    filter !== "all"
-  ) {
-
-    catalog =
-      catalog.filter(
-        function(item) {
-
-          return item.type === filter;
-
-        }
-      );
-
-  }
-
-
-  /*
-    Search
-  */
-
-  if (search) {
-
-    catalog =
-      catalog.filter(
-        function(item) {
-
-          return (
-
-            item.code
-              .toLowerCase()
-              .includes(search)
-
-            ||
-
-            (
-              item.name || ""
-            )
-              .toLowerCase()
-              .includes(search)
-
-          );
-
-        }
-      );
-
-  }
-
-
-  /*
-    Sort
-  */
-
-  catalog.sort(
-    function(a, b) {
-
-      if (
-        sort === "name"
-      ) {
-
-        return (
-          (
-            a.name ||
-            a.code
-          )
-            .toLowerCase()
-            .localeCompare(
-              (
-                b.name ||
-                b.code
-              )
-                .toLowerCase()
-            )
-        );
-
-      }
-
-
-      if (
-        sort === "code"
-      ) {
-
-        return a.code
-          .localeCompare(
-            b.code
-          );
-
-      }
-
-
-      if (
-        sort === "type"
-      ) {
-
-        return a.type
-          .localeCompare(
-            b.type
-          );
-
-      }
-
-
-      return (
-        b.lastScanned -
-        a.lastScanned
-      );
-
-    }
-  );
-
-
-  list.innerHTML =
-    "";
-
-
-  if (
-    catalog.length === 0
-  ) {
-
-    list.innerHTML =
-      '<div class="catalog-empty">' +
-      'No codes in your catalog yet.<br><br>' +
-      'Scan a QR code or barcode and it will appear here.' +
-      '</div>';
-
-    return;
-
-  }
-
-
-  catalog.forEach(
-    function(item) {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "catalog-item";
-
-
-      const displayName =
-        item.name &&
-        item.name.trim()
-          ? item.name
-          : (
-              item.type === "qr"
-                ? getQRText(
-                    item.code
-                  )
-                : item.code
-            );
-
-
-      div.innerHTML =
-
-        '<div class="catalog-item-top">' +
-
-          '<div class="catalog-item-name">' +
-            escapeHTML(
-              displayName
-            ) +
-          '</div>' +
-
-          '<div class="catalog-item-type">' +
-            escapeHTML(
-              item.type
-            ) +
-          '</div>' +
-
-        '</div>' +
-
-        '<div class="catalog-item-code">' +
-          escapeHTML(
-            item.code
-          ) +
-        '</div>' +
-
-        '<div class="catalog-item-time">' +
-          'Last scanned: ' +
-          escapeHTML(
-            new Date(
-              item.lastScanned
-            ).toLocaleString()
-          ) +
-        '</div>' +
-
-        '<div class="catalog-item-buttons">' +
-
-          '<button ' +
-            'class="catalog-small-button" ' +
-            'onclick="openCatalogEditor(\'' +
-              encodeURIComponent(
-                item.code
-              ) +
-            '\')"' +
-          '>' +
-            (
-              item.name
-                ? "Rename"
-                : "Name Code"
-            ) +
-          '</button>' +
-
-          '<button ' +
-            'class="catalog-small-button" ' +
-            'onclick="deleteCatalogItem(\'' +
-              encodeURIComponent(
-                item.code
-              ) +
-            '\')"' +
-          '>' +
-            'Delete' +
-          '</button>' +
-
-        '</div>';
-
-
-      list.appendChild(
-        div
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CATALOG EDITOR
-========================================================= */
-
-function openCatalogEditor(
-  encodedCode
-) {
-
-  const code =
-    decodeURIComponent(
-      encodedCode
-    );
-
-
-  const item =
-    findCatalogItem(
-      code
-    );
-
-
-  if (!item)
-    return;
-
-
-  currentCatalogCode =
-    code;
-
-
-  currentCatalogType =
-    item.type;
-
-
-  document.getElementById(
-    "catalog-editor-code"
-  ).textContent =
-    code;
-
-
-  document.getElementById(
-    "catalog-name-input"
-  ).value =
-    item.name || "";
-
-
-  document.getElementById(
-    "catalog-editor"
-  ).classList.add(
-    "visible"
-  );
-
-
-  setTimeout(
-    function() {
-
-      document.getElementById(
-        "catalog-name-input"
-      ).focus();
-
-    },
-    50
-  );
-
-}
-
-
-function closeCatalogEditor() {
-
-  document.getElementById(
-    "catalog-editor"
-  ).classList.remove(
-    "visible"
-  );
-
-
-  currentCatalogCode =
-    null;
-
-
-  currentCatalogType =
-    null;
-
-}
-
-
-function saveCatalogName() {
-
-  if (!currentCatalogCode)
-    return;
-
-
-  const input =
-    document.getElementById(
-      "catalog-name-input"
-    );
-
-
-  const name =
-    input.value.trim();
-
-
-  const catalog =
-    getCatalog();
-
-
-  const item =
-    catalog.find(
-      function(entry) {
-
-        return (
-          entry.code ===
-          currentCatalogCode
-        );
-
-      }
-    );
-
-
-  if (!item)
-    return;
-
-
-  item.name =
-    name;
-
-
-  saveCatalog(
-    catalog
-  );
-
-
-  devLog(
-    "Catalog name saved: " +
-    (
-      name ||
-      "[unnamed]"
-    )
-  );
-
-
-  closeCatalogEditor();
-
-
-  renderCatalog();
-
-}
-
-
-function deleteCatalogItem(
-  encodedCode
-) {
-
-  const code =
-    decodeURIComponent(
-      encodedCode
-    );
-
-
-  const catalog =
-    getCatalog();
-
-
-  const newCatalog =
-    catalog.filter(
-      function(item) {
-
-        return item.code !== code;
-
-      }
-    );
-
-
-  saveCatalog(
-    newCatalog
-  );
-
-
-  devLog(
-    "Deleted catalog item"
-  );
-
-
-  renderCatalog();
-
-}
-
-
-/* =========================================================
-   SITE NAME
-========================================================= */
-
-function getSiteName(url) {
-
-  try {
-
-    let fixedURL =
-      url;
-
-
-    if (
-
-      !fixedURL.startsWith(
-        "http://"
-      )
-
-      &&
-
-      !fixedURL.startsWith(
-        "https://"
-      )
-
-    ) {
-
-      fixedURL =
-        "https://" +
-        fixedURL;
-
-    }
-
-
-    const parsed =
-      new URL(
-        fixedURL
-      );
-
-
-    let hostname =
-      parsed.hostname.replace(
-        /^www\./,
-        ""
-      );
-
-
-    const knownSites = {
-
-      "youtube.com":
-        "YouTube",
-
-      "google.com":
-        "Google",
-
-      "github.com":
-        "GitHub",
-
-      "amazon.com":
-        "Amazon",
-
-      "apple.com":
-        "Apple",
-
-      "facebook.com":
-        "Facebook",
-
-      "instagram.com":
-        "Instagram",
-
-      "tiktok.com":
-        "TikTok",
-
-      "reddit.com":
-        "Reddit",
-
-      "microsoft.com":
-        "Microsoft",
-
-      "bambulab.com":
-        "Bambu Lab",
-
-      "makerworld.com":
-        "MakerWorld"
-
-    };
-
-
-    if (
-      knownSites[hostname]
-    ) {
-
-      return knownSites[
-        hostname
-      ];
-
-    }
-
-
-    const parts =
-      hostname.split(".");
-
-
-    if (
-      parts.length >= 2
-    ) {
-
-      const name =
-        parts[
-          parts.length - 2
-        ];
-
-
-      return (
-
-        name
-          .charAt(0)
-          .toUpperCase() +
-
-        name.slice(1)
-
-      );
-
-    }
-
-
-    return hostname;
-
-
-  } catch {
-
-    return "QR Code Found";
-
-  }
-
-}
-
-
-/* =========================================================
-   QR RESULT
-========================================================= */
-
-function getQRText(url) {
-
-  try {
-
-    const parsedURL =
-      new URL(
-
-        url.startsWith("http")
-          ? url
-          : "https://" + url
-
-      );
-
-
-    const cleanURL =
-      parsedURL.origin +
-      parsedURL.pathname;
-
-
-    if (
-
-      cleanURL ===
-      "https://apps.apple.com/app/id1166269606"
-
-    ) {
-
-      isPrinterLink =
-        true;
-
-      return "TOYBOX Found";
-
-    }
-
-
-    if (
-
-      cleanURL ===
-      "https://apps.apple.com/app/id1658133862"
-
-    ) {
-
-      isPrinterLink =
-        true;
-
-      return "Ender 3 Found";
-
-    }
-
-
-    if (
-
-      cleanURL ===
-      "https://apps.apple.com/app/id1625671285"
-
-    ) {
-
-      isPrinterLink =
-        true;
-
-      return "This is to print with the H2D";
-
-    }
-
-
-    if (
-
-      parsedURL.origin ===
-      "https://makerworld.com"
-
-      &&
-
-      parsedURL.pathname ===
-      "/en"
-
-    ) {
-
-      isPrinterLink =
-        false;
-
-      return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
-
-    }
-
-
-    isPrinterLink =
-      false;
-
-
-    return getSiteName(
-      url
-    );
-
-
-  } catch {
-
-    isPrinterLink =
-      false;
-
-    return "QR Code Found";
 
   }
 
@@ -5496,639 +5451,7 @@ async function setZoom(value) {
 
 
 /* =========================================================
-   POSITION SCAN REGION
-========================================================= */
-
-function positionScanRegion() {
-
-  const region =
-    document.getElementById(
-      "reader__scan_region"
-    );
-
-
-  if (!region)
-    return;
-
-
-  region.style.position =
-    "absolute";
-
-
-  if (
-    scannerMode === "barcode"
-  ) {
-
-    const width =
-      window.innerWidth <= 500
-        ? Math.min(
-            BARCODE_WIDTH,
-            window.innerWidth * .88
-          )
-        : BARCODE_WIDTH;
-
-
-    region.style.width =
-      width + "px";
-
-    region.style.height =
-      BARCODE_HEIGHT + "px";
-
-    region.style.minWidth =
-      width + "px";
-
-    region.style.minHeight =
-      BARCODE_HEIGHT + "px";
-
-    region.style.maxWidth =
-      width + "px";
-
-    region.style.maxHeight =
-      BARCODE_HEIGHT + "px";
-
-  } else {
-
-    region.style.width =
-      QR_SIZE + "px";
-
-    region.style.height =
-      QR_SIZE + "px";
-
-    region.style.minWidth =
-      QR_SIZE + "px";
-
-    region.style.minHeight =
-      QR_SIZE + "px";
-
-    region.style.maxWidth =
-      QR_SIZE + "px";
-
-    region.style.maxHeight =
-      QR_SIZE + "px";
-
-  }
-
-
-  region.style.left =
-    "50%";
-
-  region.style.top =
-    "50%";
-
-  region.style.transform =
-    "translate(-50%, -50%)";
-
-  region.style.margin =
-    "0";
-
-  region.style.padding =
-    "0";
-
-  region.style.border =
-    "none";
-
-}
-
-
-/* =========================================================
-   FORMAT NAME
-========================================================= */
-
-function getFormatName(
-  decodedResult
-) {
-
-  try {
-
-    if (
-      decodedResult &&
-      decodedResult.result &&
-      decodedResult.result.format
-    ) {
-
-      return String(
-        decodedResult.result.format.formatName ||
-        decodedResult.result.format
-      );
-
-    }
-
-  } catch {}
-
-
-  return scannerMode === "barcode"
-    ? "barcode"
-    : "qr";
-
-}
-
-
-/* =========================================================
-   START SCANNER
-========================================================= */
-
-async function startScanner() {
-
-  if (scannerStarting)
-    return;
-
-
-  scannerStarting =
-    true;
-
-
-  scanStartTime =
-    Date.now();
-
-
-  const status =
-    document.getElementById(
-      "status-bar"
-    );
-
-
-  status.textContent =
-    "Starting camera...";
-
-
-  applyScannerModeUI();
-
-
-  scanner =
-    new Html5Qrcode(
-      "reader"
-    );
-
-
-  const formats =
-    scannerMode === "barcode"
-      ? getBarcodeFormats()
-      : getQRFormats();
-
-
-  devLog(
-    "Starting " +
-    scannerMode.toUpperCase() +
-    " scanner"
-  );
-
-
-  try {
-
-    await scanner.start(
-
-      {
-        facingMode:
-          "environment"
-      },
-
-      {
-
-        fps:
-          scannerMode === "barcode"
-            ? 20
-            : 30,
-
-        qrbox:
-
-          scannerMode === "barcode"
-
-            ? {
-
-                width:
-                  BARCODE_WIDTH,
-
-                height:
-                  BARCODE_HEIGHT
-
-              }
-
-            : {
-
-                width:
-                  QR_SIZE,
-
-                height:
-                  QR_SIZE
-
-              },
-
-        formatsToSupport:
-          formats,
-
-        disableFlip:
-          false
-
-      },
-
-
-      async function(
-        decodedText,
-        decodedResult
-      ) {
-
-        if (
-          scanConfirmed
-        ) {
-
-          return;
-
-        }
-
-
-        status.textContent =
-          scannerMode === "barcode"
-            ? "Barcode detected"
-            : "QR detected";
-
-
-        status.className =
-          "detected";
-
-
-        reacquireCameraTrack();
-
-
-        if (
-          firstDetection ===
-          null
-        ) {
-
-          firstDetection =
-            Date.now();
-
-          detectedText =
-            decodedText;
-
-          detectedFormat =
-            getFormatName(
-              decodedResult
-            );
-
-
-          document.getElementById(
-            "hold-still"
-          ).style.display =
-            "block";
-
-
-          return;
-
-        }
-
-
-        if (
-          decodedText !==
-          detectedText
-        ) {
-
-          firstDetection =
-            Date.now();
-
-          detectedText =
-            decodedText;
-
-          detectedFormat =
-            getFormatName(
-              decodedResult
-            );
-
-
-          return;
-
-        }
-
-
-        if (
-
-          Date.now() -
-          firstDetection >=
-          HOLD_TIME
-
-        ) {
-
-          scanConfirmed =
-            true;
-
-
-          scannedURL =
-            decodedText;
-
-
-          const scanType =
-            scannerMode;
-
-
-          successfulScans++;
-
-          scanCount++;
-
-
-          lastScanTime =
-            Date.now() -
-            scanStartTime;
-
-
-          playScanSound();
-
-
-          /*
-            Put the code into the catalog
-            before deciding what to display.
-          */
-
-          const catalogItem =
-            registerCatalogScan(
-              decodedText,
-              scanType
-            );
-
-
-          /*
-            IMPORTANT:
-
-            If the user has assigned a
-            custom name, it wins.
-
-            Otherwise QR codes use the
-            existing website recognition
-            and barcodes show their value.
-          */
-
-          const result =
-            getDisplayName(
-              decodedText,
-              scanType
-            );
-
-
-          /*
-            For printer QR codes,
-            getDisplayName() may set
-            isPrinterLink.
-          */
-
-          saveHistory(
-            decodedText,
-            result,
-            scanType
-          );
-
-
-          document.getElementById(
-            "status-bar"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "hold-still"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "control-bar"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "version-number"
-          ).style.display =
-            "none";
-
-
-          try {
-
-            await scanner.stop();
-
-          } catch {}
-
-
-          cameraTrack =
-            null;
-
-
-          document.getElementById(
-            "reader"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "scan-box"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "mode-indicator"
-          ).style.display =
-            "none";
-
-
-          /*
-            Main custom name / result
-          */
-
-          document.getElementById(
-            "result-text"
-          ).textContent =
-            result;
-
-
-          document.getElementById(
-            "result-text"
-          ).style.display =
-            "block";
-
-
-          /*
-            Always show the raw code
-            underneath the name.
-          */
-
-          document.getElementById(
-            "result-code"
-          ).textContent =
-            decodedText;
-
-
-          document.getElementById(
-            "result-code"
-          ).style.display =
-            "block";
-
-
-          const openButton =
-            document.getElementById(
-              "open-button"
-            );
-
-
-          /*
-            Barcodes generally aren't
-            URLs, so don't offer Open
-            unless the value looks like
-            a URL.
-          */
-
-          const looksLikeURL =
-
-            decodedText.startsWith(
-              "http://"
-            )
-
-            ||
-
-            decodedText.startsWith(
-              "https://"
-            )
-
-            ||
-
-            decodedText.includes(
-              ".com"
-            )
-
-            ||
-
-            decodedText.includes(
-              ".net"
-            )
-
-            ||
-
-            decodedText.includes(
-              ".org"
-            );
-
-
-          if (
-            scanType === "qr" ||
-            looksLikeURL
-          ) {
-
-            openButton.textContent =
-              isPrinterLink
-                ? "Print"
-                : "Open";
-
-            openButton.style.display =
-              "block";
-
-          }
-
-
-          document.getElementById(
-            "rescan"
-          ).style.display =
-            "block";
-
-
-          devLog(
-
-            (
-              scanType === "barcode"
-                ? "Barcode"
-                : "QR"
-            ) +
-
-            " accepted: " +
-
-            result +
-
-            " | Code: " +
-
-            decodedText
-
-          );
-
-        }
-
-      },
-
-
-      function() {}
-
-    );
-
-
-    setTimeout(
-      positionScanRegion,
-      100
-    );
-
-    setTimeout(
-      positionScanRegion,
-      300
-    );
-
-    setTimeout(
-      positionScanRegion,
-      700
-    );
-
-
-    document.getElementById(
-      "loading"
-    ).style.display =
-      "none";
-
-
-    status.textContent =
-      scannerMode === "barcode"
-        ? "Ready to scan barcode"
-        : "Ready to scan QR code";
-
-
-    status.className =
-      "";
-
-
-    setTimeout(
-      reacquireCameraTrack,
-      700
-    );
-
-
-    devLog(
-      "Camera started successfully"
-    );
-
-
-  } catch(error) {
-
-    failedScans++;
-
-
-    document.getElementById(
-      "loading"
-    ).style.display =
-      "none";
-
-
-    status.textContent =
-      "Camera unavailable";
-
-
-    devLog(
-      "CAMERA ERROR: " +
-      error.message
-    );
-
-  }
-
-
-  scannerStarting =
-    false;
-
-}
-
-
-/* =========================================================
-   OPEN SCANNED SITE
+   OPEN SCANNED CODE
 ========================================================= */
 
 function openScannedSite() {
@@ -6174,14 +5497,164 @@ function openScannedSite() {
    RESCAN
 ========================================================= */
 
-async function rescan() {
+function rescan() {
 
-  /*
-    Instead of reloading the whole
-    page, restart the scanner.
-  */
+  startScanning();
 
-  await restartScanner();
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+function refreshPage() {
+
+  window.location.reload();
+
+}
+
+
+/* =========================================================
+   LIGHT MODE
+========================================================= */
+
+function toggleLightMode() {
+
+  lightMode =
+    !lightMode;
+
+
+  document.body.classList.toggle(
+    "light-mode",
+    lightMode
+  );
+
+
+  localStorage.setItem(
+    "lightMode",
+    lightMode
+      ? "on"
+      : "off"
+  );
+
+}
+
+
+/* =========================================================
+   DEV MODE
+========================================================= */
+
+function toggleDevMode() {
+
+  devMode =
+    !devMode;
+
+
+  document.body.classList.toggle(
+    "dev-mode",
+    devMode
+  );
+
+
+  document.getElementById(
+    "dev-panel"
+  ).style.display =
+    devMode
+      ? "flex"
+      : "none";
+
+
+  devLog(
+    "Developer Mode: " +
+    (
+      devMode
+        ? "ON"
+        : "OFF"
+    )
+  );
+
+}
+
+
+function clearDevOutput() {
+
+  document.getElementById(
+    "dev-output"
+  ).innerHTML =
+    "";
+
+}
+
+
+async function copyDevOutput() {
+
+  try {
+
+    await navigator.clipboard.writeText(
+
+      document.getElementById(
+        "dev-output"
+      ).innerText
+
+    );
+
+  } catch {
+
+    devLog(
+      "Could not copy output"
+    );
+
+  }
+
+}
+
+
+function exportDevOutput() {
+
+  const blob =
+    new Blob(
+
+      [
+        document.getElementById(
+          "dev-output"
+        ).innerText
+      ],
+
+      {
+        type:
+          "text/plain"
+      }
+
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.href =
+    url;
+
+
+  link.download =
+    "printer-scanner-log.txt";
+
+
+  link.click();
+
+
+  URL.revokeObjectURL(
+    url
+  );
 
 }
 
@@ -6243,38 +5716,50 @@ window.addEventListener(
 
 
 /* =========================================================
-   ESCAPE KEY
+   KEYBOARD SUPPORT
 ========================================================= */
 
 document.addEventListener(
-
   "keydown",
-
   function(event) {
 
     if (
-      event.key === "Escape"
+      event.key ===
+      "Escape"
     ) {
 
-      closeCatalogEditor();
+      closeNameDialog();
 
-      hideCatalog();
+    }
 
-      hideHistory();
+    if (
+      event.key ===
+      "Enter"
+    ) {
 
-      hideNotes();
+      const dialog =
+        document.getElementById(
+          "name-dialog"
+        );
 
-      hideHomePage();
+
+      if (
+        dialog.style.display ===
+        "flex"
+      ) {
+
+        saveCodeName();
+
+      }
 
     }
 
   }
-
 );
 
 
 /* =========================================================
-   START
+   STARTUP
 ========================================================= */
 
 window.addEventListener(
@@ -6283,81 +5768,55 @@ window.addEventListener(
 
   function() {
 
-    /*
-      Make sure Notes starts hidden.
-    */
-
-    const notes =
-      document.getElementById(
-        "notes-panel"
+    const savedLightMode =
+      localStorage.getItem(
+        "lightMode"
       );
 
 
-    notes.style.display =
-      "none";
+    if (
+      savedLightMode ===
+      "on"
+    ) {
+
+      lightMode =
+        true;
+
+      document.body.classList.add(
+        "light-mode"
+      );
+
+    }
 
 
-    notes.style.pointerEvents =
-      "none";
+    applyScannerMode();
 
-
-    /*
-      Apply saved scanner mode.
-    */
-
-    applyScannerModeUI();
+    loadNotes();
 
 
     devLog(
       "Printer Scanner 5000"
     );
 
-
     devLog(
-      "Version 5.4"
+      "Version 5.2"
     );
 
-
     devLog(
-      "Scanner mode: " +
-      scannerMode.toUpperCase()
+      "Home screen startup enabled"
     );
 
-
     devLog(
-      "QR area: FIXED 250x250"
+      "QR / Barcode catalog enabled"
     );
-
-
-    devLog(
-      "Barcode area: RECTANGULAR"
-    );
-
-
-    devLog(
-      "Barcode catalog enabled"
-    );
-
-
-    devLog(
-      "QR catalog enabled"
-    );
-
 
     devLog(
       "Custom code names enabled"
     );
 
-
     devLog(
-      "Home screen enabled"
+      "Barcode rectangular scan region enabled"
     );
-
-
-    loadNotes();
-
-
-    startScanner();
 
   }
 
