@@ -1,19 +1,24 @@
 <!--
   PRINTER SCANNER 5000
-  VERSION: 4.3
+  VERSION: 4.4
 
-  Changes from v4.2:
-  - QR detected text hides after successful scan
-  - Website/type text hides after successful scan
+  Changes from v4.3:
+  - Added Notes button to Home menu
+  - Added H2D status notes
+  - Added TOYBOX status notes
+  - Added Ender 3 status notes
+  - Notes are saved with localStorage
+  - Notes remain after refreshing the page
+  - QR detected text still hides after a successful scan
+  - Website/type text still hides after a successful scan
   - Vibration remains removed
-  - "Scan complete" remains removed
-  - "Ready to scan" remains unchanged
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -844,6 +849,108 @@ body {
 
 
 /* =========================
+   NOTES
+========================= */
+
+#notes-panel {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 600;
+
+  background: #000;
+
+  padding: 30px 20px;
+
+  overflow-y: auto;
+
+  display: none;
+}
+
+#notes-title {
+  color: white;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  margin-bottom: 30px;
+}
+
+.note-section {
+  width: 100%;
+
+  max-width: 600px;
+
+  margin: 0 auto 22px;
+}
+
+.note-section label {
+  display: block;
+
+  color: white;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.note-section textarea {
+  width: 100%;
+
+  min-height: 80px;
+
+  resize: vertical;
+
+  border: 2px solid #444;
+
+  border-radius: 14px;
+
+  padding: 12px;
+
+  background: #111;
+
+  color: white;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 16px;
+
+  outline: none;
+}
+
+.note-section textarea:focus {
+  border-color: white;
+}
+
+.notes-save,
+.notes-back {
+  position: relative;
+
+  left: auto;
+  top: auto;
+
+  transform: none;
+
+  display: block;
+
+  width: min(90%, 400px);
+
+  margin: 12px auto;
+}
+
+.notes-save:active,
+.notes-back:active {
+  transform: scale(.95);
+}
+
+
+/* =========================
    DEV MODE
 ========================= */
 
@@ -1061,7 +1168,59 @@ body.light-mode .history-item {
   color: #000;
 }
 
+
+/* NOTES LIGHT MODE */
+
+body.light-mode #notes-panel {
+  background: #f2f2f2;
+}
+
+body.light-mode #notes-title {
+  color: #000;
+}
+
+body.light-mode .note-section label {
+  color: #000;
+}
+
+body.light-mode .note-section textarea {
+  background: white;
+  color: #000;
+  border-color: #bbb;
+}
+
+
+/* =========================
+   MOBILE NOTES
+========================= */
+
+@media (
+  max-width: 500px
+) {
+
+  #notes-panel {
+    padding:
+      25px 14px;
+  }
+
+  #notes-title {
+    font-size: 26px;
+    margin-bottom: 24px;
+  }
+
+  .note-section label {
+    font-size: 16px;
+  }
+
+  .note-section textarea {
+    font-size: 15px;
+    min-height: 75px;
+  }
+
+}
+
 </style>
+
 </head>
 
 
@@ -1088,6 +1247,10 @@ body.light-mode .history-item {
   Printer Scanner 5000
 </div>
 
+
+<!-- =========================
+     HOME MENU
+========================= -->
 
 <div id="home-menu">
 
@@ -1122,6 +1285,13 @@ body.light-mode .history-item {
   "
 >
   Ender 3
+</button>
+
+<button
+  class="menu-button"
+  onclick="showNotes()"
+>
+  Notes
 </button>
 
 <button
@@ -1174,11 +1344,14 @@ body.light-mode .history-item {
 
 <div id="scan-box"></div>
 
+
 <div id="status-bar">
   Starting camera...
 </div>
 
+
 <div id="qr-type"></div>
+
 
 <div id="hold-still">
   it’s a bit blurry, try moving a bit
@@ -1200,7 +1373,9 @@ body.light-mode .history-item {
   aria-label="Flashlight"
 >
 
-<span class="icon flashlight-icon"></span>
+<span
+  class="icon flashlight-icon"
+></span>
 
 </button>
 
@@ -1236,12 +1411,18 @@ body.light-mode .history-item {
   aria-label="Scan sound"
 >
 
-<span class="icon sound-icon"></span>
+<span
+  class="icon sound-icon"
+></span>
 
 </button>
 
 </div>
 
+
+<!-- =========================
+     LOADING
+========================= -->
 
 <div id="loading">
 
@@ -1249,6 +1430,10 @@ body.light-mode .history-item {
 
 </div>
 
+
+<!-- =========================
+     RESULT
+========================= -->
 
 <div id="result-text"></div>
 
@@ -1271,10 +1456,18 @@ body.light-mode .history-item {
 </button>
 
 
+<!-- =========================
+     VERSION
+========================= -->
+
 <div id="version-number">
-  v4.3
+  v4.4
 </div>
 
+
+<!-- =========================
+     HISTORY
+========================= -->
 
 <div id="history-panel">
 
@@ -1293,8 +1486,83 @@ body.light-mode .history-item {
 
 </div>
 
+
+<!-- =========================
+     NOTES
+========================= -->
+
+<div id="notes-panel">
+
+<div id="notes-title">
+  Printer Notes
 </div>
 
+
+<div class="note-section">
+
+<label for="h2d-note">
+  H2D status =
+</label>
+
+<textarea
+  id="h2d-note"
+  placeholder="Enter H2D status..."
+></textarea>
+
+</div>
+
+
+<div class="note-section">
+
+<label for="toybox-note">
+  TOYBOX status =
+</label>
+
+<textarea
+  id="toybox-note"
+  placeholder="Enter TOYBOX status..."
+></textarea>
+
+</div>
+
+
+<div class="note-section">
+
+<label for="ender-note">
+  Ender 3 status =
+</label>
+
+<textarea
+  id="ender-note"
+  placeholder="Enter Ender 3 status..."
+></textarea>
+
+</div>
+
+
+<button
+  class="action-button notes-save"
+  onclick="saveNotes()"
+>
+  Save Notes
+</button>
+
+
+<button
+  class="action-button notes-back"
+  onclick="hideNotes()"
+>
+  Back
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     DEV PANEL
+========================= -->
 
 <div id="dev-panel">
 
@@ -1344,23 +1612,39 @@ body.light-mode .history-item {
 ========================= */
 
 let scanner = null;
+
 let firstDetection = null;
+
 let detectedText = null;
+
 let scanConfirmed = false;
+
 let scannedURL = null;
+
 let isPrinterLink = false;
+
 let cameraTrack = null;
+
 let devMode = false;
+
 let lightMode = false;
+
 let flashlightOn = false;
+
 let soundEnabled = true;
+
 let scanCount = 0;
+
 let successfulScans = 0;
+
 let failedScans = 0;
+
 let scanStartTime = null;
+
 let lastScanTime = 0;
 
 const HOLD_TIME = 600;
+
 const QR_SIZE = 250;
 
 
@@ -1405,6 +1689,7 @@ function devLog(message) {
     output.scrollHeight;
 
   updateStats();
+
 }
 
 
@@ -1427,6 +1712,7 @@ function updateStats() {
     " | Last scan: " +
     lastScanTime +
     " ms";
+
 }
 
 
@@ -1445,6 +1731,7 @@ function toggleHomeMenu() {
     menu.style.display === "block"
       ? "none"
       : "block";
+
 }
 
 
@@ -1464,12 +1751,143 @@ function openPrinterLink(url) {
     "home-menu"
   ).style.display =
     "none";
+
 }
 
 
 function refreshPage() {
 
   window.location.reload();
+
+}
+
+
+/* =========================
+   NOTES
+========================= */
+
+function showNotes() {
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+  loadNotes();
+
+  document.getElementById(
+    "notes-panel"
+  ).style.display =
+    "block";
+
+  devLog(
+    "Opened printer notes"
+  );
+
+}
+
+
+function hideNotes() {
+
+  document.getElementById(
+    "notes-panel"
+  ).style.display =
+    "none";
+
+  devLog(
+    "Closed printer notes"
+  );
+
+}
+
+
+function saveNotes() {
+
+  const h2d =
+    document.getElementById(
+      "h2d-note"
+    ).value;
+
+  const toybox =
+    document.getElementById(
+      "toybox-note"
+    ).value;
+
+  const ender =
+    document.getElementById(
+      "ender-note"
+    ).value;
+
+
+  localStorage.setItem(
+    "printerNotes",
+    JSON.stringify({
+
+      h2d: h2d,
+
+      toybox: toybox,
+
+      ender: ender
+
+    })
+  );
+
+
+  devLog(
+    "Printer notes saved"
+  );
+
+
+  alert(
+    "Printer notes saved!"
+  );
+
+}
+
+
+function loadNotes() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          "printerNotes"
+        )
+      );
+
+
+    if (!saved)
+      return;
+
+
+    document.getElementById(
+      "h2d-note"
+    ).value =
+      saved.h2d || "";
+
+
+    document.getElementById(
+      "toybox-note"
+    ).value =
+      saved.toybox || "";
+
+
+    document.getElementById(
+      "ender-note"
+    ).value =
+      saved.ender || "";
+
+
+  } catch(error) {
+
+    devLog(
+      "Could not load notes: " +
+      error.message
+    );
+
+  }
+
 }
 
 
@@ -1504,6 +1922,7 @@ function saveHistory(
   const history =
     getHistory();
 
+
   history.unshift({
 
     url: url,
@@ -1516,17 +1935,21 @@ function saveHistory(
 
   });
 
+
   const limited =
     history.slice(0, 20);
+
 
   localStorage.setItem(
     "printerScannerHistory",
     JSON.stringify(limited)
   );
 
+
   devLog(
     "Saved scan to history"
   );
+
 }
 
 
@@ -1545,7 +1968,9 @@ function showHistory() {
   const history =
     getHistory();
 
+
   list.innerHTML = "";
+
 
   if (
     history.length === 0
@@ -1566,8 +1991,10 @@ function showHistory() {
             "div"
           );
 
+
         div.className =
           "history-item";
+
 
         div.innerHTML =
 
@@ -1583,6 +2010,7 @@ function showHistory() {
           escapeHTML(item.time) +
           "</div>";
 
+
         div.onclick =
           function() {
 
@@ -1593,6 +2021,7 @@ function showHistory() {
 
           };
 
+
         list.appendChild(
           div
         );
@@ -1602,13 +2031,16 @@ function showHistory() {
 
   }
 
+
   panel.style.display =
     "block";
+
 
   document.getElementById(
     "home-menu"
   ).style.display =
     "none";
+
 }
 
 
@@ -1618,6 +2050,7 @@ function hideHistory() {
     "history-panel"
   ).style.display =
     "none";
+
 }
 
 
@@ -1627,14 +2060,17 @@ function clearHistory() {
     "printerScannerHistory"
   );
 
+
   devLog(
     "Scan history cleared"
   );
+
 
   document.getElementById(
     "home-menu"
   ).style.display =
     "none";
+
 }
 
 
@@ -1649,6 +2085,7 @@ function escapeHTML(text) {
     text;
 
   return div.innerHTML;
+
 }
 
 
@@ -1663,6 +2100,7 @@ async function toggleFlashlight() {
       "flashlight-button"
     );
 
+
   if (!cameraTrack) {
 
     devLog(
@@ -1670,12 +2108,15 @@ async function toggleFlashlight() {
     );
 
     return;
+
   }
+
 
   try {
 
     const capabilities =
       cameraTrack.getCapabilities();
+
 
     if (
       !capabilities.torch
@@ -1686,26 +2127,33 @@ async function toggleFlashlight() {
       );
 
       return;
+
     }
+
 
     flashlightOn =
       !flashlightOn;
 
+
     await cameraTrack.applyConstraints({
 
       advanced: [
+
         {
           torch:
             flashlightOn
         }
+
       ]
 
     });
+
 
     button.classList.toggle(
       "active",
       flashlightOn
     );
+
 
     devLog(
       "Flashlight: " +
@@ -1716,14 +2164,17 @@ async function toggleFlashlight() {
       )
     );
 
+
   } catch(error) {
 
     flashlightOn =
       false;
 
+
     button.classList.remove(
       "active"
     );
+
 
     devLog(
       "Flashlight error: " +
@@ -1744,15 +2195,18 @@ function toggleSound() {
   soundEnabled =
     !soundEnabled;
 
+
   const button =
     document.getElementById(
       "sound-button"
     );
 
+
   button.classList.toggle(
     "active",
     soundEnabled
   );
+
 
   devLog(
     "Scan sound: " +
@@ -1762,12 +2216,15 @@ function toggleSound() {
         : "OFF"
     )
   );
+
 }
 
 
 function playScanSound() {
 
-  if (!soundEnabled) return;
+  if (!soundEnabled)
+    return;
+
 
   try {
 
@@ -1775,40 +2232,53 @@ function playScanSound() {
       window.AudioContext ||
       window.webkitAudioContext;
 
-    if (!AudioContext) return;
+
+    if (!AudioContext)
+      return;
+
 
     const audio =
       new AudioContext();
 
+
     const oscillator =
       audio.createOscillator();
+
 
     const gain =
       audio.createGain();
 
+
     oscillator.frequency.value =
       880;
+
 
     oscillator.type =
       "sine";
 
+
     gain.gain.value =
       0.08;
+
 
     oscillator.connect(
       gain
     );
 
+
     gain.connect(
       audio.destination
     );
 
+
     oscillator.start();
+
 
     oscillator.stop(
       audio.currentTime +
       0.12
     );
+
 
   } catch {
 
@@ -1830,15 +2300,18 @@ function toggleDevMode() {
   devMode =
     !devMode;
 
+
   document.body.classList.toggle(
     "dev-mode",
     devMode
   );
 
+
   document.getElementById(
     "home-menu"
   ).style.display =
     "none";
+
 
   devLog(
     "Developer Mode: " +
@@ -1858,6 +2331,7 @@ function clearDevOutput() {
     "dev-output"
   ).innerHTML = "";
 
+
   devLog(
     "Developer output cleared"
   );
@@ -1872,14 +2346,17 @@ async function copyDevOutput() {
       "dev-output"
     ).innerText;
 
+
   try {
 
     await navigator.clipboard
       .writeText(text);
 
+
     devLog(
       "Developer output copied"
     );
+
 
   } catch {
 
@@ -1899,6 +2376,7 @@ function exportDevOutput() {
       "dev-output"
     ).innerText;
 
+
   const blob =
     new Blob(
       [text],
@@ -1908,27 +2386,34 @@ function exportDevOutput() {
       }
     );
 
+
   const url =
     URL.createObjectURL(
       blob
     );
+
 
   const link =
     document.createElement(
       "a"
     );
 
+
   link.href =
     url;
+
 
   link.download =
     "printer-scanner-log.txt";
 
+
   link.click();
+
 
   URL.revokeObjectURL(
     url
   );
+
 
   devLog(
     "Developer log exported"
@@ -1946,15 +2431,18 @@ function toggleLightMode() {
   lightMode =
     !lightMode;
 
+
   document.body.classList.toggle(
     "light-mode",
     lightMode
   );
 
+
   document.getElementById(
     "home-menu"
   ).style.display =
     "none";
+
 
   devLog(
     "Light Mode: " +
@@ -1986,6 +2474,7 @@ document.addEventListener(
         "home-button"
       );
 
+
     if (
       !menu.contains(
         event.target
@@ -2015,6 +2504,7 @@ function getSiteName(url) {
     let fixedURL =
       url;
 
+
     if (
       !fixedURL.startsWith(
         "http://"
@@ -2030,16 +2520,19 @@ function getSiteName(url) {
 
     }
 
+
     const parsed =
       new URL(
         fixedURL
       );
+
 
     let hostname =
       parsed.hostname.replace(
         /^www\./,
         ""
       );
+
 
     const knownSites = {
 
@@ -2081,6 +2574,7 @@ function getSiteName(url) {
 
     };
 
+
     if (
       knownSites[hostname]
     ) {
@@ -2091,8 +2585,10 @@ function getSiteName(url) {
 
     }
 
+
     const parts =
       hostname.split(".");
+
 
     if (
       parts.length >= 2
@@ -2103,6 +2599,7 @@ function getSiteName(url) {
           parts.length - 2
         ];
 
+
       return (
         name
           .charAt(0)
@@ -2112,7 +2609,9 @@ function getSiteName(url) {
 
     }
 
+
     return hostname;
+
 
   } catch {
 
@@ -2138,6 +2637,7 @@ function getQRType(url) {
           : "https://" + url
       );
 
+
     if (
       parsed.protocol ===
       "mailto:"
@@ -2147,6 +2647,7 @@ function getQRType(url) {
 
     }
 
+
     if (
       parsed.protocol ===
       "tel:"
@@ -2155,6 +2656,7 @@ function getQRType(url) {
       return "Phone Number";
 
     }
+
 
     if (
       parsed.protocol ===
@@ -2167,7 +2669,9 @@ function getQRType(url) {
 
     }
 
+
     return "Text";
+
 
   } catch {
 
@@ -2180,6 +2684,7 @@ function getQRType(url) {
       return "Wi-Fi";
 
     }
+
 
     return "Text";
 
@@ -2202,6 +2707,7 @@ function getQRText(url) {
           ? url
           : "https://" + url
       );
+
 
     const cleanURL =
       parsedURL.origin +
@@ -2265,9 +2771,11 @@ function getQRText(url) {
     isPrinterLink =
       false;
 
+
     return getSiteName(
       url
     );
+
 
   } catch {
 
@@ -2290,20 +2798,24 @@ async function setZoom(value) {
   const zoom =
     parseFloat(value);
 
+
   document.getElementById(
     "zoom-value"
   ).textContent =
     zoom.toFixed(1) +
     "×";
 
+
   if (!cameraTrack)
     return;
+
 
   try {
 
     const capabilities =
       cameraTrack
         .getCapabilities();
+
 
     if (!capabilities.zoom) {
 
@@ -2315,28 +2827,34 @@ async function setZoom(value) {
 
     }
 
+
     const min =
       capabilities.zoom.min;
 
     const max =
       capabilities.zoom.max;
 
+
     const actualZoom =
       min +
       ((zoom - 1) / 4) *
       (max - min);
 
+
     await cameraTrack
       .applyConstraints({
 
         advanced: [
+
           {
             zoom:
               actualZoom
           }
+
         ]
 
       });
+
 
   } catch(error) {
 
@@ -2361,44 +2879,58 @@ function positionScanRegion() {
       "reader__scan_region"
     );
 
+
   if (!region)
     return;
+
 
   region.style.position =
     "absolute";
 
+
   region.style.width =
     QR_SIZE + "px";
+
 
   region.style.height =
     QR_SIZE + "px";
 
+
   region.style.minWidth =
     QR_SIZE + "px";
+
 
   region.style.minHeight =
     QR_SIZE + "px";
 
+
   region.style.maxWidth =
     QR_SIZE + "px";
+
 
   region.style.maxHeight =
     QR_SIZE + "px";
 
+
   region.style.left =
     "50%";
+
 
   region.style.top =
     "50%";
 
+
   region.style.transform =
     "translate(-50%, -50%)";
+
 
   region.style.margin =
     "0";
 
+
   region.style.padding =
     "0";
+
 
   region.style.border =
     "none";
@@ -2415,18 +2947,22 @@ async function startScanner() {
   scanStartTime =
     Date.now();
 
+
   const status =
     document.getElementById(
       "status-bar"
     );
 
+
   status.textContent =
     "Starting camera...";
+
 
   scanner =
     new Html5Qrcode(
       "reader"
     );
+
 
   try {
 
@@ -2442,17 +2978,20 @@ async function startScanner() {
         fps: 30,
 
         qrbox: {
+
           width:
             QR_SIZE,
 
           height:
             QR_SIZE
+
         },
 
         disableFlip:
           false
 
       },
+
 
       async function(
         decodedText
@@ -2467,13 +3006,13 @@ async function startScanner() {
         }
 
 
-        /* QR DETECTED */
-
         status.textContent =
           "QR detected";
 
+
         status.className =
           "detected";
+
 
         devLog(
           "QR detected"
@@ -2487,6 +3026,7 @@ async function startScanner() {
               "#reader video"
             );
 
+
           if (
             video &&
             video.srcObject
@@ -2495,6 +3035,7 @@ async function startScanner() {
             const tracks =
               video.srcObject
                 .getVideoTracks();
+
 
             if (
               tracks.length
@@ -2518,13 +3059,16 @@ async function startScanner() {
           firstDetection =
             Date.now();
 
+
           detectedText =
             decodedText;
+
 
           document.getElementById(
             "hold-still"
           ).style.display =
             "block";
+
 
           return;
 
@@ -2539,8 +3083,10 @@ async function startScanner() {
           firstDetection =
             Date.now();
 
+
           detectedText =
             decodedText;
+
 
           return;
 
@@ -2556,16 +3102,21 @@ async function startScanner() {
           scanConfirmed =
             true;
 
+
           scannedURL =
             decodedText;
 
+
           successfulScans++;
 
+
           scanCount++;
+
 
           lastScanTime =
             Date.now() -
             scanStartTime;
+
 
           playScanSound();
 
@@ -2574,6 +3125,7 @@ async function startScanner() {
             getQRType(
               decodedText
             );
+
 
           const result =
             getQRText(
@@ -2588,9 +3140,8 @@ async function startScanner() {
 
 
           /*
-           * IMPORTANT:
-           * Hide ALL scanning status
-           * text once the scan succeeds.
+           * Hide scanning text
+           * after successful scan.
            */
 
           document.getElementById(
@@ -2598,10 +3149,12 @@ async function startScanner() {
           ).style.display =
             "none";
 
+
           document.getElementById(
             "qr-type"
           ).style.display =
             "none";
+
 
           document.getElementById(
             "hold-still"
@@ -2613,6 +3166,7 @@ async function startScanner() {
             "control-bar"
           ).style.display =
             "none";
+
 
           document.getElementById(
             "version-number"
@@ -2636,6 +3190,7 @@ async function startScanner() {
           ).style.display =
             "none";
 
+
           document.getElementById(
             "scan-box"
           ).style.display =
@@ -2646,6 +3201,7 @@ async function startScanner() {
             "result-text"
           ).textContent =
             result;
+
 
           document.getElementById(
             "result-text"
@@ -2658,10 +3214,12 @@ async function startScanner() {
               "open-button"
             );
 
+
           openButton.textContent =
             isPrinterLink
               ? "Print"
               : "Open";
+
 
           openButton.style.display =
             "block";
@@ -2682,6 +3240,7 @@ async function startScanner() {
 
       },
 
+
       function() {}
 
     );
@@ -2692,10 +3251,12 @@ async function startScanner() {
       100
     );
 
+
     setTimeout(
       positionScanRegion,
       300
     );
+
 
     setTimeout(
       positionScanRegion,
@@ -2712,6 +3273,7 @@ async function startScanner() {
     status.textContent =
       "Ready to scan";
 
+
     status.className =
       "";
 
@@ -2724,6 +3286,7 @@ async function startScanner() {
             "#reader video"
           );
 
+
         if (
           video &&
           video.srcObject
@@ -2733,12 +3296,14 @@ async function startScanner() {
             video.srcObject
               .getVideoTracks();
 
+
           if (
             tracks.length
           ) {
 
             cameraTrack =
               tracks[0];
+
 
             devLog(
               "Camera track ready"
@@ -2757,17 +3322,21 @@ async function startScanner() {
       "Camera started"
     );
 
+
   } catch(error) {
 
     failedScans++;
+
 
     document.getElementById(
       "loading"
     ).style.display =
       "none";
 
+
     status.textContent =
       "Camera unavailable";
+
 
     devLog(
       "CAMERA ERROR: " +
@@ -2788,8 +3357,10 @@ function openScannedSite() {
   if (!scannedURL)
     return;
 
+
   let url =
     scannedURL;
+
 
   if (
     !url.startsWith(
@@ -2805,6 +3376,7 @@ function openScannedSite() {
       url;
 
   }
+
 
   window.open(
     url,
@@ -2832,11 +3404,13 @@ function rescan() {
 let resizeTimer =
   null;
 
+
 function keepScannerLocked() {
 
   clearTimeout(
     resizeTimer
   );
+
 
   resizeTimer =
     setTimeout(
@@ -2882,29 +3456,41 @@ window.addEventListener(
       "Printer Scanner 5000"
     );
 
+
     devLog(
-      "Version 4.3"
+      "Version 4.4"
     );
+
 
     devLog(
       "Camera: FULL SIZE"
     );
 
+
     devLog(
       "QR area: FIXED 250x250"
     );
+
 
     devLog(
       "Vibration: REMOVED"
     );
 
+
     devLog(
       "Scan success status: REMOVED"
     );
 
+
     devLog(
       "QR detected text hides after scan"
     );
+
+
+    devLog(
+      "Printer Notes enabled"
+    );
+
 
     startScanner();
 
