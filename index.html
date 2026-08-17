@@ -1,1596 +1,3375 @@
+<!--
+  PRINTER SCANNER 5000
+  VERSION: 4.9
+
+  Features:
+  - QR scanner
+  - Fixed 250x250 scan area
+  - Actual QR scan region aligned with visible square
+  - Flashlight
+  - Sound
+  - Zoom
+  - QR detected / Ready to scan
+  - Scan history
+  - Printer shortcuts
+  - Printer status notes
+  - LocalStorage printer status saving
+  - Developer mode
+  - Light mode
+  - Orientation/resize protection
+  - Vibration removed
+  - Scan success message removed
+-->
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
 <title>Printer Scanner 5000</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-*{box-sizing:border-box}
 
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    font-family:Arial,sans-serif;
-    background:#000;
-    color:#fff;
-    overflow:hidden
+* {
+  box-sizing: border-box;
 }
 
-#app{
-    height:100%;
-    display:flex;
-    flex-direction:column
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
-#top{
-    height:65px;
-    flex:none;
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#000
+body {
+  position: fixed;
+  inset: 0;
 }
 
-#title{
-    font-size:24px;
-    font-weight:bold
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
 }
 
-#home{
-    position:absolute;
-    left:12px;
-    background:#222;
-    color:#fff;
-    border:0;
-    border-radius:12px;
-    width:42px;
-    height:42px;
-    font-size:22px
+
+/* =========================
+   TOP BAR
+========================= */
+
+#top-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #000;
+
+  z-index: 100;
 }
 
-.menu{
-    display:none;
-    position:absolute;
-    z-index:100;
-    left:12px;
-    top:58px;
-    width:205px;
-    background:#111;
-    border:1px solid #333;
-    border-radius:16px;
-    padding:8px
+#site-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
 }
 
-.menu button{
-    width:100%;
-    margin:4px 0;
-    padding:12px;
-    border:0;
-    border-radius:10px;
-    background:#222;
-    color:#fff;
-    font-size:16px;
-    font-weight:bold
+
+/* =========================
+   HOME
+========================= */
+
+#home-button {
+  position: absolute;
+
+  left: 12px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #222;
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 200;
 }
 
-.menu button:active{
-    background:#444
+#home-button:active {
+  transform:
+    translateY(-50%)
+    scale(.94);
 }
 
-#camera{
-    position:relative;
-    flex:1;
-    overflow:hidden;
-    border-radius:28px 28px 0 0;
-    background:#000
+#home-menu {
+  position: absolute;
+
+  left: 12px;
+  top: 58px;
+
+  width: 190px;
+
+  max-height:
+    calc(100vh - 75px);
+
+  overflow-y: auto;
+
+  padding: 10px;
+
+  background: #111;
+
+  border: 1px solid #333;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.5);
+
+  z-index: 300;
+
+  display: none;
 }
 
-#reader{
-    position:absolute;
-    inset:0
+.menu-button {
+  width: 100%;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 13px 10px;
+  margin: 4px 0;
+
+  background: #222;
+  color: white;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
 }
 
-#reader video{
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important
+.menu-button:active {
+  background: #333;
+  transform: scale(.98);
+}
+
+
+/* =========================
+   CAMERA
+========================= */
+
+#camera {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  top: 65px;
+  bottom: 0;
+
+  overflow: hidden;
+
+  background: #000;
+
+  border-radius: 28px 28px 0 0;
+
+  z-index: 1;
+}
+
+
+/* =========================
+   HTML5 QR CODE
+========================= */
+
+#reader {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  border: none !important;
+
+  overflow: hidden;
+
+  z-index: 4;
+}
+
+#reader video {
+  position: absolute !important;
+
+  inset: 0 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  object-fit: cover !important;
+
+  display: block !important;
 }
 
 #reader__dashboard,
-#reader__header_message{
-    display:none!important
+#reader__header_message {
+  display: none !important;
 }
 
-#scanbox{
-    position:absolute;
-    z-index:10;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:250px;
-    height:250px;
-    border:3px solid #fff;
-    border-radius:18px;
-    pointer-events:none
+
+/*
+   IMPORTANT:
+   The library's scan region is forced into
+   the exact same coordinate system as #scan-box.
+*/
+
+#reader__scan_region {
+  position: absolute !important;
+
+  width: 250px !important;
+  height: 250px !important;
+
+  min-width: 250px !important;
+  min-height: 250px !important;
+
+  max-width: 250px !important;
+  max-height: 250px !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  transform:
+    translate(-50%, -50%) !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 0 !important;
+
+  overflow: hidden !important;
+
+  pointer-events: none !important;
 }
 
-body.barcode #scanbox{
-    width:350px;
-    height:150px
+#reader__scan_region img {
+  display: none !important;
 }
 
-#status{
-    position:absolute;
-    z-index:20;
-    top:calc(50% - 185px);
-    left:50%;
-    transform:translateX(-50%);
-    background:#000b;
-    padding:9px 18px;
-    border-radius:30px;
-    font-weight:bold;
-    white-space:nowrap
+
+/* =========================
+   VISIBLE SCAN BOX
+========================= */
+
+#scan-box {
+  position: absolute;
+
+  width: 250px;
+  height: 250px;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border: 3px solid white;
+
+  border-radius: 18px;
+
+  pointer-events: none;
+
+  z-index: 20;
 }
 
-body.barcode #status{
-    top:calc(50% - 115px)
+
+/* =========================
+   STATUS
+========================= */
+
+#status-bar {
+  position: absolute;
+
+  left: 50%;
+
+  top:
+    calc(50% - 185px);
+
+  transform:
+    translateX(-50%);
+
+  z-index: 40;
+
+  padding: 9px 18px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.65);
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  white-space: nowrap;
 }
 
-#controls{
-    position:absolute;
-    z-index:20;
-    bottom:45px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:10px;
-    align-items:center;
-    width:min(94%,600px)
+#status-bar.detected {
+  background:
+    rgba(255,170,0,.8);
 }
 
-.circle{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    border:2px solid #fff;
-    background:#000;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    flex-shrink:0
+
+/* =========================
+   HOLD STILL
+========================= */
+
+#hold-still {
+  position: absolute;
+
+  left: 50%;
+
+  top:
+    calc(50% + 155px);
+
+  transform:
+    translateX(-50%);
+
+  z-index: 30;
+
+  padding: 9px 16px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.65);
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  display: none;
 }
 
-.circle.active{
-    background:#fff;
-    color:#000
+
+/* =========================
+   CONTROL BAR
+========================= */
+
+#control-bar {
+  position: absolute;
+
+  left: 50%;
+  bottom: 45px;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 100;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  width: min(94%, 600px);
 }
 
-.zoom{
-    height:48px;
-    flex:1;
-    max-width:350px;
-    min-width:180px;
-    background:#000b;
-    border-radius:30px;
-    padding:10px 15px;
-    display:flex;
-    align-items:center;
-    gap:10px
+
+/* =========================
+   ZOOM
+========================= */
+
+#zoom-container {
+  height: 48px;
+
+  flex: 1;
+
+  min-width: 180px;
+  max-width: 350px;
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.65);
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
 }
 
-.zoom input{
-    width:100%
+#zoom-label {
+  color: white;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
 }
 
-.zoom span{
-    font-size:13px
+#zoom-slider {
+  width: 100%;
+  height: 5px;
+
+  accent-color: white;
+
+  cursor: pointer;
 }
 
-.flash{
-    font-size:20px
+#zoom-value {
+  min-width: 35px;
+
+  color: white;
+
+  font-size: 13px;
+
+  text-align: right;
 }
 
-#rotate{
-    font-size:27px;
-    line-height:1
+
+/* =========================
+   CIRCLE BUTTONS
+========================= */
+
+.circle-button {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  transition: .15s;
 }
 
-#result,
-#notes,
-#history{
-    display:none;
-    position:absolute;
-    inset:0;
-    z-index:80;
-    background:#000;
-    padding:30px 20px;
-    text-align:center
+.circle-button:active {
+  transform: scale(.9);
 }
 
-.result-name{
-    font-size:34px;
-    font-weight:bold;
-    margin-top:12vh
+.circle-button.active {
+  background: white;
+  color: black;
+
+  border: 2px solid white;
 }
 
-.result-code{
-    color:#aaa;
-    margin:25px auto;
-    max-width:90%;
-    word-break:break-all
+.circle-button:not(.active) {
+  background: black;
+  color: white;
+
+  border: 2px solid white;
 }
 
-.action{
-    border:0;
-    border-radius:30px;
-    background:#fff;
-    color:#000;
-    padding:16px 35px;
-    font-size:18px;
-    font-weight:bold;
-    margin:10px
+
+/* =========================
+   ICONS
+========================= */
+
+.icon {
+  position: relative;
+
+  display: block;
+
+  width: 22px;
+  height: 22px;
+
+  color: currentColor;
+
+  pointer-events: none;
 }
 
-.notes-inner{
-    max-width:600px;
-    margin:auto
+.flashlight-icon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 2px;
+
+  width: 9px;
+  height: 15px;
+
+  border:
+    2px solid currentColor;
+
+  border-radius: 3px;
 }
 
-.notes-inner h1{
-    margin-bottom:30px
+.flashlight-icon::after {
+  content: "";
+
+  position: absolute;
+
+  left: 8px;
+  bottom: 1px;
+
+  width: 7px;
+  height: 5px;
+
+  border-left:
+    2px solid currentColor;
+
+  border-right:
+    2px solid currentColor;
 }
 
-.note{
-    margin:20px 0;
-    text-align:left
+.sound-icon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 2px;
+  top: 8px;
+
+  width: 7px;
+  height: 7px;
+
+  background: currentColor;
+
+  border-radius: 1px;
 }
 
-.note label{
-    display:block;
-    font-weight:bold;
-    font-size:18px;
-    margin-bottom:8px
+.sound-icon::after {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 4px;
+
+  width: 9px;
+  height: 14px;
+
+  background: currentColor;
+
+  clip-path:
+    polygon(
+      0 35%,
+      35% 35%,
+      100% 0,
+      100% 100%,
+      35% 65%,
+      0 65%
+    );
 }
 
-.note select{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    background:#111;
-    color:#fff;
-    border:2px solid #444;
-    font-size:16px
+
+/* =========================
+   LOADING
+========================= */
+
+#loading {
+  position: absolute;
+
+  inset: 0;
+
+  background: #000;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  z-index: 50;
 }
 
-.history-list{
-    text-align:left;
-    max-width:600px;
-    margin:auto;
-    max-height:65vh;
-    overflow:auto
+.spinner {
+  width: 28px;
+  height: 28px;
+
+  border:
+    3px solid #333;
+
+  border-top:
+    3px solid white;
+
+  border-radius: 50%;
+
+  animation:
+    spin .6s linear infinite;
 }
 
-.history-item{
-    background:#222;
-    padding:12px;
-    border-radius:10px;
-    margin:7px 0
+@keyframes spin {
+  to {
+    transform:
+      rotate(360deg);
+  }
 }
 
-.dev{
-    display:none;
-    height:50%;
-    flex:none;
-    background:#000;
-    border-top:2px solid #333;
-    flex-direction:column
+
+/* =========================
+   RESULT
+========================= */
+
+#result-text {
+  position: absolute;
+
+  left: 50%;
+  top: 12%;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 50;
+
+  width: 85%;
+  max-width: 700px;
+
+  color: white;
+
+  font-size: 36px;
+  font-weight: 700;
+
+  text-align: center;
+
+  line-height: 1.25;
+
+  display: none;
 }
 
-.devhead{
-    padding:10px;
-    background:#111;
-    font-weight:bold
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.action-button {
+  position: absolute;
+
+  left: 50%;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 50;
+
+  border: none;
+
+  padding:
+    18px 38px;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #111;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  cursor: pointer;
 }
 
-.output{
-    flex:1;
-    overflow:auto;
-    padding:10px;
-    font:12px monospace;
-    white-space:pre-wrap
+.action-button:active {
+  transform:
+    translateX(-50%)
+    scale(.95);
 }
 
-.devbuttons{
-    padding:8px;
-    display:flex;
-    gap:6px
+#open-button {
+  top: 55%;
+  display: none;
 }
 
-.devbuttons button{
-    flex:1;
-    background:#222;
-    color:#fff;
-    border:0;
-    padding:8px;
-    border-radius:8px
+#rescan {
+  top: 70%;
+  display: none;
 }
 
-body.dev #top{
-    height:50px
+
+/* =========================
+   VERSION
+========================= */
+
+#version-number {
+  position: absolute;
+
+  left: 50%;
+  bottom: 6px;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 100;
+
+  color:
+    rgba(255,255,255,.45);
+
+  font-size: 9px;
+
+  pointer-events: none;
 }
 
-body.dev #camera{
-    height:calc(50% - 25px);
-    flex:none
+
+/* =========================
+   HISTORY
+========================= */
+
+#history-panel {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: min(90%, 420px);
+
+  max-height: 75%;
+
+  overflow-y: auto;
+
+  padding: 16px;
+
+  background: #111;
+
+  border:
+    1px solid #333;
+
+  border-radius: 20px;
+
+  z-index: 500;
+
+  display: none;
 }
 
-body.dev .dev{
-    display:flex
+#history-title {
+  color: white;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  margin-bottom: 12px;
 }
 
-.light{
-    background:#eee;
-    color:#000
+.history-item {
+  padding: 12px;
+
+  margin: 6px 0;
+
+  background: #222;
+
+  border-radius: 12px;
+
+  color: white;
+
+  cursor: pointer;
 }
 
-.light #top{
-    background:#eee;
-    color:#000
+.history-name {
+  font-weight: 700;
 }
 
-.light #home{
-    background:#ddd;
-    color:#000
+.history-url {
+  margin-top: 4px;
+
+  font-size: 11px;
+
+  color: #aaa;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
 }
 
-.light .menu{
-    background:#eee;
-    border-color:#bbb
+.history-time {
+  margin-top: 4px;
+
+  font-size: 10px;
+
+  color: #777;
 }
 
-.light .menu button{
-    background:#ddd;
-    color:#000
+.history-close {
+  width: 100%;
+
+  margin-top: 10px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 12px;
+
+  background: #333;
+
+  color: white;
+
+  font-weight: 600;
 }
 
-.light .zoom,
-.light .circle{
-    background:#fff;
-    color:#000
+
+/* =========================
+   NOTES
+========================= */
+
+#notes-panel {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 600;
+
+  background: #000;
+
+  padding:
+    30px 20px;
+
+  overflow-y: auto;
+
+  display: none;
 }
 
-.light #status{
-    background:#fffc;
-    color:#000
+#notes-title {
+  color: white;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  text-align: center;
+
+  margin-bottom: 30px;
 }
 
-.light #notes,
-.light #history,
-.light #result{
-    background:#eee;
-    color:#000
+.note-section {
+  width: 100%;
+
+  max-width: 600px;
+
+  margin:
+    0 auto 22px;
 }
 
-.light .note select{
-    background:#fff;
-    color:#000
+.note-section label {
+  display: block;
+
+  color: white;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
 }
+
+.status-select {
+  width: 100%;
+
+  padding:
+    14px 16px;
+
+  border:
+    2px solid #444;
+
+  border-radius: 14px;
+
+  background: #111;
+
+  color: white;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.status-select:focus {
+  border-color: white;
+}
+
+.notes-save,
+.notes-back {
+  position: relative;
+
+  left: auto;
+  top: auto;
+
+  transform: none;
+
+  display: block;
+
+  width: min(90%, 400px);
+
+  margin:
+    12px auto;
+}
+
+.notes-save:active,
+.notes-back:active {
+  transform:
+    scale(.95);
+}
+
+
+/* =========================
+   DEV PANEL
+========================= */
+
+#dev-panel {
+  display: none;
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 50%;
+
+  background: #000;
+
+  border-top:
+    2px solid #333;
+
+  color: white;
+
+  overflow: hidden;
+
+  flex-direction: column;
+
+  z-index: 700;
+}
+
+#dev-header {
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  padding-left: 14px;
+
+  background: #111;
+
+  border-bottom:
+    1px solid #333;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#dev-output {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 10px;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  white-space: pre-wrap;
+
+  word-break: break-word;
+}
+
+.dev-line {
+  margin-bottom: 3px;
+}
+
+#dev-stats {
+  padding: 10px;
+
+  border-top:
+    1px solid #333;
+
+  background: #111;
+
+  color: #aaa;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 11px;
+}
+
+#dev-buttons {
+  display: flex;
+
+  gap: 6px;
+
+  padding: 8px;
+
+  background: #111;
+}
+
+.dev-button {
+  flex: 1;
+
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 8px;
+
+  background: #222;
+
+  color: white;
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   DEV MODE
+========================= */
+
+body.dev-mode #top-bar {
+  height: 50px;
+}
+
+body.dev-mode #camera {
+  top: 50px;
+  bottom: 50%;
+  height: auto;
+
+  border-radius: 0;
+}
+
+body.dev-mode #dev-panel {
+  display: flex;
+}
+
+
+/* =========================
+   LIGHT MODE
+========================= */
+
+body.light-mode,
+body.light-mode #app {
+  background: #f2f2f2;
+}
+
+body.light-mode #top-bar {
+  background: #f2f2f2;
+}
+
+body.light-mode #site-title {
+  color: #000;
+}
+
+body.light-mode #home-button {
+  background: #ddd;
+  color: #000;
+}
+
+body.light-mode #home-menu {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+body.light-mode .menu-button {
+  background: #ddd;
+  color: #000;
+}
+
+body.light-mode #zoom-container {
+  background:
+    rgba(255,255,255,.8);
+}
+
+body.light-mode #zoom-label,
+body.light-mode #zoom-value {
+  color: #000;
+}
+
+body.light-mode .circle-button.active {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+body.light-mode .circle-button:not(.active) {
+  background: white;
+  color: #000;
+  border-color: #000;
+}
+
+body.light-mode #status-bar {
+  background:
+    rgba(255,255,255,.85);
+
+  color: #000;
+}
+
+body.light-mode #hold-still {
+  background:
+    rgba(255,255,255,.85);
+
+  color: #000;
+}
+
+body.light-mode #history-panel {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+body.light-mode #history-title {
+  color: #000;
+}
+
+body.light-mode .history-item {
+  background: #ddd;
+  color: #000;
+}
+
+body.light-mode #notes-panel {
+  background: #f2f2f2;
+}
+
+body.light-mode #notes-title {
+  color: #000;
+}
+
+body.light-mode .note-section label {
+  color: #000;
+}
+
+body.light-mode .status-select {
+  background: white;
+  color: #000;
+  border-color: #bbb;
+}
+
+body.light-mode .status-select:focus {
+  border-color: #000;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 500px) {
+
+  #site-title {
+    font-size: 20px;
+  }
+
+  #control-bar {
+    width: 94%;
+    gap: 8px;
+  }
+
+  #zoom-container {
+    min-width: 0;
+  }
+
+  #zoom-label {
+    display: none;
+  }
+
+  #notes-panel {
+    padding:
+      25px 14px;
+  }
+
+  #notes-title {
+    font-size: 26px;
+    margin-bottom: 24px;
+  }
+
+  .note-section label {
+    font-size: 16px;
+  }
+
+  .status-select {
+    font-size: 15px;
+    padding: 13px;
+  }
+
+}
+
+
+/* =========================
+   SAFE AREA
+========================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+
+  #control-bar {
+    bottom:
+      calc(
+        45px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+  #version-number {
+    bottom:
+      calc(
+        6px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
 <div id="app">
 
-<div id="top">
 
-<button id="home">☰</button>
+<!-- TOP BAR -->
 
-<div id="title">
-Printer Scanner 5000
+<div id="top-bar">
+
+<button
+  id="home-button"
+  onclick="toggleHomeMenu()"
+  aria-label="Home menu"
+>
+  ☰
+</button>
+
+<div id="site-title">
+  Printer Scanner 5000
 </div>
 
-<div class="menu" id="menu">
 
-<button onclick="printer('H2D')">
-H2D
+<div id="home-menu">
+
+<button
+  class="menu-button"
+  onclick="openPrinterLink('https://apps.apple.com/app/id1625671285')"
+>
+  H2D
 </button>
 
-<button onclick="printer('TOYBOX')">
-TOYBOX
+<button
+  class="menu-button"
+  onclick="openPrinterLink('https://www.make.toys/toys')"
+>
+  TOYBOX
 </button>
 
-<button onclick="printer('Ender 3')">
-Ender 3
+<button
+  class="menu-button"
+  onclick="openPrinterLink('https://apps.apple.com/app/id1658133862')"
+>
+  Ender 3
 </button>
 
-<button onclick="notes()">
-Notes
+<button
+  class="menu-button"
+  onclick="showNotes()"
+>
+  Notes
 </button>
 
-<button onclick="toggleMode()">
-Scanning Mode
+<button
+  class="menu-button"
+  onclick="refreshPage()"
+>
+  Refresh
 </button>
 
-<button onclick="location.reload()">
-Refresh
+<button
+  class="menu-button"
+  onclick="showHistory()"
+>
+  Scan History
 </button>
 
-<button onclick="historyPanel()">
-Scan History
+<button
+  class="menu-button"
+  onclick="clearHistory()"
+>
+  Clear History
 </button>
 
-<button onclick="devMode()">
-Dev Mode
+<button
+  class="menu-button"
+  onclick="toggleDevMode()"
+>
+  Dev Mode
 </button>
 
-<button onclick="lightMode()">
-Light Mode
+<button
+  class="menu-button"
+  onclick="toggleLightMode()"
+>
+  Light Mode
 </button>
 
 </div>
 
 </div>
+
+
+<!-- CAMERA -->
 
 <div id="camera">
 
 <div id="reader"></div>
 
-<div id="scanbox"></div>
+<div id="scan-box"></div>
 
-<div id="status">
-Starting camera...
+<div id="status-bar">
+  Starting camera...
 </div>
 
-<div id="controls">
+<div id="hold-still">
+  it’s a bit blurry, try moving a bit
+</div>
 
-<!-- FLASHLIGHT -->
+
+<!-- CONTROLS -->
+
+<div id="control-bar">
+
 <button
-class="circle flash"
-id="flash"
-title="Flashlight">
-♧
+  id="flashlight-button"
+  class="circle-button"
+  onclick="toggleFlashlight()"
+  title="Flashlight"
+  aria-label="Flashlight"
+>
+  <span class="icon flashlight-icon"></span>
 </button>
 
-<!-- CAMERA ROTATE -->
-<button
-class="circle"
-id="rotate"
-title="Rotate camera"
-aria-label="Rotate camera">
-↻
-</button>
 
-<!-- ZOOM -->
-<div class="zoom">
+<div id="zoom-container">
 
-Zoom
+<span id="zoom-label">
+  Zoom
+</span>
 
 <input
-id="zoom"
-type="range"
-min="1"
-max="5"
-step=".1"
-value="1">
+  id="zoom-slider"
+  type="range"
+  min="1"
+  max="5"
+  step="0.1"
+  value="1"
+  oninput="setZoom(this.value)"
+>
 
-<span id="zv">
-1×
+<span id="zoom-value">
+  1×
 </span>
 
 </div>
 
-<!-- SOUND -->
+
 <button
-class="circle active"
-id="sound"
-title="Scan sound">
-◖
+  id="sound-button"
+  class="circle-button active"
+  onclick="toggleSound()"
+  title="Scan sound"
+  aria-label="Scan sound"
+>
+  <span class="icon sound-icon"></span>
 </button>
 
 </div>
+
+
+<div id="loading">
+  <div class="spinner"></div>
+</div>
+
 
 <!-- RESULT -->
 
-<div id="result">
-
-<div
-class="result-name"
-id="resultName">
-</div>
-
-<div
-class="result-code"
-id="resultCode">
-</div>
+<div id="result-text"></div>
 
 <button
-class="action"
-id="open">
-Open
+  id="open-button"
+  class="action-button"
+  onclick="openScannedSite()"
+>
+  Open
 </button>
 
 <button
-class="action"
-onclick="location.reload()">
-Rescan
+  id="rescan"
+  class="action-button"
+  onclick="rescan()"
+>
+  Rescan
 </button>
 
+
+<div id="version-number">
+  v4.9
 </div>
 
-<!-- NOTES -->
-
-<div id="notes">
-
-<div class="notes-inner">
-
-<h1>
-Printer Status
-</h1>
-
-<div class="note">
-
-<label>
-H2D status =
-</label>
-
-<select id="h2d">
-
-<option>
-Online
-</option>
-
-<option>
-Printing
-</option>
-
-<option>
-Offline
-</option>
-
-</select>
-
-</div>
-
-<div class="note">
-
-<label>
-TOYBOX status =
-</label>
-
-<select id="toy">
-
-<option>
-Online
-</option>
-
-<option>
-Printing
-</option>
-
-<option>
-Offline
-</option>
-
-</select>
-
-</div>
-
-<div class="note">
-
-<label>
-Ender 3 status =
-</label>
-
-<select id="ender">
-
-<option>
-Online
-</option>
-
-<option>
-Printing
-</option>
-
-<option>
-Offline
-</option>
-
-</select>
-
-</div>
-
-<button
-class="action"
-onclick="saveNotes()">
-Save Status
-</button>
-
-<button
-class="action"
-onclick="closePanels()">
-Back
-</button>
-
-</div>
-
-</div>
 
 <!-- HISTORY -->
 
-<div id="history">
+<div id="history-panel">
 
-<h1>
-Scan History
-</h1>
-
-<div
-class="history-list"
-id="historyList">
+<div id="history-title">
+  Scan History
 </div>
+
+<div id="history-list"></div>
 
 <button
-class="action"
-onclick="closePanels()">
-Close
+  class="history-close"
+  onclick="hideHistory()"
+>
+  Close
+</button>
+
+</div>
+
+
+<!-- NOTES -->
+
+<div id="notes-panel">
+
+<div id="notes-title">
+  Printer Status
+</div>
+
+
+<div class="note-section">
+
+<label for="h2d-status">
+  H2D status =
+</label>
+
+<select
+  id="h2d-status"
+  class="status-select"
+>
+
+<option value="online">
+  Online
+</option>
+
+<option value="printing">
+  Printing
+</option>
+
+<option value="offline">
+  Offline
+</option>
+
+</select>
+
+</div>
+
+
+<div class="note-section">
+
+<label for="toybox-status">
+  TOYBOX status =
+</label>
+
+<select
+  id="toybox-status"
+  class="status-select"
+>
+
+<option value="online">
+  Online
+</option>
+
+<option value="printing">
+  Printing
+</option>
+
+<option value="offline">
+  Offline
+</option>
+
+</select>
+
+</div>
+
+
+<div class="note-section">
+
+<label for="ender-status">
+  Ender 3 status =
+</label>
+
+<select
+  id="ender-status"
+  class="status-select"
+>
+
+<option value="online">
+  Online
+</option>
+
+<option value="printing">
+  Printing
+</option>
+
+<option value="offline">
+  Offline
+</option>
+
+</select>
+
+</div>
+
+
+<button
+  class="action-button notes-save"
+  onclick="saveNotes()"
+>
+  Save Status
+</button>
+
+<button
+  class="action-button notes-back"
+  onclick="hideNotes()"
+>
+  Back
 </button>
 
 </div>
 
 </div>
 
-<!-- DEV MODE -->
 
-<div class="dev">
+<!-- DEV PANEL -->
 
-<div class="devhead">
-Developer Output
+<div id="dev-panel">
+
+<div id="dev-header">
+  Developer Output
 </div>
 
-<div
-class="output"
-id="output">
-</div>
+<div id="dev-output"></div>
 
-<div class="devbuttons">
+<div id="dev-stats"></div>
 
-<button onclick="copyLog()">
-Copy
+<div id="dev-buttons">
+
+<button
+  class="dev-button"
+  onclick="copyDevOutput()"
+>
+  Copy Output
 </button>
 
-<button onclick="clearLog()">
-Clear
+<button
+  class="dev-button"
+  onclick="exportDevOutput()"
+>
+  Export Log
+</button>
+
+<button
+  class="dev-button"
+  onclick="clearDevOutput()"
+>
+  Clear
 </button>
 
 </div>
 
 </div>
 
-</div>
 
 <script>
 
-let mode = 'qr';
+/* =========================
+   VARIABLES
+========================= */
 
 let scanner = null;
 
-let lastURL = '';
+let firstDetection = null;
 
-let sound = true;
+let detectedText = null;
 
-let torch = false;
+let scanConfirmed = false;
 
-/* Current camera:
-   environment = rear camera
-   user = front camera
-*/
+let scannedURL = null;
 
-let facing = 'environment';
+let isPrinterLink = false;
 
-const $ = id => document.getElementById(id);
+let cameraTrack = null;
+
+let devMode = false;
+
+let lightMode = false;
+
+let flashlightOn = false;
+
+let soundEnabled = true;
+
+let scanCount = 0;
+
+let successfulScans = 0;
+
+let failedScans = 0;
+
+let scanStartTime = null;
+
+let lastScanTime = 0;
+
+const HOLD_TIME = 600;
+
+const QR_SIZE = 250;
 
 
-/* DEV LOG */
+/* =========================
+   DEV LOG
+========================= */
 
-function log(x){
+function devLog(message) {
 
-    $('output').textContent +=
-    `[${new Date().toLocaleTimeString()}] ${x}\n`;
+  const output =
+    document.getElementById(
+      "dev-output"
+    );
 
-    $('output').scrollTop =
-    $('output').scrollHeight;
+  if (!output) return;
+
+  const now = new Date();
+
+  const line =
+    document.createElement(
+      "div"
+    );
+
+  line.className =
+    "dev-line";
+
+  line.textContent =
+    "[" +
+    now.toLocaleTimeString() +
+    "] " +
+    message;
+
+  output.appendChild(line);
+
+  output.scrollTop =
+    output.scrollHeight;
+
+  updateStats();
 
 }
 
 
-/* HOME MENU */
+function updateStats() {
 
-function menu(){
+  const stats =
+    document.getElementById(
+      "dev-stats"
+    );
 
-    $('menu').style.display =
-    $('menu').style.display === 'block'
-    ? 'none'
-    : 'block';
+  if (!stats) return;
 
-}
-
-$('home').onclick = menu;
-
-
-/* PRINTER LINKS */
-
-function printer(name){
-
-    $('menu').style.display = 'none';
-
-    const urls = {
-
-        H2D:
-        'https://www.bambulab.com',
-
-        TOYBOX:
-        'https://www.make.toys/toys',
-
-        'Ender 3':
-        'https://www.creality.com'
-
-    };
-
-    window.open(urls[name], '_blank');
-
-    log('Opened ' + name);
+  stats.textContent =
+    "Scans: " +
+    scanCount +
+    " | Successful: " +
+    successfulScans +
+    " | Failed: " +
+    failedScans +
+    " | Last scan: " +
+    lastScanTime +
+    " ms";
 
 }
 
 
-/* CAMERA ROTATION */
+/* =========================
+   HOME
+========================= */
 
-async function rotateCamera(){
+function toggleHomeMenu() {
 
-    if(facing === 'environment'){
+  const menu =
+    document.getElementById(
+      "home-menu"
+    );
 
-        facing = 'user';
+  menu.style.display =
+    menu.style.display === "block"
+      ? "none"
+      : "block";
 
-        log('Switching to front camera');
+}
 
-    }else{
 
-        facing = 'environment';
+function openPrinterLink(url) {
 
-        log('Switching to rear camera');
+  devLog(
+    "Opening printer shortcut: " +
+    url
+  );
+
+  window.open(
+    url,
+    "_blank"
+  );
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+}
+
+
+function refreshPage() {
+  window.location.reload();
+}
+
+
+/* =========================
+   NOTES
+========================= */
+
+function showNotes() {
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+  loadNotes();
+
+  document.getElementById(
+    "notes-panel"
+  ).style.display =
+    "block";
+
+  devLog(
+    "Opened printer status"
+  );
+
+}
+
+
+function hideNotes() {
+
+  document.getElementById(
+    "notes-panel"
+  ).style.display =
+    "none";
+
+  devLog(
+    "Closed printer status"
+  );
+
+}
+
+
+function saveNotes() {
+
+  const data = {
+
+    h2d:
+      document.getElementById(
+        "h2d-status"
+      ).value,
+
+    toybox:
+      document.getElementById(
+        "toybox-status"
+      ).value,
+
+    ender:
+      document.getElementById(
+        "ender-status"
+      ).value
+
+  };
+
+
+  localStorage.setItem(
+
+    "printerNotes",
+
+    JSON.stringify(data)
+
+  );
+
+
+  devLog(
+    "Printer statuses saved"
+  );
+
+
+  alert(
+    "Printer statuses saved!"
+  );
+
+}
+
+
+function loadNotes() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+
+        localStorage.getItem(
+          "printerNotes"
+        )
+
+      );
+
+
+    if (!saved)
+      return;
+
+
+    document.getElementById(
+      "h2d-status"
+    ).value =
+      saved.h2d ||
+      "online";
+
+
+    document.getElementById(
+      "toybox-status"
+    ).value =
+      saved.toybox ||
+      "online";
+
+
+    document.getElementById(
+      "ender-status"
+    ).value =
+      saved.ender ||
+      "online";
+
+
+  } catch(error) {
+
+    devLog(
+      "Could not load printer statuses: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function getHistory() {
+
+  try {
+
+    return JSON.parse(
+
+      localStorage.getItem(
+        "printerScannerHistory"
+      )
+
+    ) || [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveHistory(url, name) {
+
+  const history =
+    getHistory();
+
+
+  history.unshift({
+
+    url: url,
+
+    name: name,
+
+    time:
+      new Date()
+        .toLocaleString()
+
+  });
+
+
+  localStorage.setItem(
+
+    "printerScannerHistory",
+
+    JSON.stringify(
+      history.slice(0, 20)
+    )
+
+  );
+
+
+  devLog(
+    "Saved scan to history"
+  );
+
+}
+
+
+function showHistory() {
+
+  const panel =
+    document.getElementById(
+      "history-panel"
+    );
+
+  const list =
+    document.getElementById(
+      "history-list"
+    );
+
+  const history =
+    getHistory();
+
+
+  list.innerHTML = "";
+
+
+  if (!history.length) {
+
+    list.innerHTML =
+      '<div class="history-item">No scans yet.</div>';
+
+  } else {
+
+    history.forEach(
+      function(item) {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "history-item";
+
+        div.innerHTML =
+
+          '<div class="history-name">' +
+          escapeHTML(item.name) +
+          "</div>" +
+
+          '<div class="history-url">' +
+          escapeHTML(item.url) +
+          "</div>" +
+
+          '<div class="history-time">' +
+          escapeHTML(item.time) +
+          "</div>";
+
+
+        div.onclick =
+          function() {
+
+            window.open(
+              item.url,
+              "_blank"
+            );
+
+          };
+
+
+        list.appendChild(div);
+
+      }
+    );
+
+  }
+
+
+  panel.style.display =
+    "block";
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+}
+
+
+function hideHistory() {
+
+  document.getElementById(
+    "history-panel"
+  ).style.display =
+    "none";
+
+}
+
+
+function clearHistory() {
+
+  localStorage.removeItem(
+    "printerScannerHistory"
+  );
+
+  devLog(
+    "Scan history cleared"
+  );
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+}
+
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================
+   FLASHLIGHT
+========================= */
+
+async function toggleFlashlight() {
+
+  const button =
+    document.getElementById(
+      "flashlight-button"
+    );
+
+
+  if (!cameraTrack) {
+
+    devLog(
+      "Flashlight unavailable"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const capabilities =
+      cameraTrack.getCapabilities();
+
+
+    if (!capabilities.torch) {
+
+      devLog(
+        "Camera does not support flashlight"
+      );
+
+      return;
 
     }
 
-    await start();
 
-}
-
-
-/* CONNECT ROTATE BUTTON */
-
-$('rotate').onclick = rotateCamera;
+    flashlightOn =
+      !flashlightOn;
 
 
-/* SCANNING MODE */
+    await cameraTrack.applyConstraints({
 
-function toggleMode(){
+      advanced: [
 
-    mode =
-    mode === 'qr'
-    ? 'barcode'
-    : 'qr';
-
-    document.body.classList.toggle(
-        'barcode',
-        mode === 'barcode'
-    );
-
-    $('menu').style.display = 'none';
-
-    log('Mode: ' + mode);
-
-    start();
-
-}
-
-
-/* LIGHT MODE */
-
-function lightMode(){
-
-    document.body.classList.toggle(
-        'light'
-    );
-
-    $('menu').style.display = 'none';
-
-    log('Light mode toggled');
-
-}
-
-
-/* DEV MODE */
-
-function devMode(){
-
-    document.body.classList.toggle(
-        'dev'
-    );
-
-    $('menu').style.display = 'none';
-
-    log('Dev mode toggled');
-
-}
-
-
-/* NOTES */
-
-function notes(){
-
-    loadNotes();
-
-    $('notes').style.display =
-    'block';
-
-    $('menu').style.display =
-    'none';
-
-    log('Notes opened');
-
-}
-
-
-function closePanels(){
-
-    $('notes').style.display =
-    'none';
-
-    $('history').style.display =
-    'none';
-
-}
-
-
-/* SAVE PRINTER STATUS */
-
-function saveNotes(){
-
-    localStorage.setItem(
-        'printerNotes',
-
-        JSON.stringify({
-
-            h2d:
-            $('h2d').value,
-
-            toy:
-            $('toy').value,
-
-            ender:
-            $('ender').value
-
-        })
-
-    );
-
-    log(
-        'Printer statuses saved'
-    );
-
-}
-
-
-/* LOAD PRINTER STATUS */
-
-function loadNotes(){
-
-    try{
-
-        let x =
-        JSON.parse(
-            localStorage.getItem(
-                'printerNotes'
-            )
-        );
-
-        if(x){
-
-            $('h2d').value =
-            x.h2d;
-
-            $('toy').value =
-            x.toy;
-
-            $('ender').value =
-            x.ender;
-
+        {
+          torch:
+            flashlightOn
         }
 
-    }catch{}
-
-}
-
-
-/* HISTORY */
-
-function historyPanel(){
-
-    let h =
-    JSON.parse(
-        localStorage.getItem(
-            'scanHistory'
-        ) || '[]'
-    );
-
-    $('historyList').innerHTML =
-    h.length
-
-    ?
-
-    h.map(x =>
-
-        `<div class="history-item">
-
-        <b>${x.name}</b>
-
-        <br>
-
-        ${x.code}
-
-        <br>
-
-        <small>
-        ${x.time}
-        </small>
-
-        </div>`
-
-    ).join('')
-
-    :
-
-    '<div class="history-item">No scans yet.</div>';
-
-    $('history').style.display =
-    'block';
-
-    $('menu').style.display =
-    'none';
-
-}
-
-
-/* ADD HISTORY */
-
-function addHistory(name,code){
-
-    let h =
-    JSON.parse(
-        localStorage.getItem(
-            'scanHistory'
-        ) || '[]'
-    );
-
-    h.unshift({
-
-        name:name,
-
-        code:code,
-
-        time:
-        new Date().toLocaleString()
+      ]
 
     });
 
-    localStorage.setItem(
-        'scanHistory',
 
-        JSON.stringify(
-            h.slice(0,20)
-        )
+    button.classList.toggle(
+      "active",
+      flashlightOn
     );
 
-}
 
-
-/* DEV LOG BUTTONS */
-
-function copyLog(){
-
-    navigator.clipboard?.writeText(
-        $('output').textContent
+    devLog(
+      "Flashlight: " +
+      (
+        flashlightOn
+          ? "ON"
+          : "OFF"
+      )
     );
 
-    log('Log copied');
+
+  } catch(error) {
+
+    flashlightOn = false;
+
+    button.classList.remove(
+      "active"
+    );
+
+    devLog(
+      "Flashlight error: " +
+      error.message
+    );
+
+  }
 
 }
 
 
-function clearLog(){
+/* =========================
+   SOUND
+========================= */
 
-    $('output').textContent =
-    '';
+function toggleSound() {
 
-    log('Log cleared');
+  soundEnabled =
+    !soundEnabled;
+
+
+  document.getElementById(
+    "sound-button"
+  ).classList.toggle(
+    "active",
+    soundEnabled
+  );
+
+
+  devLog(
+    "Scan sound: " +
+    (
+      soundEnabled
+        ? "ON"
+        : "OFF"
+    )
+  );
 
 }
 
 
-/* ZOOM */
+function playScanSound() {
 
-$('zoom').oninput =
-async e => {
+  if (!soundEnabled)
+    return;
 
-    let v =
-    +e.target.value;
 
-    $('zv').textContent =
-    v.toFixed(1) + '×';
+  try {
 
-    let video =
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+
+    if (!AudioContext)
+      return;
+
+
+    const audio =
+      new AudioContext();
+
+    const oscillator =
+      audio.createOscillator();
+
+    const gain =
+      audio.createGain();
+
+
+    oscillator.frequency.value =
+      880;
+
+    oscillator.type =
+      "sine";
+
+    gain.gain.value =
+      0.08;
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+      audio.destination
+    );
+
+
+    oscillator.start();
+
+    oscillator.stop(
+      audio.currentTime + 0.12
+    );
+
+  } catch {
+
+    devLog(
+      "Sound error"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   ZOOM
+========================= */
+
+async function setZoom(value) {
+
+  const zoom =
+    parseFloat(value);
+
+
+  document.getElementById(
+    "zoom-value"
+  ).textContent =
+    zoom.toFixed(1) + "×";
+
+
+  if (!cameraTrack)
+    return;
+
+
+  try {
+
+    const capabilities =
+      cameraTrack.getCapabilities();
+
+
+    if (!capabilities.zoom) {
+
+      devLog(
+        "Camera does not support zoom"
+      );
+
+      return;
+
+    }
+
+
+    const min =
+      capabilities.zoom.min;
+
+    const max =
+      capabilities.zoom.max;
+
+
+    const actualZoom =
+      min +
+      ((zoom - 1) / 4) *
+      (max - min);
+
+
+    await cameraTrack.applyConstraints({
+
+      advanced: [
+
+        {
+          zoom:
+            actualZoom
+        }
+
+      ]
+
+    });
+
+
+  } catch(error) {
+
+    devLog(
+      "Zoom error: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   DEV MODE
+========================= */
+
+function toggleDevMode() {
+
+  devMode =
+    !devMode;
+
+
+  document.body.classList.toggle(
+    "dev-mode",
+    devMode
+  );
+
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+
+  devLog(
+    "Developer Mode: " +
+    (
+      devMode
+        ? "ON"
+        : "OFF"
+    )
+  );
+
+}
+
+
+function clearDevOutput() {
+
+  document.getElementById(
+    "dev-output"
+  ).innerHTML = "";
+
+  devLog(
+    "Developer output cleared"
+  );
+
+}
+
+
+async function copyDevOutput() {
+
+  const text =
+    document.getElementById(
+      "dev-output"
+    ).innerText;
+
+
+  try {
+
+    await navigator.clipboard
+      .writeText(text);
+
+    devLog(
+      "Developer output copied"
+    );
+
+  } catch {
+
+    devLog(
+      "Could not copy developer output"
+    );
+
+  }
+
+}
+
+
+function exportDevOutput() {
+
+  const text =
+    document.getElementById(
+      "dev-output"
+    ).innerText;
+
+
+  const blob =
+    new Blob(
+      [text],
+      {
+        type:
+          "text/plain"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.href =
+    url;
+
+  link.download =
+    "printer-scanner-log.txt";
+
+
+  link.click();
+
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+/* =========================
+   LIGHT MODE
+========================= */
+
+function toggleLightMode() {
+
+  lightMode =
+    !lightMode;
+
+
+  document.body.classList.toggle(
+    "light-mode",
+    lightMode
+  );
+
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+
+  devLog(
+    "Light Mode: " +
+    (
+      lightMode
+        ? "ON"
+        : "OFF"
+    )
+  );
+
+}
+
+
+/* =========================
+   MENU CLOSE
+========================= */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    const menu =
+      document.getElementById(
+        "home-menu"
+      );
+
+    const button =
+      document.getElementById(
+        "home-button"
+      );
+
+
+    if (
+      !menu.contains(event.target) &&
+      !button.contains(event.target)
+    ) {
+
+      menu.style.display =
+        "none";
+
+    }
+
+  }
+);
+
+
+/* =========================
+   SITE NAME
+========================= */
+
+function getSiteName(url) {
+
+  try {
+
+    let fixedURL =
+      url;
+
+
+    if (
+      !fixedURL.startsWith("http://") &&
+      !fixedURL.startsWith("https://")
+    ) {
+
+      fixedURL =
+        "https://" +
+        fixedURL;
+
+    }
+
+
+    const parsed =
+      new URL(fixedURL);
+
+
+    const hostname =
+      parsed.hostname.replace(
+        /^www\./,
+        ""
+      );
+
+
+    const knownSites = {
+
+      "youtube.com":
+        "YouTube",
+
+      "google.com":
+        "Google",
+
+      "github.com":
+        "GitHub",
+
+      "amazon.com":
+        "Amazon",
+
+      "apple.com":
+        "Apple",
+
+      "facebook.com":
+        "Facebook",
+
+      "instagram.com":
+        "Instagram",
+
+      "tiktok.com":
+        "TikTok",
+
+      "reddit.com":
+        "Reddit",
+
+      "microsoft.com":
+        "Microsoft",
+
+      "bambulab.com":
+        "Bambu Lab",
+
+      "makerworld.com":
+        "MakerWorld"
+
+    };
+
+
+    if (
+      knownSites[hostname]
+    ) {
+
+      return knownSites[hostname];
+
+    }
+
+
+    const parts =
+      hostname.split(".");
+
+
+    if (parts.length >= 2) {
+
+      const name =
+        parts[parts.length - 2];
+
+
+      return (
+        name.charAt(0).toUpperCase() +
+        name.slice(1)
+      );
+
+    }
+
+
+    return hostname;
+
+  } catch {
+
+    return "QR Code Found";
+
+  }
+
+}
+
+
+/* =========================
+   QR RESULT
+========================= */
+
+function getQRText(url) {
+
+  try {
+
+    const parsedURL =
+      new URL(
+        url.startsWith("http")
+          ? url
+          : "https://" + url
+      );
+
+
+    const cleanURL =
+      parsedURL.origin +
+      parsedURL.pathname;
+
+
+    if (
+      cleanURL ===
+      "https://apps.apple.com/app/id1166269606"
+    ) {
+
+      isPrinterLink = true;
+
+      return "TOYBOX Found";
+
+    }
+
+
+    if (
+      cleanURL ===
+      "https://apps.apple.com/app/id1658133862"
+    ) {
+
+      isPrinterLink = true;
+
+      return "Ender 3 Found";
+
+    }
+
+
+    if (
+      cleanURL ===
+      "https://apps.apple.com/app/id1625671285"
+    ) {
+
+      isPrinterLink = true;
+
+      return "This is to print with the H2D";
+
+    }
+
+
+    if (
+      cleanURL ===
+      "https://www.make.toys/toys"
+    ) {
+
+      isPrinterLink = true;
+
+      return "TOYBOX Found";
+
+    }
+
+
+    if (
+      parsedURL.origin ===
+        "https://makerworld.com" &&
+      parsedURL.pathname === "/en"
+    ) {
+
+      isPrinterLink = false;
+
+      return "This opens MakerWorld, which is for the H2D, I just put the wrong text on the QR code :/";
+
+    }
+
+
+    isPrinterLink = false;
+
+    return getSiteName(url);
+
+  } catch {
+
+    isPrinterLink = false;
+
+    return "QR Code Found";
+
+  }
+
+}
+
+
+/* =========================
+   LOCK SCAN REGION
+========================= */
+
+function positionScanRegion() {
+
+  const region =
+    document.getElementById(
+      "reader__scan_region"
+    );
+
+  const box =
+    document.getElementById(
+      "scan-box"
+    );
+
+
+  if (!region || !box)
+    return;
+
+
+  /*
+    Both elements use exactly the same
+    dimensions and center position.
+  */
+
+  const styles = {
+
+    position: "absolute",
+
+    width: QR_SIZE + "px",
+    height: QR_SIZE + "px",
+
+    minWidth: QR_SIZE + "px",
+    minHeight: QR_SIZE + "px",
+
+    maxWidth: QR_SIZE + "px",
+    maxHeight: QR_SIZE + "px",
+
+    left: "50%",
+    top: "50%",
+
+    transform:
+      "translate(-50%, -50%)",
+
+    margin: "0",
+    padding: "0",
+
+    border: "none"
+
+  };
+
+
+  Object.assign(
+    region.style,
+    styles
+  );
+
+
+  /*
+    Force the visible box to the same
+    exact coordinates.
+  */
+
+  box.style.width =
+    QR_SIZE + "px";
+
+  box.style.height =
+    QR_SIZE + "px";
+
+  box.style.left =
+    "50%";
+
+  box.style.top =
+    "50%";
+
+  box.style.transform =
+    "translate(-50%, -50%)";
+
+}
+
+
+/* =========================
+   GET CAMERA TRACK
+========================= */
+
+function updateCameraTrack() {
+
+  const video =
     document.querySelector(
-        '#reader video'
+      "#reader video"
     );
 
-    try{
 
-        let t =
-        video
-        ?.srcObject
-        ?.getVideoTracks()[0];
+  if (
+    video &&
+    video.srcObject
+  ) {
 
-        let c =
-        t?.getCapabilities();
+    const tracks =
+      video.srcObject
+        .getVideoTracks();
 
-        if(
-            t &&
-            c?.zoom
-        ){
 
-            let z =
-            c.zoom.min +
-            (v-1)/4 *
-            (c.zoom.max-c.zoom.min);
+    if (tracks.length) {
 
-            await t.applyConstraints({
+      cameraTrack =
+        tracks[0];
 
-                advanced:[
-                    {
-                        zoom:z
-                    }
-                ]
+      devLog(
+        "Camera track ready"
+      );
 
-            });
-
-        }
-
-    }catch(e){
-
-        log(
-            'Zoom: ' +
-            e.message
-        );
+      return true;
 
     }
 
-};
+  }
 
 
-/* SOUND */
-
-$('sound').onclick = () => {
-
-    sound =
-    !sound;
-
-    $('sound').classList.toggle(
-        'active',
-        sound
-    );
-
-    log(
-        'Sound ' +
-        (sound ? 'on' : 'off')
-    );
-
-};
-
-
-/* FLASHLIGHT */
-
-$('flash').onclick =
-async () => {
-
-    try{
-
-        let t =
-        document
-        .querySelector(
-            '#reader video'
-        )
-        ?.srcObject
-        ?.getVideoTracks()[0];
-
-        let c =
-        t?.getCapabilities();
-
-        if(c?.torch){
-
-            torch =
-            !torch;
-
-            await t.applyConstraints({
-
-                advanced:[
-                    {
-                        torch:torch
-                    }
-                ]
-
-            });
-
-            $('flash').classList.toggle(
-                'active',
-                torch
-            );
-
-            log(
-                'Flashlight ' +
-                (torch ? 'on' : 'off')
-            );
-
-        }else{
-
-            log(
-                'Flashlight unavailable'
-            );
-
-        }
-
-    }catch(e){
-
-        log(
-            'Flashlight: ' +
-            e.message
-        );
-
-    }
-
-};
-
-
-/* SCAN SOUND */
-
-function beep(){
-
-    if(!sound)
-        return;
-
-    try{
-
-        let A =
-        AudioContext ||
-        webkitAudioContext;
-
-        let a =
-        new A();
-
-        let o =
-        a.createOscillator();
-
-        let g =
-        a.createGain();
-
-        o.frequency.value =
-        880;
-
-        g.gain.value =
-        .06;
-
-        o.connect(g);
-
-        g.connect(
-            a.destination
-        );
-
-        o.start();
-
-        o.stop(
-            a.currentTime +
-            .12
-        );
-
-    }catch{}
+  return false;
 
 }
 
 
-/* BARCODE DATABASE */
+/* =========================
+   START SCANNER
+========================= */
 
-const products = {
+async function startScanner() {
 
-    '012345678905':
-    'Water Bottle',
-
-    '123456789012':
-    'H2D Filament',
-
-    '987654321098':
-    'TOYBOX Filament'
-
-};
+  scanStartTime =
+    Date.now();
 
 
-/* START SCANNER */
+  const status =
+    document.getElementById(
+      "status-bar"
+    );
 
-async function start(){
 
-    if(scanner){
+  status.textContent =
+    "Starting camera...";
 
-        try{
-            await scanner.stop();
-        }catch{}
 
-        scanner = null;
-
-    }
-
-    $('result').style.display =
-    'none';
-
-    $('reader').style.display =
-    'block';
-
-    $('controls').style.display =
-    'flex';
-
-    $('scanbox').style.display =
-    'block';
-
-    $('status').style.display =
-    'block';
-
-    $('status').textContent =
-    mode === 'qr'
-    ? 'Ready to scan'
-    : 'Ready to scan barcode';
-
-    scanner =
+  scanner =
     new Html5Qrcode(
-        'reader'
-    );
-
-    try{
-
-        let formats =
-        mode === 'qr'
-
-        ?
-
-        [
-            Html5QrcodeSupportedFormats.QR_CODE
-        ]
-
-        :
-
-        [
-
-            Html5QrcodeSupportedFormats.CODE_128,
-
-            Html5QrcodeSupportedFormats.CODE_39,
-
-            Html5QrcodeSupportedFormats.EAN_13,
-
-            Html5QrcodeSupportedFormats.EAN_8,
-
-            Html5QrcodeSupportedFormats.UPC_A,
-
-            Html5QrcodeSupportedFormats.UPC_E
-
-        ];
-
-
-        await scanner.start(
-
-            {
-                facingMode:facing
-            },
-
-            {
-
-                fps:20,
-
-                qrbox:
-                mode === 'qr'
-
-                ?
-
-                {
-                    width:250,
-                    height:250
-                }
-
-                :
-
-                {
-                    width:350,
-                    height:150
-                },
-
-                formatsToSupport:
-                formats
-
-            },
-
-            async text => {
-
-                await found(text);
-
-            },
-
-            () => {}
-
-        );
-
-
-        log(
-            'Camera started: ' +
-            (
-                facing === 'environment'
-                ? 'rear'
-                : 'front'
-            )
-        );
-
-
-    }catch(e){
-
-        $('status').textContent =
-        'Camera unavailable';
-
-        log(
-            'Camera error: ' +
-            e.message
-        );
-
-    }
-
-}
-
-
-/* SCAN RESULT */
-
-async function found(text){
-
-    if(!scanner)
-        return;
-
-
-    try{
-
-        await scanner.stop();
-
-    }catch{}
-
-
-    beep();
-
-
-    addHistory(
-
-        mode === 'qr'
-        ? siteName(text)
-        : (
-            products[text]
-            ||
-            'Unknown Product'
-        ),
-
-        text
-
+      "reader"
     );
 
 
-    $('reader').style.display =
-    'none';
+  try {
 
-    $('scanbox').style.display =
-    'none';
+    await scanner.start(
 
-    $('controls').style.display =
-    'none';
+      {
+        facingMode:
+          "environment"
+      },
 
-    $('status').style.display =
-    'none';
+      {
 
-    $('result').style.display =
-    'block';
+        fps: 30,
 
+        qrbox: {
+          width: QR_SIZE,
+          height: QR_SIZE
+        },
 
-    if(mode === 'barcode'){
+        disableFlip: false
 
-        $('resultName').textContent =
-        products[text]
-        ||
-        'Unknown Product';
-
-        $('resultCode').textContent =
-        'Barcode: ' + text;
-
-        $('open').style.display =
-        'none';
-
-    }else{
-
-        let name =
-        siteName(text);
-
-        $('resultName').textContent =
-        name;
-
-        $('resultCode').style.display =
-        'none';
-
-        lastURL =
-        text;
-
-        $('open').style.display =
-        'inline-block';
-
-        $('open').onclick =
-        () => {
-
-            let u =
-            text.startsWith('http')
-            ? text
-            : 'https://' + text;
-
-            window.open(
-                u,
-                '_blank'
-            );
-
-        };
-
-    }
+      },
 
 
-    log(
-        'Detected ' +
-        text
-    );
+      async function(decodedText) {
 
-}
+        if (scanConfirmed)
+          return;
 
 
-/* WEBSITE NAME */
+        status.textContent =
+          "QR detected";
 
-function siteName(u){
-
-    try{
-
-        let x =
-        new URL(
-            u.startsWith('http')
-            ? u
-            : 'https://' + u
-        );
-
-        let h =
-        x.hostname.replace(
-            /^www\./,
-            ''
-        );
+        status.className =
+          "detected";
 
 
-        if(
-            h === 'make.toys' &&
-            x.pathname === '/toys'
-        ){
+        if (!cameraTrack)
+          updateCameraTrack();
 
-            return 'TOYBOX';
+
+        if (
+          firstDetection === null
+        ) {
+
+          firstDetection =
+            Date.now();
+
+          detectedText =
+            decodedText;
+
+
+          document.getElementById(
+            "hold-still"
+          ).style.display =
+            "block";
+
+
+          devLog(
+            "First QR detection"
+          );
+
+          return;
 
         }
 
 
-        let known = {
+        if (
+          decodedText !==
+          detectedText
+        ) {
 
-            'google.com':
-            'Google',
+          firstDetection =
+            Date.now();
 
-            'youtube.com':
-            'YouTube',
+          detectedText =
+            decodedText;
 
-            'github.com':
-            'GitHub',
+          return;
 
-            'amazon.com':
-            'Amazon',
-
-            'apple.com':
-            'Apple',
-
-            'bambulab.com':
-            'Bambu Lab',
-
-            'make.toys':
-            'TOYBOX',
-
-            'creality.com':
-            'Creality'
-
-        };
+        }
 
 
-        return (
+        if (
+          Date.now() -
+          firstDetection >=
+          HOLD_TIME
+        ) {
 
-            known[h]
+          scanConfirmed =
+            true;
 
-            ||
+          scannedURL =
+            decodedText;
 
-            h
-            .split('.')[0]
-            .replace(
-                /^./,
-                c => c.toUpperCase()
-            )
 
+          successfulScans++;
+          scanCount++;
+
+
+          lastScanTime =
+            Date.now() -
+            scanStartTime;
+
+
+          playScanSound();
+
+
+          const result =
+            getQRText(
+              decodedText
+            );
+
+
+          saveHistory(
+            decodedText,
+            result
+          );
+
+
+          status.style.display =
+            "none";
+
+
+          document.getElementById(
+            "hold-still"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "control-bar"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "version-number"
+          ).style.display =
+            "none";
+
+
+          try {
+            await scanner.stop();
+          } catch {}
+
+
+          cameraTrack =
+            null;
+
+
+          document.getElementById(
+            "reader"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "scan-box"
+          ).style.display =
+            "none";
+
+
+          const resultText =
+            document.getElementById(
+              "result-text"
+            );
+
+
+          resultText.textContent =
+            result;
+
+          resultText.style.display =
+            "block";
+
+
+          const openButton =
+            document.getElementById(
+              "open-button"
+            );
+
+
+          openButton.textContent =
+            isPrinterLink
+              ? "Print"
+              : "Open";
+
+
+          openButton.style.display =
+            "block";
+
+
+          document.getElementById(
+            "rescan"
+          ).style.display =
+            "block";
+
+
+          devLog(
+            "QR accepted: " +
+            result
+          );
+
+        }
+
+      },
+
+
+      function() {}
+
+    );
+
+
+    /*
+      html5-qrcode can modify its internal
+      scan-region after start(), so lock it
+      repeatedly during startup.
+    */
+
+    const lockTimes =
+      [50, 150, 300, 600, 1000];
+
+
+    lockTimes.forEach(
+      function(delay) {
+
+        setTimeout(
+          function() {
+
+            positionScanRegion();
+
+            updateCameraTrack();
+
+          },
+          delay
         );
 
-    }catch{
+      }
+    );
 
-        return 'QR Code';
 
-    }
+    document.getElementById(
+      "loading"
+    ).style.display =
+      "none";
+
+
+    status.textContent =
+      "Ready to scan";
+
+    status.className =
+      "";
+
+
+    devLog(
+      "Camera started"
+    );
+
+
+    devLog(
+      "QR area locked: 250x250"
+    );
+
+
+  } catch(error) {
+
+    failedScans++;
+
+
+    document.getElementById(
+      "loading"
+    ).style.display =
+      "none";
+
+
+    status.textContent =
+      "Camera unavailable";
+
+
+    devLog(
+      "CAMERA ERROR: " +
+      error.message
+    );
+
+  }
 
 }
 
 
-/* START */
+/* =========================
+   OPEN RESULT
+========================= */
 
-window.onload =
-() => {
+function openScannedSite() {
+
+  if (!scannedURL)
+    return;
+
+
+  let url =
+    scannedURL;
+
+
+  if (
+    !url.startsWith("http://") &&
+    !url.startsWith("https://")
+  ) {
+
+    url =
+      "https://" +
+      url;
+
+  }
+
+
+  window.open(
+    url,
+    "_blank"
+  );
+
+}
+
+
+/* =========================
+   RESCAN
+========================= */
+
+function rescan() {
+
+  window.location.reload();
+
+}
+
+
+/* =========================
+   RESIZE / ROTATION
+========================= */
+
+let resizeTimer = null;
+
+
+function keepScannerLocked() {
+
+  clearTimeout(
+    resizeTimer
+  );
+
+
+  resizeTimer =
+    setTimeout(
+      function() {
+
+        positionScanRegion();
+
+      },
+      50
+    );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  keepScannerLocked
+);
+
+
+window.addEventListener(
+  "orientationchange",
+  function() {
+
+    setTimeout(
+      function() {
+
+        positionScanRegion();
+
+      },
+      100
+    );
+
+
+    setTimeout(
+      function() {
+
+        positionScanRegion();
+
+      },
+      500
+    );
+
+  }
+);
+
+
+/*
+  Also re-lock when the browser changes
+  the viewport dimensions.
+*/
+
+if (
+  window.visualViewport
+) {
+
+  window.visualViewport.addEventListener(
+    "resize",
+    keepScannerLocked
+  );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    devLog(
+      "Printer Scanner 5000"
+    );
+
+    devLog(
+      "Version 4.9"
+    );
+
+    devLog(
+      "QR area: FIXED 250x250"
+    );
+
+    devLog(
+      "Visible box and scan region synchronized"
+    );
+
+    devLog(
+      "Vibration: REMOVED"
+    );
+
+    devLog(
+      "Scan success status: REMOVED"
+    );
+
+    devLog(
+      "Printer status dropdowns enabled"
+    );
+
 
     loadNotes();
 
-    log(
-        'Printer Scanner 5000 v4.8 loaded'
-    );
+    startScanner();
 
-    start();
-
-};
-
-
-/* KEEP SCAN BOX FIXED */
-
-window.onresize =
-() => {
-
-    let b =
-    $('scanbox');
-
-    b.style.width =
-    mode === 'qr'
-    ? '250px'
-    : '350px';
-
-    b.style.height =
-    mode === 'qr'
-    ? '250px'
-    : '150px';
-
-};
+  }
+);
 
 </script>
 
 </body>
+
 </html>
