@@ -2,22 +2,18 @@
   PRINTER SCANNER 5000
   VERSION: 5.1
 
-  FIXES / FEATURES:
-  - Fixed camera freezing after saving Notes
-  - Fixed Home menu becoming unclickable after Notes
-  - Saving Notes never reloads or stops the scanner
-  - Notes overlay cannot block the Home button after closing
-  - Camera track is safely reacquired after Notes
-  - Printer statuses remain saved locally
-  - Fixed 250x250 scan region retained
-  - Scanner Mode added
-  - QR Code mode added
-  - Barcode mode added
-  - All Codes mode added
-  - Scanner mode saved locally
-  - Unknown Barcode Identifier added
-  - Barcode format identification added
-  - Barcode search added
+  NEW IN VERSION 5.1:
+  - Added QR / Barcode scan mode selector
+  - Barcode mode uses a wide rectangular scan area
+  - QR mode retains 250x250 square scan area
+  - Added Barcode Catalog
+  - Added QR Code Catalog
+  - Catalog can contain both QR and barcodes
+  - Catalog entries can be renamed
+  - Catalog can be sorted by Name, Code, or Type
+  - Scanned codes automatically use their saved catalog name
+  - Unknown scans can be added to the catalog
+  - Catalog saved locally
   - Existing scanner features retained
 -->
 
@@ -278,19 +274,10 @@ body {
 
 
 /* =========================
-   FIXED SCAN REGION
+   QR SCAN REGION
 ========================= */
 
 #reader__scan_region {
-
-  width: 250px !important;
-  height: 250px !important;
-
-  min-width: 250px !important;
-  min-height: 250px !important;
-
-  max-width: 250px !important;
-  max-height: 250px !important;
 
   position: absolute !important;
 
@@ -311,11 +298,6 @@ body {
   pointer-events: none !important;
 }
 
-#reader__scan_region img {
-
-  display: none !important;
-}
-
 
 /* =========================
    SCAN BOX
@@ -324,15 +306,6 @@ body {
 #scan-box {
 
   position: absolute;
-
-  width: 250px !important;
-  height: 250px !important;
-
-  min-width: 250px !important;
-  min-height: 250px !important;
-
-  max-width: 250px !important;
-  max-height: 250px !important;
 
   left: 50%;
   top: 50%;
@@ -348,6 +321,25 @@ body {
   pointer-events: none;
 
   z-index: 20;
+
+  width: 250px;
+  height: 250px;
+}
+
+
+/*
+  Barcode mode is intentionally
+  much wider and shorter.
+*/
+
+body.barcode-mode #scan-box {
+
+  width:
+    min(88vw, 520px);
+
+  height: 145px;
+
+  border-radius: 14px;
 }
 
 
@@ -386,6 +378,12 @@ body {
   white-space: nowrap;
 }
 
+body.barcode-mode #status-bar {
+
+  top:
+    calc(50% - 115px);
+}
+
 #status-bar.detected {
 
   background:
@@ -394,7 +392,7 @@ body {
 
 
 /* =========================
-   BLUR MESSAGE
+   HOLD STILL
 ========================= */
 
 #hold-still {
@@ -428,6 +426,12 @@ body {
   white-space: nowrap;
 
   display: none;
+}
+
+body.barcode-mode #hold-still {
+
+  top:
+    calc(50% + 100px);
 }
 
 
@@ -733,7 +737,7 @@ body {
 
   z-index: 50;
 
-  width: 85%;
+  width: 90%;
 
   max-width: 700px;
 
@@ -748,6 +752,41 @@ body {
   line-height: 1.25;
 
   display: none;
+}
+
+.result-name {
+
+  font-size: 36px;
+
+  font-weight: 700;
+
+  color: white;
+}
+
+.result-code {
+
+  margin-top: 14px;
+
+  font-size: 16px;
+
+  font-weight: 400;
+
+  color: #aaa;
+
+  word-break: break-all;
+}
+
+.result-type {
+
+  margin-top: 8px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #888;
+
+  text-transform: uppercase;
 }
 
 
@@ -892,6 +931,7 @@ body {
 }
 
 .history-name {
+
   font-weight: 700;
 }
 
@@ -1060,131 +1100,10 @@ body {
 
 
 /* =========================
-   SCANNER MODE
+   CATALOG
 ========================= */
 
-#scanner-mode-panel {
-
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 2100;
-
-  background: #000;
-
-  padding:
-    30px 20px;
-
-  overflow-y: auto;
-
-  display: none;
-
-  pointer-events: none;
-}
-
-#scanner-mode-title {
-
-  color: white;
-
-  font-size: 30px;
-
-  font-weight: 700;
-
-  text-align: center;
-
-  margin-bottom: 10px;
-}
-
-#scanner-mode-current {
-
-  color: #aaa;
-
-  font-size: 15px;
-
-  text-align: center;
-
-  margin-bottom: 25px;
-}
-
-.scanner-mode-option {
-
-  width: min(90%, 500px);
-
-  margin: 10px auto;
-
-  padding: 18px;
-
-  border:
-    2px solid #444;
-
-  border-radius: 16px;
-
-  background: #111;
-
-  color: white;
-
-  text-align: left;
-
-  cursor: pointer;
-}
-
-.scanner-mode-option.active {
-
-  border-color: white;
-
-  background: #222;
-}
-
-.scanner-mode-option-title {
-
-  font-size: 19px;
-
-  font-weight: 700;
-
-  margin-bottom: 5px;
-}
-
-.scanner-mode-option-description {
-
-  color: #aaa;
-
-  font-size: 13px;
-
-  line-height: 1.4;
-}
-
-.scanner-mode-back {
-
-  width: min(90%, 400px);
-
-  display: block;
-
-  margin: 25px auto;
-
-  border: none;
-
-  border-radius: 999px;
-
-  padding: 15px;
-
-  background: white;
-
-  color: #111;
-
-  font-size: 18px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-/* =========================
-   BARCODE IDENTIFIER
-========================= */
-
-#barcode-identifier-panel {
+#catalog-panel {
 
   position: absolute;
 
@@ -1194,8 +1113,10 @@ body {
 
   background: #000;
 
+  color: white;
+
   padding:
-    30px 20px;
+    22px 16px;
 
   overflow-y: auto;
 
@@ -1204,145 +1125,489 @@ body {
   pointer-events: none;
 }
 
-#barcode-identifier-title {
+#catalog-title {
 
-  color: white;
+  text-align: center;
 
   font-size: 28px;
 
   font-weight: 700;
 
-  text-align: center;
-
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
-#barcode-identifier-description {
-
-  width: min(90%, 600px);
-
-  margin: 0 auto 25px;
-
-  color: #aaa;
-
-  font-size: 14px;
-
-  line-height: 1.5;
+#catalog-subtitle {
 
   text-align: center;
+
+  color: #888;
+
+  font-size: 13px;
+
+  margin-bottom: 18px;
 }
 
-#barcode-code-input {
+.catalog-toolbar {
 
-  display: block;
+  width: 100%;
 
-  width: min(90%, 600px);
+  max-width: 700px;
 
-  margin: 0 auto 12px;
+  margin: 0 auto 15px;
 
-  padding: 16px;
+  display: flex;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+}
+
+.catalog-select {
+
+  flex: 1;
+
+  min-width: 130px;
+
+  padding: 12px;
 
   border:
-    2px solid #444;
+    1px solid #444;
 
-  border-radius: 14px;
+  border-radius: 12px;
 
   background: #111;
 
   color: white;
 
+  font-size: 14px;
+}
+
+.catalog-count {
+
+  width: 100%;
+
+  color: #777;
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+#catalog-list {
+
+  width: 100%;
+
+  max-width: 700px;
+
+  margin: 0 auto;
+}
+
+.catalog-item {
+
+  background: #151515;
+
+  border:
+    1px solid #333;
+
+  border-radius: 15px;
+
+  padding: 15px;
+
+  margin-bottom: 10px;
+}
+
+.catalog-item-name {
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  color: white;
+
+  word-break: break-word;
+}
+
+.catalog-item-code {
+
+  margin-top: 8px;
+
+  color: #aaa;
+
   font-family:
     "Courier New",
     monospace;
 
-  font-size: 20px;
+  font-size: 13px;
+
+  word-break: break-all;
+}
+
+.catalog-item-type {
+
+  display: inline-block;
+
+  margin-top: 8px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #333;
+
+  color: #ccc;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.catalog-item-buttons {
+
+  display: flex;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.catalog-small-button {
+
+  flex: 1;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px;
+
+  background: #292929;
+
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.catalog-small-button.delete {
+
+  background: #4a1d1d;
+}
+
+.catalog-empty {
+
+  padding: 35px 15px;
 
   text-align: center;
+
+  color: #777;
+
+  background: #111;
+
+  border-radius: 15px;
+}
+
+.catalog-close {
+
+  display: block;
+
+  width: min(100%, 700px);
+
+  margin: 18px auto 30px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  padding: 14px;
+
+  background: #333;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+}
+
+
+/* =========================
+   CATALOG EDITOR
+========================= */
+
+#catalog-editor {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 4000;
+
+  background:
+    rgba(0,0,0,.75);
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.catalog-editor-box {
+
+  width: min(100%, 430px);
+
+  background: #151515;
+
+  border:
+    1px solid #444;
+
+  border-radius: 20px;
+
+  padding: 20px;
+}
+
+.catalog-editor-title {
+
+  color: white;
+
+  font-size: 22px;
+
+  font-weight: 700;
+
+  margin-bottom: 15px;
+}
+
+.catalog-editor-label {
+
+  display: block;
+
+  color: #aaa;
+
+  font-size: 12px;
+
+  margin-bottom: 6px;
+}
+
+.catalog-editor-code {
+
+  background: #222;
+
+  color: #aaa;
+
+  border-radius: 10px;
+
+  padding: 10px;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 12px;
+
+  word-break: break-all;
+
+  margin-bottom: 15px;
+}
+
+#catalog-name-input {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    2px solid #444;
+
+  border-radius: 12px;
+
+  background: #000;
+
+  color: white;
+
+  font-size: 17px;
 
   outline: none;
 }
 
-#barcode-code-input:focus {
+#catalog-name-input:focus {
 
   border-color: white;
 }
 
-.barcode-identifier-button {
+.catalog-editor-buttons {
 
-  display: block;
+  display: flex;
 
-  width: min(90%, 400px);
+  gap: 8px;
 
-  margin: 10px auto;
+  margin-top: 15px;
+}
 
-  padding: 14px;
+.catalog-editor-buttons button {
+
+  flex: 1;
 
   border: none;
 
-  border-radius: 999px;
+  border-radius: 12px;
+
+  padding: 13px;
 
   background: white;
 
   color: #111;
-
-  font-size: 17px;
 
   font-weight: 700;
 
   cursor: pointer;
 }
 
-.barcode-identifier-secondary {
+.catalog-editor-buttons button.cancel {
 
-  background: #222;
+  background: #333;
 
   color: white;
 }
 
-#barcode-identification-result {
 
-  width: min(90%, 600px);
+/* =========================
+   UNKNOWN SCAN PANEL
+========================= */
 
-  margin: 25px auto;
+#unknown-panel {
 
-  padding: 18px;
+  position: fixed;
 
-  border:
-    1px solid #333;
+  inset: 0;
 
-  border-radius: 16px;
+  z-index: 3500;
 
-  background: #111;
-
-  color: white;
+  background:
+    rgba(0,0,0,.82);
 
   display: none;
 
-  line-height: 1.5;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
 }
 
-.barcode-result-title {
+.unknown-box {
 
-  font-size: 20px;
+  width: min(100%, 440px);
+
+  background: #151515;
+
+  border:
+    1px solid #444;
+
+  border-radius: 20px;
+
+  padding: 22px;
+
+  color: white;
+}
+
+.unknown-title {
+
+  font-size: 24px;
 
   font-weight: 700;
 
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.barcode-result-row {
+.unknown-description {
 
-  margin:
-    7px 0;
+  color: #aaa;
 
-  color: #ccc;
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  margin-bottom: 15px;
 }
 
-.barcode-result-value {
+.unknown-code {
+
+  padding: 12px;
+
+  background: #222;
+
+  border-radius: 12px;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 13px;
+
+  word-break: break-all;
+
+  margin-bottom: 15px;
+}
+
+.unknown-name {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    2px solid #444;
+
+  border-radius: 12px;
+
+  background: #000;
 
   color: white;
 
+  font-size: 17px;
+
+  outline: none;
+}
+
+.unknown-buttons {
+
+  display: flex;
+
+  gap: 8px;
+
+  margin-top: 15px;
+}
+
+.unknown-buttons button {
+
+  flex: 1;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 13px;
+
   font-weight: 700;
+
+  cursor: pointer;
+}
+
+.unknown-save {
+
+  background: white;
+
+  color: #111;
+}
+
+.unknown-skip {
+
+  background: #333;
+
+  color: white;
 }
 
 
@@ -1626,42 +1891,24 @@ body.light-mode .status-select:focus {
   border-color: #000;
 }
 
-body.light-mode #scanner-mode-panel,
-body.light-mode #barcode-identifier-panel {
+body.light-mode #catalog-panel {
 
   background: #f2f2f2;
-}
-
-body.light-mode #scanner-mode-title,
-body.light-mode #barcode-identifier-title {
 
   color: #000;
 }
 
-body.light-mode .scanner-mode-option {
-
-  background: white;
+body.light-mode #catalog-title {
 
   color: #000;
-
-  border-color: #ccc;
 }
 
-body.light-mode .scanner-mode-option.active {
+body.light-mode #catalog-subtitle {
 
-  background: #ddd;
-
-  border-color: #000;
+  color: #666;
 }
 
-body.light-mode .scanner-mode-option-description,
-body.light-mode #scanner-mode-current,
-body.light-mode #barcode-identifier-description {
-
-  color: #555;
-}
-
-body.light-mode #barcode-code-input {
+body.light-mode .catalog-select {
 
   background: white;
 
@@ -1670,23 +1917,72 @@ body.light-mode #barcode-code-input {
   border-color: #bbb;
 }
 
-body.light-mode #barcode-identification-result {
+body.light-mode .catalog-item {
+
+  background: white;
+
+  border-color: #ccc;
+}
+
+body.light-mode .catalog-item-name {
+
+  color: #000;
+}
+
+body.light-mode .catalog-item-code {
+
+  color: #555;
+}
+
+body.light-mode .catalog-item-type {
+
+  background: #ddd;
+
+  color: #333;
+}
+
+body.light-mode .catalog-small-button {
+
+  background: #ddd;
+
+  color: #000;
+}
+
+body.light-mode .catalog-empty {
+
+  background: white;
+
+  color: #666;
+}
+
+body.light-mode .catalog-editor-box,
+body.light-mode .unknown-box {
+
+  background: #f5f5f5;
+}
+
+body.light-mode .catalog-editor-title,
+body.light-mode .unknown-title {
+
+  color: #000;
+}
+
+body.light-mode .catalog-editor-code,
+body.light-mode .unknown-code {
+
+  background: #ddd;
+
+  color: #333;
+}
+
+body.light-mode #catalog-name-input,
+body.light-mode .unknown-name {
 
   background: white;
 
   color: #000;
 
-  border-color: #ccc;
-}
-
-body.light-mode .barcode-result-row {
-
-  color: #555;
-}
-
-body.light-mode .barcode-result-value {
-
-  color: #000;
+  border-color: #bbb;
 }
 
 
@@ -1696,9 +1992,17 @@ body.light-mode .barcode-result-value {
 
 @media (max-width: 500px) {
 
-  #notes-panel,
-  #scanner-mode-panel,
-  #barcode-identifier-panel {
+  #site-title {
+
+    font-size: 20px;
+  }
+
+  #home-menu {
+
+    width: 200px;
+  }
+
+  #notes-panel {
 
     padding:
       25px 14px;
@@ -1723,14 +2027,21 @@ body.light-mode .barcode-result-value {
     padding: 13px;
   }
 
-  #scanner-mode-title {
+  body.barcode-mode #scan-box {
 
-    font-size: 26px;
+    width: 90vw;
+
+    height: 120px;
   }
 
-  #barcode-identifier-title {
+  #result-text {
 
-    font-size: 25px;
+    top: 10%;
+  }
+
+  .result-name {
+
+    font-size: 28px;
   }
 
 }
@@ -1743,6 +2054,10 @@ body.light-mode .barcode-result-value {
 
 <div id="app">
 
+
+<!-- =========================
+     TOP BAR
+========================= -->
 
 <div id="top-bar">
 
@@ -1761,6 +2076,7 @@ body.light-mode .barcode-result-value {
 
 <div id="home-menu">
 
+
 <button
   class="menu-button"
   onclick="
@@ -1772,6 +2088,7 @@ body.light-mode .barcode-result-value {
   H2D
 </button>
 
+
 <button
   class="menu-button"
   onclick="
@@ -1782,6 +2099,7 @@ body.light-mode .barcode-result-value {
 >
   TOYBOX
 </button>
+
 
 <button
   class="menu-button"
@@ -1805,25 +2123,18 @@ body.light-mode .barcode-result-value {
 
 <button
   class="menu-button"
-  onclick="showScannerMode()"
+  onclick="toggleScanMode()"
+  id="scan-mode-button"
 >
-  Scanner Mode
+  Scan Mode: QR
 </button>
 
 
 <button
   class="menu-button"
-  onclick="showBarcodeIdentifier()"
+  onclick="showCatalog()"
 >
-  Identify Barcode
-</button>
-
-
-<button
-  class="menu-button"
-  onclick="refreshPage()"
->
-  Refresh
+  Catalog
 </button>
 
 
@@ -1845,6 +2156,14 @@ body.light-mode .barcode-result-value {
 
 <button
   class="menu-button"
+  onclick="refreshPage()"
+>
+  Refresh
+</button>
+
+
+<button
+  class="menu-button"
   onclick="toggleDevMode()"
 >
   Dev Mode
@@ -1858,10 +2177,15 @@ body.light-mode .barcode-result-value {
   Light Mode
 </button>
 
-</div>
 
 </div>
 
+</div>
+
+
+<!-- =========================
+     CAMERA
+========================= -->
 
 <div id="camera">
 
@@ -1879,6 +2203,7 @@ body.light-mode .barcode-result-value {
 
 
 <div id="control-bar">
+
 
 <button
   id="flashlight-button"
@@ -2065,148 +2390,205 @@ body.light-mode .barcode-result-value {
 
 
 <!-- =========================
-     SCANNER MODE
+     CATALOG
 ========================= -->
 
 <div
-  id="scanner-mode-panel"
+  id="catalog-panel"
   onclick="event.stopPropagation()"
 >
 
-<div id="scanner-mode-title">
-  Scanner Mode
+<div id="catalog-title">
+  Code Catalog
 </div>
 
-<div id="scanner-mode-current">
-  Current mode: QR Codes
+<div id="catalog-subtitle">
+  Your saved QR codes and barcodes
 </div>
 
 
-<div
-  id="scanner-mode-qr"
-  class="scanner-mode-option active"
-  onclick="setScannerMode('qr')"
+<div class="catalog-toolbar">
+
+<select
+  id="catalog-sort"
+  class="catalog-select"
+  onchange="renderCatalog()"
 >
+<option value="name">
+  Sort by Name
+</option>
 
-<div class="scanner-mode-option-title">
-  QR Codes
-</div>
+<option value="code">
+  Sort by Code
+</option>
 
-<div class="scanner-mode-option-description">
-  Scans QR codes only. This is the original scanner mode.
-</div>
+<option value="type">
+  Sort by Type
+</option>
 
-</div>
+</select>
 
 
-<div
-  id="scanner-mode-barcode"
-  class="scanner-mode-option"
-  onclick="setScannerMode('barcode')"
+<select
+  id="catalog-filter"
+  class="catalog-select"
+  onchange="renderCatalog()"
 >
-
-<div class="scanner-mode-option-title">
-  Barcodes
-</div>
-
-<div class="scanner-mode-option-description">
-  Scans common 1D barcodes including UPC, EAN,
-  Code 39, Code 93, Code 128 and ITF.
-</div>
-
-</div>
-
-
-<div
-  id="scanner-mode-all"
-  class="scanner-mode-option"
-  onclick="setScannerMode('all')"
->
-
-<div class="scanner-mode-option-title">
+<option value="all">
   All Codes
+</option>
+
+<option value="qr">
+  QR Codes
+</option>
+
+<option value="barcode">
+  Barcodes
+</option>
+
+</select>
+
+<div
+  id="catalog-count"
+  class="catalog-count"
+></div>
+
 </div>
 
-<div class="scanner-mode-option-description">
-  Scans QR codes and supported barcode formats.
-</div>
 
-</div>
+<div id="catalog-list"></div>
 
 
 <button
-  class="scanner-mode-back"
-  onclick="hideScannerMode()"
+  class="catalog-close"
+  onclick="hideCatalog()"
 >
-  Back
+  Back to Scanner
 </button>
 
 </div>
 
 
 <!-- =========================
-     BARCODE IDENTIFIER
+     CATALOG EDITOR
 ========================= -->
 
 <div
-  id="barcode-identifier-panel"
+  id="catalog-editor"
+  onclick="closeCatalogEditor(event)"
+>
+
+<div
+  class="catalog-editor-box"
   onclick="event.stopPropagation()"
 >
 
-<div id="barcode-identifier-title">
-  Identify Barcode
+<div class="catalog-editor-title">
+  Name This Code
 </div>
 
-<div id="barcode-identifier-description">
+<label class="catalog-editor-label">
+  Code
+</label>
 
-Enter an unknown barcode number below.
-The scanner can identify common numeric
-barcode formats from their length and
-check digit.
+<div
+  id="catalog-editor-code"
+  class="catalog-editor-code"
+></div>
 
-</div>
-
+<label
+  class="catalog-editor-label"
+  for="catalog-name-input"
+>
+  Name
+</label>
 
 <input
-  id="barcode-code-input"
+  id="catalog-name-input"
   type="text"
-  inputmode="numeric"
+  placeholder="Example: H2D Filament"
   autocomplete="off"
-  placeholder="Enter barcode number"
-  onkeydown="
-    if (event.key === 'Enter')
-      identifyBarcode()
-  "
 >
 
+<div class="catalog-editor-buttons">
 
 <button
-  class="barcode-identifier-button"
-  onclick="identifyBarcode()"
+  onclick="saveCatalogEditor()"
 >
-  Identify
+  Save Name
 </button>
 
-
 <button
-  class="barcode-identifier-button barcode-identifier-secondary"
-  onclick="searchBarcode()"
+  class="cancel"
+  onclick="hideCatalogEditor()"
 >
-  Search Code
-</button>
-
-
-<div id="barcode-identification-result"></div>
-
-
-<button
-  class="scanner-mode-back"
-  onclick="hideBarcodeIdentifier()"
->
-  Back
+  Cancel
 </button>
 
 </div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     UNKNOWN CODE
+========================= -->
+
+<div
+  id="unknown-panel"
+>
+
+<div class="unknown-box">
+
+<div class="unknown-title">
+  Unknown Code
+</div>
+
+<div class="unknown-description">
+
+  This code is not in your catalog yet.
+  Give it a name and it will be remembered
+  the next time you scan it.
+
+</div>
+
+<div
+  id="unknown-code"
+  class="unknown-code"
+></div>
+
+<input
+  id="unknown-name"
+  class="unknown-name"
+  type="text"
+  placeholder="Name this code"
+  autocomplete="off"
+>
+
+<div class="unknown-buttons">
+
+<button
+  class="unknown-save"
+  onclick="saveUnknownCode()"
+>
+  Add to Catalog
+</button>
+
+<button
+  class="unknown-skip"
+  onclick="skipUnknownCode()"
+>
+  Skip
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 
 </div>
 
@@ -2267,9 +2649,13 @@ let firstDetection = null;
 
 let detectedText = null;
 
+let detectedFormat = null;
+
 let scanConfirmed = false;
 
 let scannedURL = null;
+
+let scannedType = "qr";
 
 let isPrinterLink = false;
 
@@ -2293,117 +2679,34 @@ let scanStartTime = null;
 
 let lastScanTime = 0;
 
+let editingCatalogCode = null;
+
+let unknownCatalogCode = null;
+
+let unknownCatalogType = null;
+
 const HOLD_TIME = 600;
 
 const QR_SIZE = 250;
 
 
-/* =========================
-   SCANNER MODE
-========================= */
+/*
+  Barcode mode rectangle.
+*/
 
-let scannerMode =
-  localStorage.getItem(
-    "printerScannerMode"
-  ) || "qr";
+const BARCODE_WIDTH = 520;
+
+const BARCODE_HEIGHT = 145;
 
 
 /*
-  Barcode formats supported by
-  html5-qrcode.
+  Current mode is saved locally.
 */
 
-const BARCODE_FORMATS = [
-
-  Html5QrcodeSupportedFormats.CODABAR,
-
-  Html5QrcodeSupportedFormats.CODE_39,
-
-  Html5QrcodeSupportedFormats.CODE_93,
-
-  Html5QrcodeSupportedFormats.CODE_128,
-
-  Html5QrcodeSupportedFormats.ITF,
-
-  Html5QrcodeSupportedFormats.EAN_13,
-
-  Html5QrcodeSupportedFormats.EAN_8,
-
-  Html5QrcodeSupportedFormats.RSS_14,
-
-  Html5QrcodeSupportedFormats.RSS_EXPANDED,
-
-  Html5QrcodeSupportedFormats.UPC_A,
-
-  Html5QrcodeSupportedFormats.UPC_E,
-
-  Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION
-
-];
-
-
-function getScannerFormats() {
-
-  if (
-    scannerMode ===
-    "barcode"
-  ) {
-
-    return BARCODE_FORMATS;
-
-  }
-
-
-  if (
-    scannerMode ===
-    "all"
-  ) {
-
-    return [
-
-      Html5QrcodeSupportedFormats.QR_CODE,
-
-      ...BARCODE_FORMATS
-
-    ];
-
-  }
-
-
-  return [
-
-    Html5QrcodeSupportedFormats.QR_CODE
-
-  ];
-
-}
-
-
-function getScannerModeName() {
-
-  if (
-    scannerMode ===
-    "barcode"
-  ) {
-
-    return "Barcodes";
-
-  }
-
-
-  if (
-    scannerMode ===
-    "all"
-  ) {
-
-    return "All Codes";
-
-  }
-
-
-  return "QR Codes";
-
-}
+let scanMode =
+  localStorage.getItem(
+    "printerScannerScanMode"
+  ) || "qr";
 
 
 /* =========================
@@ -2523,10 +2826,89 @@ function refreshPage() {
 
 
 /* =========================
-   SCANNER MODE SCREEN
+   SCAN MODE
 ========================= */
 
-function showScannerMode() {
+function updateScanModeUI() {
+
+  document.body.classList.toggle(
+    "barcode-mode",
+    scanMode === "barcode"
+  );
+
+
+  const button =
+    document.getElementById(
+      "scan-mode-button"
+    );
+
+
+  if (button) {
+
+    button.textContent =
+      scanMode === "barcode"
+        ? "Scan Mode: Barcode"
+        : "Scan Mode: QR";
+
+  }
+
+
+  /*
+    Update the visual scan box.
+  */
+
+  const box =
+    document.getElementById(
+      "scan-box"
+    );
+
+
+  if (box) {
+
+    if (
+      scanMode === "barcode"
+    ) {
+
+      box.style.width =
+        "min(88vw, 520px)";
+
+      box.style.height =
+        "145px";
+
+      box.style.borderRadius =
+        "14px";
+
+    } else {
+
+      box.style.width =
+        "250px";
+
+      box.style.height =
+        "250px";
+
+      box.style.borderRadius =
+        "18px";
+
+    }
+
+  }
+
+}
+
+
+function toggleScanMode() {
+
+  scanMode =
+    scanMode === "qr"
+      ? "barcode"
+      : "qr";
+
+
+  localStorage.setItem(
+    "printerScannerScanMode",
+    scanMode
+  );
+
 
   document.getElementById(
     "home-menu"
@@ -2534,275 +2916,21 @@ function showScannerMode() {
     "none";
 
 
-  updateScannerModeUI();
-
-
-  const panel =
-    document.getElementById(
-      "scanner-mode-panel"
-    );
-
-
-  panel.style.display =
-    "block";
-
-
-  panel.style.pointerEvents =
-    "auto";
-
-
   devLog(
-    "Opened scanner mode settings"
+    "Scan mode changed to: " +
+    scanMode
   );
-
-}
-
-
-function hideScannerMode() {
-
-  const panel =
-    document.getElementById(
-      "scanner-mode-panel"
-    );
-
-
-  panel.style.display =
-    "none";
-
-
-  panel.style.pointerEvents =
-    "none";
-
-
-  devLog(
-    "Closed scanner mode settings"
-  );
-
-}
-
-
-function updateScannerModeUI() {
-
-  const current =
-    document.getElementById(
-      "scanner-mode-current"
-    );
-
-
-  if (!current)
-    return;
-
-
-  current.textContent =
-    "Current mode: " +
-    getScannerModeName();
-
-
-  document
-    .getElementById(
-      "scanner-mode-qr"
-    )
-    .classList.toggle(
-      "active",
-      scannerMode === "qr"
-    );
-
-
-  document
-    .getElementById(
-      "scanner-mode-barcode"
-    )
-    .classList.toggle(
-      "active",
-      scannerMode === "barcode"
-    );
-
-
-  document
-    .getElementById(
-      "scanner-mode-all"
-    )
-    .classList.toggle(
-      "active",
-      scannerMode === "all"
-    );
-
-}
-
-
-async function setScannerMode(mode) {
-
-  if (
-    mode !== "qr" &&
-    mode !== "barcode" &&
-    mode !== "all"
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    scannerMode === mode
-  ) {
-
-    hideScannerMode();
-
-    return;
-
-  }
-
-
-  scannerMode =
-    mode;
-
-
-  localStorage.setItem(
-    "printerScannerMode",
-    scannerMode
-  );
-
-
-  updateScannerModeUI();
-
-
-  devLog(
-    "Scanner mode changed to: " +
-    getScannerModeName()
-  );
-
-
-  hideScannerMode();
 
 
   /*
-    Stop the old scanner.
+    Reloading is intentional here.
 
-    The scanner must be recreated
-    because formatsToSupport is set
-    when Html5Qrcode is created.
+    html5-qrcode needs to be restarted
+    with a different formatsToSupport
+    list for the new mode.
   */
 
-  try {
-
-    if (
-      scanner &&
-      scanner.isScanning
-    ) {
-
-      await scanner.stop();
-
-    }
-
-  } catch(error) {
-
-    devLog(
-      "Scanner stop during mode change: " +
-      error.message
-    );
-
-  }
-
-
-  scanner =
-    null;
-
-  cameraTrack =
-    null;
-
-
-  firstDetection =
-    null;
-
-  detectedText =
-    null;
-
-  scanConfirmed =
-    false;
-
-  scannedURL =
-    null;
-
-  isPrinterLink =
-    false;
-
-
-  document.getElementById(
-    "reader"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "scan-box"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "status-bar"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "control-bar"
-  ).style.display =
-    "flex";
-
-
-  document.getElementById(
-    "version-number"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "result-text"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "open-button"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "rescan"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "hold-still"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "status-bar"
-  ).textContent =
-    "Starting " +
-    getScannerModeName() +
-    "...";
-
-
-  document.getElementById(
-    "status-bar"
-  ).className =
-    "";
-
-
-  document.getElementById(
-    "loading"
-  ).style.display =
-    "flex";
-
-
-  startScanner();
+  window.location.reload();
 
 }
 
@@ -3009,7 +3137,7 @@ function loadNotes() {
 
 
 /* =========================
-   CAMERA TRACK RECOVERY
+   CAMERA TRACK
 ========================= */
 
 function reacquireCameraTrack() {
@@ -3081,7 +3209,8 @@ function getHistory() {
 
 function saveHistory(
   url,
-  name
+  name,
+  type
 ) {
 
   const history =
@@ -3095,6 +3224,9 @@ function saveHistory(
 
     name:
       name,
+
+    type:
+      type,
 
     time:
       new Date()
@@ -3193,32 +3325,34 @@ function showHistory() {
         div.onclick =
           function() {
 
-            /*
-              Only open URLs from history.
-            */
+            let url =
+              item.url;
+
 
             if (
-              /^https?:\/\//i.test(
-                item.url
+              !url.startsWith(
+                "http://"
               )
+
+              &&
+
+              !url.startsWith(
+                "https://"
+              )
+
             ) {
 
-              window.open(
-                item.url,
-                "_blank"
-              );
-
-            } else {
-
-              showBarcodeIdentifier();
-
-
-              document.getElementById(
-                "barcode-code-input"
-              ).value =
-                item.url;
+              url =
+                "https://" +
+                url;
 
             }
+
+
+            window.open(
+              url,
+              "_blank"
+            );
 
           };
 
@@ -3286,6 +3420,837 @@ function escapeHTML(text) {
     text;
 
   return div.innerHTML;
+
+}
+
+
+/* =========================
+   CATALOG STORAGE
+========================= */
+
+function getCatalog() {
+
+  try {
+
+    const data =
+      JSON.parse(
+
+        localStorage.getItem(
+          "printerScannerCatalog"
+        )
+
+      );
+
+
+    if (
+      Array.isArray(data)
+    ) {
+
+      return data;
+
+    }
+
+
+    return [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveCatalog(
+  catalog
+) {
+
+  localStorage.setItem(
+
+    "printerScannerCatalog",
+
+    JSON.stringify(
+      catalog
+    )
+
+  );
+
+}
+
+
+function findCatalogEntry(
+  code
+) {
+
+  const catalog =
+    getCatalog();
+
+
+  return catalog.find(
+    function(item) {
+
+      return item.code === code;
+
+    }
+  ) || null;
+
+}
+
+
+function addCatalogEntry(
+  code,
+  type,
+  name
+) {
+
+  const catalog =
+    getCatalog();
+
+
+  const existing =
+    catalog.find(
+      function(item) {
+
+        return item.code === code;
+
+      }
+    );
+
+
+  if (existing) {
+
+    existing.name =
+      name;
+
+    existing.type =
+      type;
+
+  } else {
+
+    catalog.push({
+
+      code:
+        code,
+
+      name:
+        name,
+
+      type:
+        type,
+
+      created:
+        new Date()
+          .toLocaleString()
+
+    });
+
+  }
+
+
+  saveCatalog(
+    catalog
+  );
+
+
+  devLog(
+    "Catalog entry saved: " +
+    name
+  );
+
+}
+
+
+/* =========================
+   CATALOG
+========================= */
+
+function showCatalog() {
+
+  document.getElementById(
+    "home-menu"
+  ).style.display =
+    "none";
+
+
+  renderCatalog();
+
+
+  const panel =
+    document.getElementById(
+      "catalog-panel"
+    );
+
+
+  panel.style.display =
+    "block";
+
+
+  panel.style.pointerEvents =
+    "auto";
+
+
+  devLog(
+    "Opened code catalog"
+  );
+
+}
+
+
+function hideCatalog() {
+
+  const panel =
+    document.getElementById(
+      "catalog-panel"
+    );
+
+
+  panel.style.display =
+    "none";
+
+
+  panel.style.pointerEvents =
+    "none";
+
+
+  devLog(
+    "Closed code catalog"
+  );
+
+
+  setTimeout(
+    reacquireCameraTrack,
+    50
+  );
+
+}
+
+
+function renderCatalog() {
+
+  const list =
+    document.getElementById(
+      "catalog-list"
+    );
+
+
+  const count =
+    document.getElementById(
+      "catalog-count"
+    );
+
+
+  const sort =
+    document.getElementById(
+      "catalog-sort"
+    ).value;
+
+
+  const filter =
+    document.getElementById(
+      "catalog-filter"
+    ).value;
+
+
+  let catalog =
+    getCatalog();
+
+
+  /*
+    Filter.
+  */
+
+  if (
+    filter !== "all"
+  ) {
+
+    catalog =
+      catalog.filter(
+        function(item) {
+
+          return item.type === filter;
+
+        }
+      );
+
+  }
+
+
+  /*
+    Sort.
+  */
+
+  catalog.sort(
+    function(a, b) {
+
+      if (
+        sort === "name"
+      ) {
+
+        return a.name
+          .toLowerCase()
+          .localeCompare(
+            b.name.toLowerCase()
+          );
+
+      }
+
+
+      if (
+        sort === "code"
+      ) {
+
+        return a.code
+          .localeCompare(
+            b.code
+          );
+
+      }
+
+
+      if (
+        sort === "type"
+      ) {
+
+        return a.type
+          .localeCompare(
+            b.type
+          );
+
+      }
+
+
+      return 0;
+
+    }
+  );
+
+
+  count.textContent =
+    catalog.length +
+    " code" +
+    (
+      catalog.length === 1
+        ? ""
+        : "s"
+    );
+
+
+  list.innerHTML =
+    "";
+
+
+  if (
+    catalog.length === 0
+  ) {
+
+    list.innerHTML =
+
+      '<div class="catalog-empty">' +
+
+      'No codes are saved yet.<br><br>' +
+
+      'Scan a QR code or barcode and give it a name.' +
+
+      '</div>';
+
+    return;
+
+  }
+
+
+  catalog.forEach(
+    function(item) {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "catalog-item";
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+
+      name.className =
+        "catalog-item-name";
+
+
+      name.textContent =
+        item.name;
+
+
+      const code =
+        document.createElement(
+          "div"
+        );
+
+
+      code.className =
+        "catalog-item-code";
+
+
+      code.textContent =
+        item.code;
+
+
+      const type =
+        document.createElement(
+          "div"
+        );
+
+
+      type.className =
+        "catalog-item-type";
+
+
+      type.textContent =
+        item.type === "barcode"
+          ? "Barcode"
+          : "QR Code";
+
+
+      const buttons =
+        document.createElement(
+          "div"
+        );
+
+
+      buttons.className =
+        "catalog-item-buttons";
+
+
+      const rename =
+        document.createElement(
+          "button"
+        );
+
+
+      rename.className =
+        "catalog-small-button";
+
+
+      rename.textContent =
+        "Rename";
+
+
+      rename.onclick =
+        function() {
+
+          openCatalogEditor(
+            item.code
+          );
+
+        };
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+
+      remove.className =
+        "catalog-small-button delete";
+
+
+      remove.textContent =
+        "Delete";
+
+
+      remove.onclick =
+        function() {
+
+          deleteCatalogEntry(
+            item.code
+          );
+
+        };
+
+
+      buttons.appendChild(
+        rename
+      );
+
+
+      buttons.appendChild(
+        remove
+      );
+
+
+      div.appendChild(
+        name
+      );
+
+
+      div.appendChild(
+        code
+      );
+
+
+      div.appendChild(
+        type
+      );
+
+
+      div.appendChild(
+        buttons
+      );
+
+
+      list.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+function deleteCatalogEntry(
+  code
+) {
+
+  if (
+    !confirm(
+      "Delete this code from the catalog?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  let catalog =
+    getCatalog();
+
+
+  catalog =
+    catalog.filter(
+      function(item) {
+
+        return item.code !== code;
+
+      }
+    );
+
+
+  saveCatalog(
+    catalog
+  );
+
+
+  renderCatalog();
+
+
+  devLog(
+    "Deleted catalog entry"
+  );
+
+}
+
+
+/* =========================
+   CATALOG EDITOR
+========================= */
+
+function openCatalogEditor(
+  code
+) {
+
+  const entry =
+    findCatalogEntry(
+      code
+    );
+
+
+  if (!entry)
+    return;
+
+
+  editingCatalogCode =
+    code;
+
+
+  document.getElementById(
+    "catalog-editor-code"
+  ).textContent =
+    entry.code;
+
+
+  document.getElementById(
+    "catalog-name-input"
+  ).value =
+    entry.name;
+
+
+  document.getElementById(
+    "catalog-editor"
+  ).style.display =
+    "flex";
+
+
+  setTimeout(
+    function() {
+
+      document.getElementById(
+        "catalog-name-input"
+      ).focus();
+
+    },
+    50
+  );
+
+}
+
+
+function saveCatalogEditor() {
+
+  if (
+    !editingCatalogCode
+  ) {
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "catalog-name-input"
+    );
+
+
+  const name =
+    input.value.trim();
+
+
+  if (!name) {
+
+    alert(
+      "Please enter a name."
+    );
+
+    return;
+
+  }
+
+
+  const catalog =
+    getCatalog();
+
+
+  const entry =
+    catalog.find(
+      function(item) {
+
+        return item.code ===
+          editingCatalogCode;
+
+      }
+    );
+
+
+  if (entry) {
+
+    entry.name =
+      name;
+
+    saveCatalog(
+      catalog
+    );
+
+  }
+
+
+  hideCatalogEditor();
+
+
+  renderCatalog();
+
+
+  devLog(
+    "Renamed catalog entry: " +
+    name
+  );
+
+}
+
+
+function hideCatalogEditor() {
+
+  document.getElementById(
+    "catalog-editor"
+  ).style.display =
+    "none";
+
+
+  editingCatalogCode =
+    null;
+
+}
+
+
+function closeCatalogEditor(
+  event
+) {
+
+  if (
+    event.target.id ===
+    "catalog-editor"
+  ) {
+
+    hideCatalogEditor();
+
+  }
+
+}
+
+
+/* =========================
+   UNKNOWN CODE
+========================= */
+
+function showUnknownCodePanel(
+  code,
+  type
+) {
+
+  unknownCatalogCode =
+    code;
+
+  unknownCatalogType =
+    type;
+
+
+  document.getElementById(
+    "unknown-code"
+  ).textContent =
+    code;
+
+
+  document.getElementById(
+    "unknown-name"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "unknown-panel"
+  ).style.display =
+    "flex";
+
+
+  setTimeout(
+    function() {
+
+      document.getElementById(
+        "unknown-name"
+      ).focus();
+
+    },
+    100
+  );
+
+}
+
+
+function saveUnknownCode() {
+
+  if (
+    !unknownCatalogCode
+  ) {
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "unknown-name"
+    );
+
+
+  const name =
+    input.value.trim();
+
+
+  if (!name) {
+
+    alert(
+      "Please enter a name for this code."
+    );
+
+    return;
+
+  }
+
+
+  addCatalogEntry(
+
+    unknownCatalogCode,
+
+    unknownCatalogType,
+
+    name
+
+  );
+
+
+  document.getElementById(
+    "unknown-panel"
+  ).style.display =
+    "none";
+
+
+  unknownCatalogCode =
+    null;
+
+  unknownCatalogType =
+    null;
+
+
+  /*
+    Show the newly assigned name
+    immediately.
+  */
+
+  showFinalResult(
+    detectedText,
+    detectedFormat
+  );
+
+}
+
+
+function skipUnknownCode() {
+
+  document.getElementById(
+    "unknown-panel"
+  ).style.display =
+    "none";
+
+
+  unknownCatalogCode =
+    null;
+
+  unknownCatalogType =
+    null;
+
+
+  showFinalResult(
+    detectedText,
+    detectedFormat
+  );
 
 }
 
@@ -3785,7 +4750,7 @@ function getSiteName(url) {
 
   } catch {
 
-    return "QR Code Found";
+    return "Code Found";
 
   }
 
@@ -3902,696 +4867,479 @@ function getQRText(url) {
 
 
 /* =========================
-   GENERIC SCAN RESULT
+   FORMAT DETECTION
 ========================= */
 
-function getScanText(code) {
+function getFormatName(
+  decodedResult
+) {
+
+  try {
+
+    if (
+      decodedResult &&
+      decodedResult.result &&
+      decodedResult.result.format
+    ) {
+
+      const format =
+        decodedResult.result.format;
+
+
+      if (
+        format.formatName
+      ) {
+
+        return format.formatName;
+
+      }
+
+
+      if (
+        format.format
+      ) {
+
+        return String(
+          format.format
+        );
+
+      }
+
+    }
+
+  } catch {
+
+    /*
+      Fall through.
+    */
+
+  }
+
 
   /*
-    QR mode keeps the original
-    printer and website behavior.
+    If the scanner is in barcode
+    mode, classify it as a barcode.
   */
 
   if (
-    scannerMode ===
-    "qr"
+    scanMode === "barcode"
   ) {
 
-    return getQRText(
-      code
-    );
+    return "Barcode";
 
   }
 
 
-  isPrinterLink =
-    false;
-
-
-  const identification =
-    identifyBarcodeValue(
-      code
-    );
-
-
-  if (
-    identification.type
-  ) {
-
-    return (
-      identification.type +
-      ": " +
-      code
-    );
-
-  }
-
-
-  return (
-    "Barcode Found: " +
-    code
-  );
+  return "QR_CODE";
 
 }
 
 
-/* =========================
-   BARCODE IDENTIFICATION
-========================= */
-
-function onlyDigits(value) {
-
-  return String(value)
-    .replace(
-      /\D/g,
-      ""
-    );
-
-}
-
-
-function calculateEANCheckDigit(
-  digits
+function getCodeType(
+  formatName
 ) {
 
-  if (
-    digits.length !== 12
-  ) {
-
-    return null;
-
-  }
-
-
-  let sum = 0;
-
-
-  for (
-    let i = 0;
-    i < digits.length;
-    i++
-  ) {
-
-    const digit =
-      parseInt(
-        digits[i],
-        10
-      );
-
-
-    sum +=
-      i % 2 === 0
-        ? digit
-        : digit * 3;
-
-  }
-
-
-  return (
-    (
-      10 -
-      (
-        sum % 10
-      )
-    ) % 10
-  );
-
-}
-
-
-function isValidEAN13(
-  code
-) {
-
-  if (
-    !/^\d{13}$/.test(code)
-  ) {
-
-    return false;
-
-  }
-
-
-  let sum = 0;
-
-
-  for (
-    let i = 0;
-    i < 12;
-    i++
-  ) {
-
-    const digit =
-      parseInt(
-        code[i],
-        10
-      );
-
-
-    sum +=
-      i % 2 === 0
-        ? digit
-        : digit * 3;
-
-  }
-
-
-  const check =
-    (
-      10 -
-      (
-        sum % 10
-      )
-    ) % 10;
-
-
-  return (
-    check ===
-    parseInt(
-      code[12],
-      10
-    )
-  );
-
-}
-
-
-function isValidEAN8(
-  code
-) {
-
-  if (
-    !/^\d{8}$/.test(code)
-  ) {
-
-    return false;
-
-  }
-
-
-  let sum = 0;
-
-
-  for (
-    let i = 0;
-    i < 7;
-    i++
-  ) {
-
-    const digit =
-      parseInt(
-        code[i],
-        10
-      );
-
-
-    sum +=
-      i % 2 === 0
-        ? digit * 3
-        : digit;
-
-  }
-
-
-  const check =
-    (
-      10 -
-      (
-        sum % 10
-      )
-    ) % 10;
-
-
-  return (
-    check ===
-    parseInt(
-      code[7],
-      10
-    )
-  );
-
-}
-
-
-function isValidUPCA(
-  code
-) {
-
-  if (
-    !/^\d{12}$/.test(code)
-  ) {
-
-    return false;
-
-  }
-
-
-  let sum = 0;
-
-
-  for (
-    let i = 0;
-    i < 11;
-    i++
-  ) {
-
-    const digit =
-      parseInt(
-        code[i],
-        10
-      );
-
-
-    sum +=
-      i % 2 === 0
-        ? digit * 3
-        : digit;
-
-  }
-
-
-  const check =
-    (
-      10 -
-      (
-        sum % 10
-      )
-    ) % 10;
-
-
-  return (
-    check ===
-    parseInt(
-      code[11],
-      10
-    )
-  );
-
-}
-
-
-function identifyBarcodeValue(
-  rawCode
-) {
-
-  const code =
+  const name =
     String(
-      rawCode || ""
-    ).trim();
-
-
-  const digits =
-    onlyDigits(
-      code
-    );
+      formatName || ""
+    ).toUpperCase();
 
 
   if (
-    isValidUPCA(
-      digits
-    )
+    name.includes("QR")
   ) {
 
-    return {
-
-      type:
-        "UPC-A",
-
-      description:
-        "12-digit Universal Product Code"
-
-    };
+    return "qr";
 
   }
 
 
-  if (
-    isValidEAN13(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "EAN-13",
-
-      description:
-        "13-digit European/International Article Number"
-
-    };
-
-  }
-
-
-  if (
-    isValidEAN8(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "EAN-8",
-
-      description:
-        "8-digit compact EAN barcode"
-
-    };
-
-  }
-
-
-  if (
-    /^\d{14}$/.test(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "GTIN-14 / ITF-14",
-
-      description:
-        "14-digit trade-item identifier"
-
-    };
-
-  }
-
-
-  if (
-    /^\d{12}$/.test(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "Possible UPC-A",
-
-      description:
-        "12 numeric digits, but the check digit did not validate"
-
-    };
-
-  }
-
-
-  if (
-    /^\d{13}$/.test(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "Possible EAN-13",
-
-      description:
-        "13 numeric digits, but the check digit did not validate"
-
-    };
-
-  }
-
-
-  if (
-    /^\d{8}$/.test(
-      digits
-    )
-  ) {
-
-    return {
-
-      type:
-        "Possible EAN-8",
-
-      description:
-        "8 numeric digits, but the check digit did not validate"
-
-    };
-
-  }
-
-
-  if (
-    /^[0-9A-Z\-\.\ \$\/\+\%]+$/i.test(
-      code
-    )
-  ) {
-
-    return {
-
-      type:
-        "Possible Code 39 / Code 128",
-
-      description:
-        "Alphanumeric barcode; the exact symbology cannot be guaranteed from the text alone"
-
-    };
-
-  }
-
-
-  return {
-
-    type:
-      "",
-
-    description:
-      "Unknown barcode format"
-
-  };
+  return "barcode";
 
 }
 
 
 /* =========================
-   UNKNOWN BARCODE SCREEN
+   CATALOG DISPLAY NAME
 ========================= */
 
-function showBarcodeIdentifier() {
+function getCatalogDisplayName(
+  code,
+  fallbackName
+) {
 
-  document.getElementById(
-    "home-menu"
-  ).style.display =
-    "none";
-
-
-  const panel =
-    document.getElementById(
-      "barcode-identifier-panel"
-    );
-
-
-  panel.style.display =
-    "block";
-
-
-  panel.style.pointerEvents =
-    "auto";
-
-
-  document.getElementById(
-    "barcode-code-input"
-  ).focus();
-
-
-  devLog(
-    "Opened barcode identifier"
-  );
-
-}
-
-
-function hideBarcodeIdentifier() {
-
-  const panel =
-    document.getElementById(
-      "barcode-identifier-panel"
-    );
-
-
-  panel.style.display =
-    "none";
-
-
-  panel.style.pointerEvents =
-    "none";
-
-
-  document.getElementById(
-    "barcode-identification-result"
-  ).style.display =
-    "none";
-
-
-  devLog(
-    "Closed barcode identifier"
-  );
-
-}
-
-
-function identifyBarcode() {
-
-  const input =
-    document.getElementById(
-      "barcode-code-input"
-    );
-
-
-  const code =
-    input.value.trim();
-
-
-  if (!code) {
-
-    showBarcodeIdentificationResult(
-
-      "No barcode entered",
-
-      "Enter the numbers or characters printed below the barcode."
-
-    );
-
-    return;
-
-  }
-
-
-  const result =
-    identifyBarcodeValue(
+  const entry =
+    findCatalogEntry(
       code
     );
 
 
-  if (
-    result.type
+  if (entry) {
+
+    return entry.name;
+
+  }
+
+
+  return fallbackName;
+
+}
+
+
+/* =========================
+   FINAL RESULT
+========================= */
+
+function showFinalResult(
+  code,
+  formatName
+) {
+
+  const type =
+    getCodeType(
+      formatName
+    );
+
+
+  scannedType =
+    type;
+
+
+  const catalogEntry =
+    findCatalogEntry(
+      code
+    );
+
+
+  let displayName;
+
+
+  if (catalogEntry) {
+
+    displayName =
+      catalogEntry.name;
+
+  } else if (
+    type === "qr"
   ) {
 
-    showBarcodeIdentificationResult(
-
-      result.type,
-
-      result.description +
-
-      "<br><br>" +
-
-      "<strong>Code:</strong> " +
-
-      escapeHTML(
+    displayName =
+      getQRText(
         code
-      )
-
-    );
+      );
 
   } else {
 
-    showBarcodeIdentificationResult(
-
-      "Unknown Barcode",
-
-      "This code could not be confidently identified from its text value." +
-
-      "<br><br>" +
-
-      "<strong>Code:</strong> " +
-
-      escapeHTML(
-        code
-      ) +
-
-      "<br><br>" +
-
-      "Try Search Code to look for the number online."
-
-    );
+    displayName =
+      "Barcode Found";
 
   }
 
 
-  devLog(
-    "Barcode identified: " +
-    code
-  );
-
-}
-
-
-function showBarcodeIdentificationResult(
-  title,
-  description
-) {
-
   const result =
     document.getElementById(
-      "barcode-identification-result"
+      "result-text"
     );
 
 
   result.innerHTML =
 
-    '<div class="barcode-result-title">' +
+    '<div class="result-name">' +
 
     escapeHTML(
-      title
+      displayName
     ) +
 
-    "</div>" +
+    '</div>' +
 
-    '<div class="barcode-result-row">' +
+    '<div class="result-code">' +
 
-    description +
+    escapeHTML(
+      code
+    ) +
 
-    "</div>";
+    '</div>' +
+
+    '<div class="result-type">' +
+
+    (
+      type === "barcode"
+        ? "Barcode"
+        : "QR Code"
+    ) +
+
+    '</div>';
 
 
   result.style.display =
     "block";
 
+
+  /*
+    Printer shortcuts should only
+    use the QR-specific printer logic.
+  */
+
+  const openButton =
+    document.getElementById(
+      "open-button"
+    );
+
+
+  if (
+    type === "qr"
+  ) {
+
+    /*
+      getQRText updates isPrinterLink.
+    */
+
+    getQRText(
+      code
+    );
+
+
+    openButton.textContent =
+      isPrinterLink
+        ? "Print"
+        : "Open";
+
+
+    openButton.style.display =
+      "block";
+
+  } else {
+
+    /*
+      Barcodes are not assumed to
+      be URLs.
+    */
+
+    isPrinterLink =
+      false;
+
+
+    if (
+      /^https?:\/\//i.test(
+        code
+      )
+    ) {
+
+      openButton.textContent =
+        "Open";
+
+      openButton.style.display =
+        "block";
+
+    } else {
+
+      openButton.style.display =
+        "none";
+
+    }
+
+  }
+
+
+  document.getElementById(
+    "rescan"
+  ).style.display =
+    "block";
+
 }
 
 
-function searchBarcode() {
+/* =========================
+   ACCEPT SCAN
+========================= */
 
-  const code =
-    document.getElementById(
-      "barcode-code-input"
-    ).value.trim();
+async function acceptScan(
+  decodedText,
+  decodedResult
+) {
 
-
-  if (!code) {
+  if (
+    scanConfirmed
+  ) {
 
     return;
 
   }
 
 
-  const searchURL =
-    "https://www.google.com/search?q=" +
-    encodeURIComponent(
-      '"' +
-      code +
-      '" barcode'
+  scanConfirmed =
+    true;
+
+
+  scannedURL =
+    decodedText;
+
+
+  detectedText =
+    decodedText;
+
+
+  detectedFormat =
+    getFormatName(
+      decodedResult
     );
 
 
-  window.open(
-    searchURL,
-    "_blank"
+  scannedType =
+    getCodeType(
+      detectedFormat
+    );
+
+
+  successfulScans++;
+
+  scanCount++;
+
+
+  lastScanTime =
+    Date.now() -
+    scanStartTime;
+
+
+  playScanSound();
+
+
+  const typeName =
+    scannedType === "barcode"
+      ? "Barcode"
+      : "QR Code";
+
+
+  /*
+    Determine whether the code
+    already has a catalog name.
+  */
+
+  const catalogEntry =
+    findCatalogEntry(
+      decodedText
+    );
+
+
+  let historyName;
+
+
+  if (catalogEntry) {
+
+    historyName =
+      catalogEntry.name;
+
+  } else if (
+    scannedType === "qr"
+  ) {
+
+    historyName =
+      getQRText(
+        decodedText
+      );
+
+  } else {
+
+    historyName =
+      "Barcode Found";
+
+  }
+
+
+  saveHistory(
+    decodedText,
+    historyName,
+    typeName
+  );
+
+
+  document.getElementById(
+    "status-bar"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "hold-still"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "control-bar"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "version-number"
+  ).style.display =
+    "none";
+
+
+  try {
+
+    await scanner.stop();
+
+  } catch {}
+
+
+  cameraTrack =
+    null;
+
+
+  document.getElementById(
+    "reader"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "scan-box"
+  ).style.display =
+    "none";
+
+
+  /*
+    Show the final result.
+  */
+
+  showFinalResult(
+    decodedText,
+    detectedFormat
   );
 
 
   devLog(
-    "Searched barcode: " +
-    code
+    typeName +
+    " accepted: " +
+    decodedText
   );
+
+
+  /*
+    If the code is not cataloged,
+    offer the user the option to
+    name it.
+  */
+
+  if (
+    !catalogEntry
+  ) {
+
+    setTimeout(
+      function() {
+
+        showUnknownCodePanel(
+          decodedText,
+          scannedType
+        );
+
+      },
+      250
+    );
+
+  }
 
 }
 
@@ -4686,7 +5434,7 @@ async function setZoom(value) {
 
 
 /* =========================
-   LOCK SCAN REGION
+   POSITION SCAN REGION
 ========================= */
 
 function positionScanRegion() {
@@ -4704,23 +5452,6 @@ function positionScanRegion() {
   region.style.position =
     "absolute";
 
-  region.style.width =
-    QR_SIZE + "px";
-
-  region.style.height =
-    QR_SIZE + "px";
-
-  region.style.minWidth =
-    QR_SIZE + "px";
-
-  region.style.minHeight =
-    QR_SIZE + "px";
-
-  region.style.maxWidth =
-    QR_SIZE + "px";
-
-  region.style.maxHeight =
-    QR_SIZE + "px";
 
   region.style.left =
     "50%";
@@ -4728,17 +5459,152 @@ function positionScanRegion() {
   region.style.top =
     "50%";
 
+
   region.style.transform =
     "translate(-50%, -50%)";
+
 
   region.style.margin =
     "0";
 
+
   region.style.padding =
     "0";
 
+
   region.style.border =
     "none";
+
+
+  if (
+    scanMode === "barcode"
+  ) {
+
+    const width =
+      Math.min(
+        window.innerWidth * .88,
+        BARCODE_WIDTH
+      );
+
+
+    region.style.width =
+      width + "px";
+
+
+    region.style.height =
+      BARCODE_HEIGHT + "px";
+
+
+    region.style.minWidth =
+      width + "px";
+
+
+    region.style.minHeight =
+      BARCODE_HEIGHT + "px";
+
+
+    region.style.maxWidth =
+      width + "px";
+
+
+    region.style.maxHeight =
+      BARCODE_HEIGHT + "px";
+
+
+  } else {
+
+    region.style.width =
+      QR_SIZE + "px";
+
+
+    region.style.height =
+      QR_SIZE + "px";
+
+
+    region.style.minWidth =
+      QR_SIZE + "px";
+
+
+    region.style.minHeight =
+      QR_SIZE + "px";
+
+
+    region.style.maxWidth =
+      QR_SIZE + "px";
+
+
+    region.style.maxHeight =
+      QR_SIZE + "px";
+
+  }
+
+}
+
+
+/* =========================
+   BARCODE FORMATS
+========================= */
+
+function getBarcodeFormats() {
+
+  /*
+    html5-qrcode provides these
+    format constants.
+
+    The existence checks make the
+    scanner more tolerant of library
+    versions.
+  */
+
+  const formats = [];
+
+
+  const possibleFormats = [
+
+    "CODE_128",
+
+    "CODE_39",
+
+    "CODE_93",
+
+    "CODABAR",
+
+    "EAN_13",
+
+    "EAN_8",
+
+    "ITF",
+
+    "UPC_A",
+
+    "UPC_E",
+
+    "RSS_14",
+
+    "RSS_EXPANDED"
+
+  ];
+
+
+  possibleFormats.forEach(
+    function(name) {
+
+      if (
+        Html5QrcodeSupportedFormats &&
+        Html5QrcodeSupportedFormats[name]
+      ) {
+
+        formats.push(
+          Html5QrcodeSupportedFormats[name]
+        );
+
+      }
+
+    }
+  );
+
+
+  return formats;
 
 }
 
@@ -4760,28 +5626,56 @@ async function startScanner() {
 
 
   status.textContent =
-    "Starting " +
-    getScannerModeName() +
-    "...";
+    scanMode === "barcode"
+      ? "Starting barcode scanner..."
+      : "Starting QR scanner...";
 
 
-  status.className =
-    "";
+  /*
+    Make sure the UI matches the
+    selected mode.
+  */
+
+  updateScanModeUI();
 
 
   scanner =
     new Html5Qrcode(
-
-      "reader",
-
-      {
-
-        formatsToSupport:
-          getScannerFormats()
-
-      }
-
+      "reader"
     );
+
+
+  /*
+    QR mode scans only QR.
+
+    Barcode mode scans only common
+    1D barcode formats.
+
+    This is important because the
+    user specifically requested that
+    barcode mode be barcode-only.
+  */
+
+  let formatsToSupport;
+
+
+  if (
+    scanMode === "barcode"
+  ) {
+
+    formatsToSupport =
+      getBarcodeFormats();
+
+  } else {
+
+    formatsToSupport = [
+
+      Html5QrcodeSupportedFormats
+        .QR_CODE
+
+    ];
+
+  }
 
 
   try {
@@ -4798,15 +5692,35 @@ async function startScanner() {
         fps:
           30,
 
-        qrbox: {
+        qrbox:
 
-          width:
-            QR_SIZE,
+          scanMode === "barcode"
 
-          height:
-            QR_SIZE
+            ? {
 
-        },
+                width:
+                  Math.min(
+                    window.innerWidth * .88,
+                    BARCODE_WIDTH
+                  ),
+
+                height:
+                  BARCODE_HEIGHT
+
+              }
+
+            : {
+
+                width:
+                  QR_SIZE,
+
+                height:
+                  QR_SIZE
+
+              },
+
+        formatsToSupport:
+          formatsToSupport,
 
         disableFlip:
           false
@@ -4829,8 +5743,9 @@ async function startScanner() {
 
 
         status.textContent =
-          getScannerModeName() +
-          " detected";
+          scanMode === "barcode"
+            ? "Barcode detected"
+            : "QR detected";
 
 
         status.className =
@@ -4850,6 +5765,11 @@ async function startScanner() {
 
           detectedText =
             decodedText;
+
+          detectedFormat =
+            getFormatName(
+              decodedResult
+            );
 
 
           document.getElementById(
@@ -4874,6 +5794,11 @@ async function startScanner() {
           detectedText =
             decodedText;
 
+          detectedFormat =
+            getFormatName(
+              decodedResult
+            );
+
 
           return;
 
@@ -4888,172 +5813,9 @@ async function startScanner() {
 
         ) {
 
-          scanConfirmed =
-            true;
-
-
-          scannedURL =
-            decodedText;
-
-
-          successfulScans++;
-
-          scanCount++;
-
-
-          lastScanTime =
-            Date.now() -
-            scanStartTime;
-
-
-          playScanSound();
-
-
-          /*
-            Get the actual format reported
-            by html5-qrcode when available.
-          */
-
-          let detectedFormat =
-            null;
-
-
-          if (
-            decodedResult &&
-            decodedResult.result &&
-            decodedResult.result.format
-          ) {
-
-            detectedFormat =
-              decodedResult
-                .result
-                .format
-                .formatName;
-
-          }
-
-
-          if (
-            detectedFormat
-          ) {
-
-            devLog(
-              "Detected format: " +
-              detectedFormat
-            );
-
-          }
-
-
-          const result =
-            getScanText(
-              decodedText
-            );
-
-
-          saveHistory(
+          await acceptScan(
             decodedText,
-            result
-          );
-
-
-          document.getElementById(
-            "status-bar"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "hold-still"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "control-bar"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "version-number"
-          ).style.display =
-            "none";
-
-
-          try {
-
-            await scanner.stop();
-
-          } catch(error) {
-
-            devLog(
-              "Scanner stop error: " +
-              error.message
-            );
-
-          }
-
-
-          cameraTrack =
-            null;
-
-
-          document.getElementById(
-            "reader"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "scan-box"
-          ).style.display =
-            "none";
-
-
-          document.getElementById(
-            "result-text"
-          ).textContent =
-            result;
-
-
-          document.getElementById(
-            "result-text"
-          ).style.display =
-            "block";
-
-
-          const openButton =
-            document.getElementById(
-              "open-button"
-            );
-
-
-          openButton.textContent =
-
-            isPrinterLink
-              ? "Print"
-              : (
-                  scannerMode === "qr"
-                    ? "Open"
-                    : "Identify"
-                );
-
-
-          openButton.style.display =
-            "block";
-
-
-          document.getElementById(
-            "rescan"
-          ).style.display =
-            "block";
-
-
-          devLog(
-            getScannerModeName() +
-            " accepted: " +
-            result
+            decodedResult
           );
 
         }
@@ -5089,8 +5851,9 @@ async function startScanner() {
 
 
     status.textContent =
-      "Ready: " +
-      getScannerModeName();
+      scanMode === "barcode"
+        ? "Ready for barcode"
+        : "Ready for QR";
 
 
     status.className =
@@ -5109,9 +5872,31 @@ async function startScanner() {
 
 
     devLog(
-      "Scanner mode: " +
-      getScannerModeName()
+      "Mode: " +
+      scanMode
     );
+
+
+    if (
+      scanMode === "barcode"
+    ) {
+
+      devLog(
+        "Barcode region: rectangular"
+      );
+
+      devLog(
+        "Barcode formats enabled: " +
+        formatsToSupport.length
+      );
+
+    } else {
+
+      devLog(
+        "QR region: fixed 250x250"
+      );
+
+    }
 
 
   } catch(error) {
@@ -5149,34 +5934,6 @@ function openScannedSite() {
     return;
 
 
-  /*
-    Barcode modes should open the
-    identification screen instead
-    of treating the barcode number
-    as a URL.
-  */
-
-  if (
-    scannerMode !== "qr"
-  ) {
-
-    showBarcodeIdentifier();
-
-
-    document.getElementById(
-      "barcode-code-input"
-    ).value =
-      scannedURL;
-
-
-    identifyBarcode();
-
-
-    return;
-
-  }
-
-
   let url =
     scannedURL;
 
@@ -5194,6 +5951,21 @@ function openScannedSite() {
     )
 
   ) {
+
+    /*
+      Don't attempt to open an
+      ordinary numeric barcode
+      as a website.
+    */
+
+    if (
+      scannedType === "barcode"
+    ) {
+
+      return;
+
+    }
+
 
     url =
       "https://" +
@@ -5243,6 +6015,8 @@ function keepScannerLocked() {
 
         positionScanRegion();
 
+        updateScanModeUI();
+
       },
 
       50
@@ -5278,6 +6052,64 @@ window.addEventListener(
 
 
 /* =========================
+   ENTER KEY SUPPORT
+========================= */
+
+document.addEventListener(
+
+  "keydown",
+
+  function(event) {
+
+    if (
+      event.key !==
+      "Enter"
+    ) {
+
+      return;
+
+    }
+
+
+    const unknown =
+      document.getElementById(
+        "unknown-panel"
+      );
+
+
+    if (
+      unknown.style.display ===
+      "flex"
+    ) {
+
+      saveUnknownCode();
+
+      return;
+
+    }
+
+
+    const editor =
+      document.getElementById(
+        "catalog-editor"
+      );
+
+
+    if (
+      editor.style.display ===
+      "flex"
+    ) {
+
+      saveCatalogEditor();
+
+    }
+
+  }
+
+);
+
+
+/* =========================
    START
 ========================= */
 
@@ -5287,27 +6119,9 @@ window.addEventListener(
 
   function() {
 
-    /*
-      Make absolutely sure overlays
-      cannot intercept clicks while
-      hidden.
-    */
-
     const notes =
       document.getElementById(
         "notes-panel"
-      );
-
-
-    const scannerModePanel =
-      document.getElementById(
-        "scanner-mode-panel"
-      );
-
-
-    const barcodePanel =
-      document.getElementById(
-        "barcode-identifier-panel"
       );
 
 
@@ -5319,20 +6133,41 @@ window.addEventListener(
       "none";
 
 
-    scannerModePanel.style.display =
+    const catalog =
+      document.getElementById(
+        "catalog-panel"
+      );
+
+
+    catalog.style.display =
       "none";
 
 
-    scannerModePanel.style.pointerEvents =
+    catalog.style.pointerEvents =
       "none";
 
 
-    barcodePanel.style.display =
+    const unknown =
+      document.getElementById(
+        "unknown-panel"
+      );
+
+
+    unknown.style.display =
       "none";
 
 
-    barcodePanel.style.pointerEvents =
+    const editor =
+      document.getElementById(
+        "catalog-editor"
+      );
+
+
+    editor.style.display =
       "none";
+
+
+    updateScanModeUI();
 
 
     devLog(
@@ -5346,13 +6181,23 @@ window.addEventListener(
 
 
     devLog(
-      "Scanner mode: " +
-      getScannerModeName()
+      "Scan mode: " +
+      scanMode
     );
 
 
     devLog(
-      "QR/barcode area: FIXED 250x250"
+      "QR catalog and barcode catalog enabled"
+    );
+
+
+    devLog(
+      "Custom code names enabled"
+    );
+
+
+    devLog(
+      "Catalog saved locally"
     );
 
 
@@ -5361,30 +6206,7 @@ window.addEventListener(
     );
 
 
-    devLog(
-      "Scan success status: REMOVED"
-    );
-
-
-    devLog(
-      "Printer status dropdowns enabled"
-    );
-
-
-    devLog(
-      "Notes camera protection enabled"
-    );
-
-
-    devLog(
-      "Barcode identifier enabled"
-    );
-
-
     loadNotes();
-
-
-    updateScannerModeUI();
 
 
     startScanner();
